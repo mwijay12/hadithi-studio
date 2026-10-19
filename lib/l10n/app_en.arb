@@ -1,0 +1,478 @@
+{
+  "@@locale": "en",
+  "appName": "Hadithi Studio",
+  "tagline": "Read. Listen. Live the Story.",
+  "welcome": "Welcome!",
+  "greeting": "Hello {name}!",
+  "@greeting": {
+    "description": "Home screen greeting using the user's first name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Neema"
+      }
+    }
+  },
+  "home": "Home",
+  "library": "Library",
+  "create": "Create",
+  "bookshelf": "My Shelf",
+  "profile": "Profile",
+  "settings": "Settings",
+  "search": "Search stories...",
+  "searchHint": "Search by title, author or category",
+  "seeAll": "See All",
+  "loading": "Loading...",
+  "error": "Something went wrong",
+  "retry": "Try again",
+  "tryAgain": "Try Again",
+  "noResults": "No results found",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "save": "Save",
+  "done": "Done",
+  "next": "Next",
+  "skip": "Skip",
+  "back": "Back",
+  "close": "Close",
+  "yes": "Yes",
+  "no": "No",
+  "ok": "OK",
+  "splashGreeting": "Welcome to Hadithi Studio!",
+  "splashTagline": "Read. Listen. Live the Story.",
+  "splashLoading": "Preparing your library...",
+  "onboardingTitle1": "Read Stories That Come Alive",
+  "onboardingBody1": "Beautifully illustrated stories that spark your child's imagination, in Swahili and English.",
+  "onboardingTitle2": "Listen in Swahili Voice",
+  "onboardingBody2": "Hear stories read aloud in clear Swahili while each word is highlighted as it is spoken.",
+  "onboardingTitle3": "Create Your Own Story",
+  "onboardingBody3": "Use AI to write and illustrate your own story, from a single idea to a finished book.",
+  "onboardingTitle4": "Choose Your Language",
+  "onboardingBody4": "Pick Swahili, English or both. You can change this at any time.",
+  "getStarted": "Get Started",
+  "chooseLanguage": "Choose Language",
+  "chooseLanguageSubtitle": "The language you prefer to use in the app.",
+  "chooseAgeGroup": "Choose Age Group",
+  "chooseAgeGroupSubtitle": "We will recommend stories that suit this age.",
+  "chooseInterests": "Pick Your Favourite Categories",
+  "chooseInterestsSubtitle": "Select one or more. You can change these later.",
+  "swahili": "Swahili",
+  "english": "English",
+  "bilingual": "Both Languages",
+  "continueReading": "Continue Reading",
+  "featured": "Featured Stories",
+  "trending": "Trending",
+  "categories": "Categories",
+  "dailyStory": "Story of the Day",
+  "goodMorning": "Good morning!",
+  "goodAfternoon": "Good afternoon!",
+  "goodEvening": "Good evening!",
+  "readNow": "Read Now",
+  "listenNow": "Listen Now",
+  "createdInTanzania": "Created in Tanzania",
+  "recommendations": "Recommended for You",
+  "download": "Download",
+  "downloaded": "Downloaded",
+  "downloads": "Downloads",
+  "myDownloads": "My Downloads",
+  "favorites": "Favorites",
+  "history": "History",
+  "myStories": "My Stories",
+  "drafts": "Drafts",
+  "published": "Published",
+  "filter": "Filter",
+  "sortBy": "Sort by",
+  "apply": "Apply",
+  "clear": "Clear",
+  "readAloud": "Read Aloud",
+  "pause": "Pause",
+  "resume": "Resume",
+  "speed": "Speed",
+  "slow": "Slow",
+  "normal": "Normal",
+  "fast": "Fast",
+  "veryFast": "Very fast",
+  "bookmark": "Bookmark",
+  "share": "Share",
+  "review": "Review",
+  "rating": "Rating",
+  "pages": "Pages",
+  "minutes": "minutes",
+  "readingTime": "Reading Time",
+  "author": "Author",
+  "publishDate": "Published",
+  "tapToInteract": "Tap to interact!",
+  "page": "Page",
+  "ofPages": "of {total}",
+  "@ofPages": {
+    "description": "Page indicator, e.g. 'Page 3 of 10'.",
+    "placeholders": {
+      "total": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "ttsVoice": "Voice",
+  "voiceMama": "Mama",
+  "voiceBaba": "Baba",
+  "voiceMtoto": "Child",
+  "autoPageTurn": "Auto Page Turn",
+  "fontSize": "Text Size",
+  "nightMode": "Night Mode",
+  "createStory": "Create Story",
+  "generateStory": "Generate Story with AI",
+  "generateIllustration": "Generate Illustration with AI",
+  "chooseTemplate": "Choose Template",
+  "storyTitle": "Story Title",
+  "storyDescription": "Story Description",
+  "chooseCategory": "Choose Category",
+  "chooseArtStyle": "Choose Art Style",
+  "preview": "Preview",
+  "publish": "Publish",
+  "saveDraft": "Save Draft",
+  "aiGenerating": "AI is generating...",
+  "template": "Template",
+  "custom": "Start from Scratch",
+  "pageCount": "Number of Pages",
+  "characterBuilder": "Character Builder",
+  "free": "Free",
+  "premium": "VIP",
+  "subscribe": "Subscribe",
+  "price": "Price",
+  "perMonth": "per month",
+  "planBure": "FREE",
+  "planMsingi": "BASIC",
+  "planVip": "VIP",
+  "planFamilia": "FAMILY",
+  "payWithMpesa": "Pay with M-Pesa",
+  "payWithTigoPesa": "Pay with Tigo Pesa",
+  "payWithAirtelMoney": "Pay with Airtel Money",
+  "payWithHalopesa": "Pay with Halopesa",
+  "payWithCard": "Pay with Card",
+  "enterPhoneNumber": "Enter phone number",
+  "confirmPayment": "Confirm Payment",
+  "paymentSuccessful": "Payment Successful!",
+  "paymentFailed": "Payment Failed",
+  "transactionHistory": "Transaction History",
+  "achievements": "Achievements",
+  "streak": "Streak",
+  "level": "Level",
+  "points": "Points",
+  "parentalControls": "Parental Controls",
+  "screenTime": "Screen Time",
+  "childProfile": "Child Profile",
+  "childProfiles": "Child Profiles",
+  "readingStats": "Reading Stats",
+  "readingLevel": "Reading Level",
+  "ageGroup": "Age Group",
+  "myAccount": "My Account",
+  "manageSubscription": "Manage Subscription",
+  "login": "Log In",
+  "register": "Sign Up",
+  "phoneNumber": "Phone Number",
+  "password": "Password",
+  "forgotPassword": "Forgot password?",
+  "logout": "Log Out",
+  "orContinueWith": "Or continue with",
+  "otpSent": "We sent a verification code to your phone.",
+  "verify": "Verify",
+  "noInternet": "No Internet",
+  "offlineMode": "Offline Mode",
+  "offlineBanner": "You are offline — showing downloaded stories.",
+  "errorNetwork": "No network connection. Check your internet.",
+  "errorTimeout": "The request timed out. Please try again.",
+  "errorServer": "Server error. Please try again.",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "storageFull": "Storage is full. Delete some downloaded stories.",
+  "language": "Language",
+  "theme": "Appearance",
+  "darkMode": "Dark Mode",
+  "notifications": "Notifications",
+  "about": "About",
+  "helpSupport": "Help & Support",
+  "contactUs": "Contact Us",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "version": "Version",
+  "clearCache": "Clear Cache",
+  "storageUsed": "Storage Used",
+  "catAnimalStories": "Animal Stories",
+  "catMoralsWisdom": "Morals & Wisdom",
+  "catScience": "Science for Kids",
+  "catCulture": "Tanzanian Culture",
+  "catPoemsSongs": "Poems & Songs",
+  "catSafari": "Safari & Adventure",
+  "storySafariYaSimba": "Simba's Safari",
+  "storyMlimaKilimanjaro": "Mount Kilimanjaro",
+  "storyNyotaZaUsiku": "Stars of the Night",
+  "storyNgomaYaFuraha": "The Happy Drum",
+  "searchPlaceholder": "Search stories, authors, categories...",
+  "@searchPlaceholder": {
+    "description": "Hint inside the immersive search bar on the All Stories page."
+  },
+  "allStories": "All Stories",
+  "@allStories": {
+    "description": "Page title for the complete library listing."
+  },
+  "storiesFound": "{count} stories found",
+  "@storiesFound": {
+    "description": "Reactive result count above a story grid, e.g. '24 stories found'.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "24"
+      }
+    }
+  },
+  "noStoriesFound": "No matching stories",
+  "@noStoriesFound": {
+    "description": "Empty-state title when filters or a search return nothing."
+  },
+  "tryDifferentFilter": "Try a different filter",
+  "@tryDifferentFilter": {
+    "description": "Empty-state hint suggesting the user widen the filter."
+  },
+  "clearFilters": "Clear Filters",
+  "@clearFilters": {
+    "description": "Action that resets every active filter."
+  },
+  "filters": "Filters",
+  "@filters": {
+    "description": "Label of the button that opens the filter bottom sheet."
+  },
+  "applyFilters": "Apply Filters",
+  "@applyFilters": {
+    "description": "Confirm button inside the filter bottom sheet."
+  },
+  "clearAll": "Clear All",
+  "@clearAll": {
+    "description": "Header action inside the filter sheet that resets the selection."
+  },
+  "sortNewest": "Newest",
+  "@sortNewest": {
+    "description": "Sort order: most recently published first."
+  },
+  "sortPopular": "Most Popular",
+  "@sortPopular": {
+    "description": "Sort order: most read first."
+  },
+  "sortRating": "Top Rated",
+  "@sortRating": {
+    "description": "Sort order: highest rating first."
+  },
+  "sortName": "Name (A-Z)",
+  "@sortName": {
+    "description": "Sort order: title alphabetical."
+  },
+  "all": "All",
+  "@all": {
+    "description": "Neutral chip meaning no filter is applied."
+  },
+  "newLabel": "New",
+  "@newLabel": {
+    "description": "Short chip label for the newest-first sort. Not the same as sortNewest."
+  },
+  "popular": "Popular",
+  "@popular": {
+    "description": "Short chip label for the most-read sort."
+  },
+  "freeOnly": "Free",
+  "@freeOnly": {
+    "description": "Chip that keeps only free stories."
+  },
+  "loadingMore": "Loading more...",
+  "@loadingMore": {
+    "description": "Footer shown while the next page of stories is loading."
+  },
+  "pullToRefresh": "Pull to refresh",
+  "@pullToRefresh": {
+    "description": "Hint shown while a pull-to-refresh gesture is in progress."
+  },
+  "readingSettings": "Reading Settings",
+  "@readingSettings": {
+    "description": "Title of the settings panel that slides over the reader."
+  },
+  "readingMode": "Reading mode",
+  "@readingMode": {
+    "description": "Label of the reading-mode selector in the reader settings panel."
+  },
+  "readAndListen": "Read and Listen",
+  "@readAndListen": {
+    "description": "Reading mode: text on screen plus audio reading it aloud (default)."
+  },
+  "listenOnly": "Listen Only",
+  "@listenOnly": {
+    "description": "Reading mode: audio only, for bedtime listening."
+  },
+  "readOnly": "Read Only",
+  "@readOnly": {
+    "description": "Reading mode: no audio at all, silent reading."
+  },
+  "turnDelay": "Page turn delay",
+  "@turnDelay": {
+    "description": "How long the reader waits before turning the page by itself."
+  },
+  "delaySeconds": "{seconds} s",
+  "@delaySeconds": {
+    "description": "Short label for the auto page-turn delay chips.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "backgroundMusic": "Background music",
+  "@backgroundMusic": {
+    "description": "Switch that adds soft music behind the narration (not wired yet)."
+  },
+  "musicVolume": "Music volume",
+  "@musicVolume": {
+    "description": "Slider label for the background-music volume."
+  },
+  "continuePrompt": "Continue reading from page {page}?",
+  "@continuePrompt": {
+    "description": "Asked when the reader finds a saved position for this story.",
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "startOver": "Start over",
+  "@startOver": {
+    "description": "Action that ignores the saved position and starts at page one."
+  },
+  "congratulations": "Congratulations!",
+  "@congratulations": {
+    "description": "Heading of the dialog shown when the last page is finished."
+  },
+  "storyComplete": "You have finished the story!",
+  "@storyComplete": {
+    "description": "Body of the completion dialog."
+  },
+  "readAnother": "Read another story",
+  "@readAnother": {
+    "description": "Action in the completion dialog that returns to the shelf."
+  },
+  "rateStory": "Rate this story",
+  "@rateStory": {
+    "description": "Action in the completion dialog that opens the rating prompt."
+  },
+  "reportStory": "Report",
+  "@reportStory": {
+    "description": "Overflow action that reports a problem with the story."
+  },
+  "storyInfo": "Details",
+  "@storyInfo": {
+    "description": "Overflow action that shows story information."
+  },
+  "moreOptions": "More options",
+  "@moreOptions": {
+    "description": "Tooltip of the overflow menu button in the reader."
+  },
+  "tapToHear": "Tap a word to hear it",
+  "@tapToHear": {
+    "description": "Hint that a single word can be tapped to be read aloud."
+  },
+  "bookmarkAdded": "Bookmark saved",
+  "@bookmarkAdded": {
+    "description": "Short confirmation after saving a bookmark."
+  },
+  "bookmarkRemoved": "Bookmark removed",
+  "@bookmarkRemoved": {
+    "description": "Short confirmation after removing a bookmark."
+  },
+  "speedGentle": "Gentle",
+  "@speedGentle": {
+    "description": "Speech speed chip between Slow and Normal."
+  },
+  "speedQuick": "A bit fast",
+  "@speedQuick": {
+    "description": "Speech speed chip between Normal and Fast."
+  },
+  "aboutTheStory": "About the Story",
+  "readMore": "Read More",
+  "readLess": "Show Less",
+  "writtenBy": "Written by {author}",
+  "follow": "Follow",
+  "following": "Following",
+  "readers": "{count} readers",
+  "reviews": "{count} reviews",
+  "pagesCount": "{count} pages",
+  "readingTimeLabel": "~{minutes} min",
+  "similarStories": "Similar Stories",
+  "userReviews": "Reader Reviews",
+  "writeReview": "Write a Review",
+  "viewAll": "View All",
+  "errorOccurred": "An Error Occurred",
+  "unlockFor": "Unlock for TZS {price}",
+  "shareStoryMessage": "Read \"{title}\" on Hadithi Studio!",
+  "@writtenBy": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "@readers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@reviews": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@readingTimeLabel": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@unlockFor": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "@shareStoryMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "crashTitle": "Sorry! Something went wrong 😔",
+  "crashMessage": "We apologise. Something unexpected happened.",
+  "restartApp": "Restart",
+  "goHome": "Go Home",
+  "reportProblem": "Report a Problem",
+  "reportProblemCopied": "Details copied. Send them to support.",
+  "errorDetails": "Technical Details",
+  "appLanguage": "App Language",
+  "aboutApp": "About",
+  "notAvailableYet": "Not available yet",
+  "languageChanged": "Language changed to {language}",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
+}

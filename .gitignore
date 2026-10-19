@@ -1,0 +1,18 @@
+# Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+debug-info/
+
+# Vifaa vya preview (si sehemu ya app)
+temp/
+media-output/
+preview-check/
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store

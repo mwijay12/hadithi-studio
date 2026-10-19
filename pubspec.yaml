@@ -1,0 +1,119 @@
+name: hadithi_studio
+description: "Hadithi Studio — Tanzania's Interactive Story & Illustrated Book Studio. Soma. Sikiliza. Ishi Hadithi."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # ---------- State Management ----------
+  flutter_bloc: ^8.1.3
+  equatable: ^2.0.5
+
+  # ---------- Dependency Injection ----------
+  get_it: ^7.6.4
+
+  # ---------- Network ----------
+  dio: ^5.4.0
+  connectivity_plus: ^5.0.2
+
+  # ---------- Local Storage ----------
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+
+  # ---------- Navigation ----------
+  go_router: ^13.0.0
+
+  # ---------- UI ----------
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  google_fonts: ^9.0.0
+
+  # ---------- Speech / Audio ----------
+  flutter_tts: ^3.8.5
+  just_audio: ^0.9.36
+
+  # ---------- i18n ----------
+  # NOTE: 'any' inaruhusu Flutter kuamua toleo la intl linalolingana na
+  # flutter_localizations (Flutter hupin intl kwa toleo mahususi).
+  intl: any
+
+  # ---------- Utils ----------
+  url_launcher: ^6.2.2
+  share_plus: ^7.2.2
+  path_provider: ^2.1.2
+  uuid: ^4.2.2
+  logger: ^2.0.2+1
+  dartz: ^0.10.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+
+  # Huwasha generation ya lib/l10n/generated/* kutoka lib/l10n/*.arb
+  generate: true
+
+  assets:
+    - assets/images/
+    - assets/images/onboarding/
+    - assets/images/categories/
+    - assets/images/stories/
+    - assets/images/stories/pages/safari-ya-simba/
+    - assets/images/stories/pages/mlima-kilimanjaro/
+    - assets/images/stories/pages/nyota-za-usiku/
+    - assets/images/stories/pages/kifaru-mdogo/
+    - assets/images/stories/pages/twiga-mrefu/
+    - assets/images/stories/pages/mti-wa-babu/
+    - assets/images/stories/pages/safari-ya-matone/
+    - assets/images/mascot/
+    - assets/images/badges/
+    - assets/icons/
+    - assets/lottie/
+    - assets/rive/
+    - assets/sounds/
+    - assets/audio/
+    - assets/audio/songs/
+    - assets/fonts/
+
+  # ---------------------------------------------------------------------
+  # FONTS — kwa sasa tunatumia package `google_fonts` (tazama
+  # lib/config/theme/typography.dart) ili project i-build bila binary assets.
+  #
+  # KWA PRODUCTION (na ili kufanya kazi OFFLINE — muhimu kwa Tanzania):
+  # 1. Pakua Nunito, Merriweather na Baloo 2 (.ttf) kutoka Google Fonts.
+  # 2. Weka kwenye assets/fonts/
+  # 3. Ondoa alama za maoni (comment) kwenye bloku hapa chini.
+  # 4. Badilisha AppTypography kutoka GoogleFonts.* kwenda TextStyle ya kawaida.
+  #
+  # fonts:
+  #   - family: Nunito
+  #     fonts:
+  #       - asset: assets/fonts/Nunito-Light.ttf
+  #         weight: 300
+  #       - asset: assets/fonts/Nunito-Regular.ttf
+  #       - asset: assets/fonts/Nunito-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Nunito-Bold.ttf
+  #         weight: 700
+  #   - family: Merriweather
+  #     fonts:
+  #       - asset: assets/fonts/Merriweather-Regular.ttf
+  #       - asset: assets/fonts/Merriweather-Bold.ttf
+  #         weight: 700
+  #   - family: Baloo2
+  #     fonts:
+  #       - asset: assets/fonts/Baloo2-Regular.ttf
+  #       - asset: assets/fonts/Baloo2-Bold.ttf
+  #         weight: 700
