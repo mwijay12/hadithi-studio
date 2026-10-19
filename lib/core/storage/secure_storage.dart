@@ -209,14 +209,11 @@ abstract class SecureStorage {
 
 /// Chaguo za Android kwa `flutter_secure_storage`.
 ///
-/// `encryptedSharedPreferences: true` hutumia `EncryptedSharedPreferences` ya
-/// AndroidX badala ya SharedPreferences ya kawaida inayofungwa kwa RSA pekee.
-/// Hii ni muhimu kwa Tanzania: kwenye simu nyingi za Android 6–9, watumiaji
-/// huruhusu backup, na SharedPreferences ya wazi inaweza kuvuja kwenye faili ya
-/// backup. Kwenye `flutter_secure_storage` v10 chaguo hili ni la kawaida
-/// (kwa hivyo linatoweka), lakini kwa v9 (toleo la project hii) linahitajika.
-const AndroidOptions _androidOptions =
-    AndroidOptions(encryptedSharedPreferences: true);
+/// Kwenye v10 `EncryptedSharedPreferences` ya AndroidX ni **ya kawaida** —
+/// chaguo la `encryptedSharedPreferences` limeondolewa. Hii ni muhimu kwa
+/// Tanzania: kwenye simu nyingi za Android 6–9, watumiaji huruhusu backup,
+/// na SharedPreferences ya wazi inaweza kuvuja kwenye faili ya backup.
+const AndroidOptions _androidOptions = AndroidOptions();
 
 /// Chaguo za iOS/macOS.
 ///

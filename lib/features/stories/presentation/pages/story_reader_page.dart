@@ -1031,7 +1031,7 @@ class _TopControls extends StatelessWidget {
               english: 'Read stories on Hadithi Studio!',
             )
           : l10n.shareStoryMessage(story.title(swahili: context.isSwahili));
-      unawaited(Share.share(text));
+      unawaited(SharePlus.instance.share(ShareParams(text: text)));
       return;
     }
 

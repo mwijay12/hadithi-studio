@@ -295,7 +295,9 @@ class _HeroCover extends StatelessWidget {
   void _share(BuildContext context, String title) {
     final AppLocalizations l10n = context.l10n;
     HapticFeedback.lightImpact();
-    unawaited(Share.share(l10n.shareStoryMessage(title)));
+    unawaited(
+      SharePlus.instance.share(ShareParams(text: l10n.shareStoryMessage(title))),
+    );
   }
 }
 

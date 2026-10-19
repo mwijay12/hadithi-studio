@@ -247,8 +247,7 @@ class ReaderCubit extends Cubit<ReaderState> {
     if (state.story == null || _pageText.trim().isEmpty) return;
 
     if (state.isPaused) {
-      await _speech.resume();
-      emit(state.copyWith(isPaused: false));
+      await _resumePlayback();
       return;
     }
 
@@ -329,14 +328,29 @@ class ReaderCubit extends Cubit<ReaderState> {
     if (!state.isSpeaking) return startReadAloud();
 
     if (state.isPaused) {
-      await _speech.resume();
-      emit(state.copyWith(isPaused: false));
-      _scheduleNextToken();
+      return _resumePlayback();
     } else {
       _stopKaraoke();
       await _speech.pause();
       emit(state.copyWith(isPaused: true));
     }
+  }
+
+  /// Huendeleza kusoma, au huanza upya ukurasa kama injini haitekelezi
+  /// `resume` (Android/iOS).
+  Future<void> _resumePlayback() async {
+    final bool resumed = await _speech.resume();
+    if (resumed) {
+      emit(state.copyWith(isPaused: false));
+      _scheduleNextToken();
+      return;
+    }
+
+    // TTS ya simu haitoi `resume` — tunaanza ukurasa upya ili mtoto
+    // asikae kimya akiwa amedhani sauti inaendelea.
+    emit(state.copyWith(isPaused: false, clearHighlight: true));
+    _stopKaraoke();
+    await startReadAloud();
   }
 
   /// Husimamisha au kuanza kusoma.

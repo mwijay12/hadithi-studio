@@ -106,11 +106,10 @@ class NetworkInfoImpl implements NetworkInfo {
   /// matumaini, lakini kunaonyesha UI ya kawaida (spinners) badala ya onyo.
   ConnectionQuality _cached = ConnectionQuality.wifi;
 
-  /// `connectivity_plus` 5.x hutoa **kitu kimoja** (`ConnectivityResult`) kwa
-  /// kila tukio, si orodha. Orodha ilikuwa API ya 6.x. Tunabadilisha hapa na
-  /// kuzifunga kuwa orodha ya kitu kimoja kabla ya [_fromResults], ili mantiki
-  /// ya "Wi-Fi kwanza" ibaki mahali pamoja (tazama doc yake).
-  StreamSubscription<ConnectivityResult>? _subscription;
+  /// `connectivity_plus` 6.x+ hutoa **orodha** ya aina za muunganisho kwa
+  /// kila tukio (kifaa kinaweza kuwa kwenye Wi-Fi **na** data ya simu kwa
+  /// wakati mmoja). Tunaituma orodha hiyo moja kwa moja kwa [_fromResults].
+  StreamSubscription<List<ConnectivityResult>>? _subscription;
 
   /// Broadcast controller — kwa sababu sources zetu ni nyingi (ReaderBloc,
   /// PaymentBloc, CacheManager) na zote zinahitaji kusikiliza kwa wakati mmoja.
@@ -129,7 +128,7 @@ class NetworkInfoImpl implements NetworkInfo {
     _refresh();
 
     _subscription = _connectivity.onConnectivityChanged.listen(
-      (result) => _emit(_fromResults(<ConnectivityResult>[result])),
+      _emitFromResults,
       onError: (Object error, StackTrace stackTrace) {
         // Plugin ikishindwa (hutokea kwenye Android ya zamani), tunabaki na
         // hali ya mwisho tunayoijua badala ya kuangusha app.
@@ -149,8 +148,9 @@ class NetworkInfoImpl implements NetworkInfo {
 
   @override
   Future<ConnectionQuality> checkQuality() async {
-    final ConnectivityResult result = await _connectivity.checkConnectivity();
-    final quality = _fromResults(<ConnectivityResult>[result]);
+    final List<ConnectivityResult> results =
+        await _connectivity.checkConnectivity();
+    final quality = _fromResults(results);
     _emit(quality);
     return quality;
   }
@@ -183,9 +183,14 @@ class NetworkInfoImpl implements NetworkInfo {
   /// Husoma hali ya kwanza kwa nyuma (background).
   void _refresh() {
     _connectivity.checkConnectivity().then(
-          (result) => _emit(_fromResults(<ConnectivityResult>[result])),
+          _emitFromResults,
           onError: (Object error) => _emit(_cached),
         );
+  }
+
+  /// Hupokea orodha ya aina za muunganisho na kutoa [ConnectionQuality].
+  void _emitFromResults(List<ConnectivityResult> results) {
+    _emit(_fromResults(results));
   }
 
   /// Hubadilisha orodha ya `ConnectivityResult` kuwa [ConnectionQuality] moja.

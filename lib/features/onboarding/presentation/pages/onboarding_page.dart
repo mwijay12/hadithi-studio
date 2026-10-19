@@ -45,6 +45,7 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/spacing.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/services/library_store.dart';
+import '../../../../core/utils/contrast_utils.dart';
 import '../../../../l10n/app_locale_controller.dart';
 import '../../../../l10n/l10n.dart';
 
@@ -1174,6 +1175,10 @@ class _SlideBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Beji iko juu ya mandhari inayotembea; nyeupe 78% ndiyo uso wake.
+    // Rangi ya chapa inaweza kuwa hafifu (gold, orange) — tunatumia toleo
+    // linalosomeka kwa maandishi na ikoni, huku mpaka ukibaki na rangi halisi.
+    final Color ink = ContrastUtils.readableInk(accent, Colors.white);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -1187,7 +1192,7 @@ class _SlideBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: AppSpacing.iconSm, color: accent),
+          Icon(icon, size: AppSpacing.iconSm, color: ink),
           const SizedBox(width: AppSpacing.xs + 2),
           Flexible(
             child: Text(
@@ -1195,7 +1200,7 @@ class _SlideBadge extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: accent,
+                    color: ink,
                     fontWeight: FontWeight.w700,
                   ),
             ),
@@ -1250,6 +1255,12 @@ class _FeaturePill extends StatelessWidget {
     // tunaruhusu maandishi yeyote marefu ("Ukubwa wa Maandishi") kupata
     // nafasi yake kamili badala ya kukatwa kwa ellipsis.
     final double maxPillWidth = MediaQuery.sizeOf(context).width * 0.8;
+    // Tint 9% juu ya mandhari — maandishi hutumia toleo linalosomeka.
+    final Color tint = ContrastUtils.blend(
+      accent.withValues(alpha: 0.09),
+      AppColors.background,
+    );
+    final Color ink = ContrastUtils.readableInk(accent, tint);
     return Container(
       constraints: BoxConstraints(maxWidth: maxPillWidth),
       padding: const EdgeInsets.symmetric(
@@ -1257,13 +1268,13 @@ class _FeaturePill extends StatelessWidget {
         vertical: AppSpacing.xs + 2,
       ),
       decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.09),
+        color: tint,
         borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: AppSpacing.iconSm, color: accent),
+          Icon(icon, size: AppSpacing.iconSm, color: ink),
           const SizedBox(width: AppSpacing.xs + 2),
           Flexible(
             child: Text(
@@ -1271,7 +1282,7 @@ class _FeaturePill extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: accent,
+                    color: ink,
                     fontWeight: FontWeight.w600,
                   ),
             ),
@@ -1298,6 +1309,18 @@ class _LanguageChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Kwenye chip iliyochaguliwa, mandhari ni rangi halisi ya chapa — kwa
+    // sunsetGold au turquoise, nyeupe haisomeki. readableInk huchagua ink
+    // nyeusi/nyeupe inayofikia 4.5:1.
+    final Color tint = selected
+        ? accent
+        : ContrastUtils.blend(
+            accent.withValues(alpha: 0.08),
+            AppColors.background,
+          );
+    final Color ink = selected
+        ? ContrastUtils.readableInk(Colors.white, accent)
+        : ContrastUtils.readableInk(accent, tint);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
@@ -1311,7 +1334,7 @@ class _LanguageChip extends StatelessWidget {
           vertical: AppSpacing.md,
         ),
         decoration: BoxDecoration(
-          color: selected ? accent : accent.withValues(alpha: 0.08),
+          color: tint,
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           border: Border.all(
             color: selected ? accent : accent.withValues(alpha: 0.30),
@@ -1320,7 +1343,7 @@ class _LanguageChip extends StatelessWidget {
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: selected ? Colors.white : accent,
+                color: ink,
                 fontWeight: FontWeight.w600,
               ),
         ),

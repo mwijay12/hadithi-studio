@@ -164,11 +164,18 @@ class SpeechService {
   }
 
   /// Huendeleza kusoma baada ya [pause].
-  Future<void> resume() async {
+  ///
+  /// Hurudisha `true` kama injini iliendelea yenyewe. Kwenye simu
+  /// (`flutter_tts` haina `resume`), hurudisha `false` — mwitaji anapaswa
+  /// kuanza ukurasa upya badala ya kudhani sauti inaendelea.
+  Future<bool> resume() async {
+    if (!kIsWeb) return false;
     try {
+      // Web (`speechSynthesis`) hutumia `pause` kama geuza.
       await _tts.pause();
+      return true;
     } catch (_) {
-      // Web hutumia `pause` kama geuza (toggle) — tazama `flutter_tts_web`.
+      return false;
     }
   }
 

@@ -18,6 +18,12 @@ int _red(Color color) => (color.r * 255.0).round().clamp(0, 255);
 /// Kituo cha rangi (0–255) — `Color.green` imepitwa na wakati.
 int _green(Color color) => (color.g * 255.0).round().clamp(0, 255);
 
+/// Jina la hex la rangi — hutumika kwenye `reason` za majaribio.
+String _name(Color color) => '#'
+    '${_red(color).toRadixString(16).padLeft(2, '0')}'
+    '${_green(color).toRadixString(16).padLeft(2, '0')}'
+    '${(color.b * 255.0).round().clamp(0, 255).toRadixString(16).padLeft(2, '0')}';
+
 void main() {
   group('ratio', () {
     test('nyeusi juu ya nyeupe ni 21:1', () {
@@ -117,8 +123,45 @@ void main() {
     });
   });
 
-  group('jozi za msingi za app (kumbukumbu ya WCAG)', () {
-    // Hizi ni jozi zinazotumika kwenye ukurasa wa maelezo. Kama jozi yoyote
+  group('onboarding na chips (I-12 iliyorekebishwa)', () {
+    // Rangi halisi zinazotumika kwenye onboarding (`_accents`) pamoja na
+    // rangi zote za makundi. Kila moja HAIWEZI kutumika kama maandishi juu
+    // ya tint yake bila `readableInk` — sunsetGold ni 1.97:1, brightGreen
+    // 2.45:1, n.k. Jaribio hili huthibitisha tiba inafanya kazi kwa zote.
+    final List<Color> accents = <Color>[
+      AppColors.safariGreen,
+      AppColors.kilimanjaroBlue,
+      AppColors.kangaOrange,
+      AppColors.purpleFun,
+      ...AppColors.categoryAccents,
+    ];
+
+    for (final Color accent in accents) {
+      test('kidonge (9% tint) ${_name(accent)} kinasomeka', () {
+        final Color tint = ContrastUtils.blend(
+          accent.withValues(alpha: 0.09),
+          AppColors.background,
+        );
+        final Color ink = ContrastUtils.readableInk(accent, tint);
+        expect(
+          ContrastUtils.ratio(ink, tint),
+          greaterThanOrEqualTo(ContrastUtils.aaNormalText),
+          reason: 'ink ${ContrastUtils.ratio(ink, tint).toStringAsFixed(2)}:1',
+        );
+      });
+
+      test('chip iliyochaguliwa (mandhari ${_name(accent)}) inasomeka', () {
+        final Color ink = ContrastUtils.readableInk(Colors.white, accent);
+        expect(
+          ContrastUtils.ratio(ink, accent),
+          greaterThanOrEqualTo(ContrastUtils.aaNormalText),
+          reason: 'ink ${ContrastUtils.ratio(ink, accent).toStringAsFixed(2)}:1',
+        );
+      });
+    }
+  });
+
+  group('jozi za msingi za app (kumbukumbu ya WCAG)', () {    // Hizi ni jozi zinazotumika kwenye ukurasa wa maelezo. Kama jozi yoyote
     // itashuka chini ya kiwango baadaye, jaribio hili litasimama.
     final Map<String, (Color, Color, double)> pairs =
         <String, (Color, Color, double)>{

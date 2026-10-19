@@ -6,7 +6,7 @@ Hadithi Studio ni Flutter app inayompa mtoto hadithi **10** zenye michoro, sauti
 na mwingiliano — na inafanya kazi **bila mtandao** tangu sekunde ya kwanza.
 Fonti, picha na hadithi zote zimefungwa ndani ya app.
 
-> **Hali ya mradi:** `0.1.0` — inajengwa, inajaribiwa (majaribio 153), na
+> **Hali ya mradi:** `0.1.0` — inajengwa, inajaribiwa (majaribio 185), na
 > inaweza kufunguliwa kwenye kivinjari au simu. Hii bado si toleo la duka la
 > app: tazama [Kinachobaki](#kinachobaki) kabla ya kuchapisha.
 
@@ -29,7 +29,7 @@ imejengwa kinyume:
 
 ### Msimbo unaojilinda
 
-Mradi huu una **majaribio 153** yanayolinda sifa, sivyo muonekano pekee:
+Mradi huu una **majaribio 185** yanayolinda sifa, sivyo muonekano pekee:
 
 - **Utofautishaji (contrast)** — `theme_contrast_test.dart` hupima jozi za
   `ColorScheme` na kushindwa chini ya **4.5:1** (maandishi) na **3:1** (vidhibiti).
@@ -109,7 +109,7 @@ flutter run -d chrome        # kivinjari
 
 ```bash
 flutter analyze              # inapaswa kuwa 0 errors
-flutter test                 # 153 majaribio
+flutter test                 # 185 majaribio
 ```
 
 ### Kujenga APK

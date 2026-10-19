@@ -21,11 +21,11 @@ na hakuna picha za kila hadithi.** **SI tayari kwa launch.**
 | Kipimo | Thamani |
 |---|---|
 | `flutter analyze` | **0 errors** |
-| `flutter test` | **96 passed, 0 failed** |
-| Flutter / Dart | **3.16.9 / 3.2.6** |
-| SDK path | `/home/accio/tools/flutter` (**SI** `/root/tools/flutter`) |
+| `flutter test` | **185 passed, 0 failed** |
+| Flutter / Dart | **3.47.2 / 3.13.2** (deps ziliboreshwa kwa `pub upgrade --major-versions`) |
+| SDK path | `/home/accio/tools/flutter` (mashine ya awali); sasa Windows: Flutter 3.47.2 |
 | l10n keys | en **307** · sw **258** |
-| Git | **HAKUNA `.git`** — repository haijaanzishwa |
+| Git | **IPO** — `github.com/mwijay12/hadithi-studio`, branch `main` |
 | Preview | Cloudflare quick tunnel + seva ya gzip/threaded |
 
 ---
@@ -33,17 +33,17 @@ na hakuna picha za kila hadithi.** **SI tayari kwa launch.**
 ## 2. JINSI YA KUENDA (kutoka sifuri hadi app inayoendesha)
 
 ```bash
-export PATH=/home/accio/tools/flutter/bin:$PATH
-git config --global --add safe.directory /home/accio/tools/flutter   # LAZIMA
+export PATH=/home/accio/tools/flutter/bin:$PATH   # kwenye Windows: Flutter iko kwenye PATH
+git config --global --add safe.directory /home/accio/tools/flutter   # LAZIMA (Linux)
 cd <project>
 flutter pub get
 flutter gen-l10n
 flutter analyze
 flutter test
-flutter build web -t lib/main_web_preview.dart --release \
-  --web-renderer=html
+flutter build web -t lib/main_web_preview.dart --release --no-wasm-dry-run
 # ↑ Service worker huwashwa (offline PWA). Kwa preview ya haraka (bila cache):
 #   ongeza --pwa-strategy=none
+# Kumbuka: Flutter 3.47 imeondoa --web-renderer=html (ilikuwa ya 3.16).
 python3 tool/hadithi_preview_server.py build/web 8080
 bash tool/hadithi_keepalive.sh      # huanzisha cloudflared + hulog URL
 cat /tmp/hadithi_url.txt            # URL ya sasa
@@ -56,10 +56,9 @@ cat /tmp/hadithi_url.txt            # URL ya sasa
 2. ~~**`google_fonts` LAZIMA ibaki `6.1.0`**~~ — **imeondolewa kabisa.** Fonti
    zimefungwa ndani ya app (`assets/fonts/`), hivyo hakuna utegemezi wa
    mtandao na hakuna mgongano wa `dart2js`.
-3. **`--web-renderer=html`, sivyo canvaskit.** CanvasKit ni **4.7 MB** ya wasm; over
-   tunnel ya bure (27 KB/s) ni **dakika 5** za skrini nyeupe — mtumiaji hudhani
-   link imekufa. HTML renderer = inaanza.
-4. **Renderersha ya HTML HAIIUNGI MKONO shaders.** `shimmer` hutumia `ShaderMask`
+3. ~~**`--web-renderer=html`, sivyo canvaskit.**~~ **Historical (Flutter 3.16).**
+   Flutter 3.47 haitumii flag hiyo; build ya web huchagua renderer yenyewe.
+4. **Renderer ya HTML HAIIUNGI MKONO shaders.** `shimmer` hutumia `ShaderMask`
    → `Unsupported operation: FragmentProgram is not supported for the HTML renderer`.
    Imelindwa (`loading_widget.dart` hurudi kizuizi tuli kwenye web). **Hii inaathiri
    `Rive` ya Prompt 6/8 — shader zake hazitafanya kazi kwenye web-HTML.**
@@ -69,7 +68,19 @@ cat /tmp/hadithi_url.txt            # URL ya sasa
    faili za PID au pattern yenye `[x]`.
 7. **Vyanzo vya API vya Flutter 3.16:** `MediaQuery.of`, `textScaleFactor`
    (**sivyo** `TextScaler`), `WillPopScope` (**sivyo** `PopScope`),
-   `Color.withOpacity` (**sivyo** `withValues`).
+   `Color.withOpacity` (**sivyo** `withValues`). **Historical** — msimbo wa sasa
+   unatumia API za Flutter 3.47 (`withValues`, `TextScaler`, n.k.).
+8. **Deps za kale za Flutter 3.16 zilizuia build ya web kabisa.** `web 0.3.0` +
+   `share_plus 4.x` + `connectivity_plus 5.x` havikubali Flutter 3.47. Tiba:
+   `flutter pub upgrade --major-versions` (92 deps zilibadilika), kisha kurekebisha
+   API: `connectivity_plus` hurudisha `List<ConnectivityResult>`,
+   `SharePlus.instance.share(ShareParams(...))`, `flutter_secure_storage` v10
+   (`AndroidOptions` bila `encryptedSharedPreferences`).
+9. **`Could not start thread DartWorker: 22`** — dart.exe/analyzer wa zamani
+   ulikuwa bado unaendesha. Ua process kabla ya build/analyze.
+10. **`flutter_tts` haina `resume` kwenye simu.** `resume()` ya `SpeechService`
+    sasa hurudisha `bool`; kwenye Android/iOS cubit **huanza ukurasa upya** badala
+    ya kudhani sauti inaendelea (awali ilirudia `pause` na mtoto alibaki kimya).
 
 ---
 
@@ -144,11 +155,13 @@ wa maelezo (muhtasari) na reader (maandishi ya ukurasa).
 **Kwenye reader, Kiswahili pekee kinapata mwanga wa karaoke** — nafasi za herufi
 haziwezi kuendana na maandishi mawili; TTS inasoma Kiswahili.
 
-### 4.6 Ufikivu / WCAG AA — ✅ kwa ukurasa wa maelezo
+### 4.6 Ufikivu / WCAG AA — ✅ (maelezo + onboarding)
 `ContrastUtils` (`ratio`, `blend`, `readableInk`). Nilipima na kupata **hitilafu 7**
-(chipu zilikuwa zikitumia rangi ya chapa kama **maandishi** juu ya tint yake:
+(chipu zilizokuwa zikitumia rangi ya chapa kama **maandishi** juu ya tint yake:
 brightGreen 2.39:1, skyBlue 2.28:1, sunsetGold 1.92:1…). Zimerekebishwa kwa
-`readableInk`. **Palette ya skrini nyingine HAJAPIMWA.**
+`readableInk`. **Onboarding pia imerekebishwa (I-12):** `_SlideBadge`,
+`_FeaturePill`, `_LanguageChip` hutumia `readableInk`/`blend`; jaribio jipya
+hulinda rangi zote za `_accents` + `categoryAccents` (`test/contrast_utils_test.dart`).
 
 ### 4.7 Ukamataji wa makosa — ✅
 `AppErrorHandler` (`classify()` → `AppErrorKind`, rekodi 20, `onRecord` hook ya
@@ -218,13 +231,13 @@ mkataba wa uaminifu. Usiyaondoe bila kujenga kitu halisi.
 | **I-3** | **Sauti ya Kiswahili ni mbovu** — injini za simu hazina Kiswahili, hivyo husoma maandishi ya Kiswahili kwa sauti ya Kiingereza | Mtumiaji | **Kubwa** |
 | **I-4** | ✅ **IMESHUGHULIKA** — fonti zote (Nunito, Poppins, Merriweather, Baloo2) zimefungwa ndani ya `assets/fonts/`; `google_fonts` imeondolewa | `pubspec.yaml`, `lib/config/theme/typography.dart` | Imefungwa |
 | **I-5** | ✅ **IMESHUGHULIKA** — build ya default sasa huwasha service worker; app hufanya kazi offline | `README.md`, `docs/HANDOFF.md` | Imefungwa |
-| **I-6** | Renderer ya HTML **haistawishi shaders** → `shimmer` imelindwa; `Rive` ya baadaye itashindwa | browser console | Wastani |
+| **I-6** | Renderer ya HTML **haistawishi shaders** → `shimmer` imelindwa; `Rive` ya baadaye itashindwa. Kumbuka: Flutter 3.47 imeondoa `--web-renderer=html`; pia `index.html` ya service worker inatoa onyo la deprecation (si kosa) | browser console | Wastani |
 | **I-7** | ✅ **IMESHUGHULIKA** — kidonge huruhusu mistari 2 na upana wa 80% wa skrini; hakuna ellipsis | `onboarding_page.dart` | Imefungwa |
 | **I-8** | `assets/images/badges/` **tupu** → badges hutumia emoji | `find assets` | Ndogo |
 | **I-9** | ✅ **IMESHUGHULIKA** — repo ipo na remote `github.com/mwijay12/hadithi-studio` | `git remote -v` | Imefungwa |
 | **I-10** | Tunnel ni quick tunnel — URL hubadilika | `hadithi_keepalive.sh` | Ndogo |
-| **I-11** | **Ukaguzi wa click-through wa detail → reader HAUKUFANYIKA KAMWE** | — | **Kubwa (hatari)** |
-| **I-12** | Palette ya skrini **nyingine** (home/onboarding/shelf/night) **haijapimwa WCAG** | — | Wastani |
+| **I-11** | ✅ **IMETHIBITISHWA** — click-through (onboarding → "Safari ya Simba" → "Soma Sasa" → reader) ilipita kwenye Chromium/Playwright, makosa 0 ya ukurasa | `%TEMP%\opencode\webcheck\clickthrough.js`, `reader.png` | Imefungwa |
+| **I-12** | ✅ **IMESHUGHULIKA kwa onboarding** — `_SlideBadge`, `_FeaturePill`, `_LanguageChip` sasa hutumia `ContrastUtils.readableInk`/`blend`; jaribio jipya `contrast_utils_test.dart` hulinda rangi zote. Skrini nyingine hutumia rangi za `ColorScheme` zinazopita | `onboarding_page.dart`, `test/contrast_utils_test.dart` | Wastani |
 
 ---
 
