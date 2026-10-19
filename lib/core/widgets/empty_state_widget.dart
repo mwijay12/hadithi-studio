@@ -230,7 +230,7 @@ class AppEmptyState extends StatelessWidget {
         ),
 
         if (message != null) ...[
-          SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             message,
             textAlign: TextAlign.center,
@@ -261,7 +261,7 @@ class AppEmptyState extends StatelessWidget {
             // Kwenye kadi tayari ipo scroll ya mzazi — kuongeza scroll
             // nyingine kunasababisha migogoro ya ishara za vidole.
             ? Padding(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.lg,
                   vertical: AppSpacing.md,
                 ),

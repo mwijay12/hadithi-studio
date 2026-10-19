@@ -27,7 +27,7 @@ void main() {
       final File source =
           File('lib/config/constants/asset_constants.dart');
       expect(source.existsSync(), isTrue,
-          reason: 'faili ya constants haipo');
+          reason: 'faili ya constants haipo',);
 
       final String code = source
           .readAsStringSync()
@@ -44,7 +44,7 @@ void main() {
           .toList();
 
       expect(missing, isEmpty,
-          reason: 'picha hizi zinatajwa lakini hazipo: $missing');
+          reason: 'picha hizi zinatajwa lakini hazipo: $missing',);
     });
   });
 
@@ -82,7 +82,7 @@ void main() {
         }
       }
       expect(duplicated, isEmpty,
-          reason: 'hadithi hizi zinarudia mchoro: $duplicated');
+          reason: 'hadithi hizi zinarudia mchoro: $duplicated',);
     });
 
     test('kundi la wanyama lina hadithi', () {
@@ -95,7 +95,7 @@ void main() {
     test('activeShelves haina rafu tupu', () {
       for (final shelf in StorySampleData.activeShelves) {
         expect(StorySampleData.countInShelf(shelf), greaterThan(0),
-            reason: 'rafu ${shelf.name} inaonekana lakini haina hadithi');
+            reason: 'rafu ${shelf.name} inaonekana lakini haina hadithi',);
       }
     });
   });

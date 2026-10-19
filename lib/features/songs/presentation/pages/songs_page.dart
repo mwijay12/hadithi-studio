@@ -109,7 +109,7 @@ class _SongsPageState extends State<SongsPage> {
                     final Song song = _songs[index];
                     final bool playing = _playingId == song.id;
                     return Material(
-                      color: theme.colorScheme.surfaceVariant.withOpacity(0.45),
+                      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.45),
                       borderRadius: AppSpacing.borderRadiusLg,
                       child: InkWell(
                         borderRadius: AppSpacing.borderRadiusLg,
@@ -191,7 +191,7 @@ class _EmptySongs extends StatelessWidget {
               height: 96,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.zanzibarTurquoise.withOpacity(0.14),
+                color: AppColors.zanzibarTurquoise.withValues(alpha: 0.14),
               ),
               child: const Icon(
                 Icons.music_note_rounded,

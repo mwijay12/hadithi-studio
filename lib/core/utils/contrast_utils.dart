@@ -63,10 +63,13 @@ abstract final class ContrastUtils {
   ///
   /// Hupuuza alpha: tumia [blend] kwanza kama rangi ina uwazi.
   static double relativeLuminance(Color color) {
-    return 0.2126 * _linearise(color.red) +
-        0.7152 * _linearise(color.green) +
-        0.0722 * _linearise(color.blue);
+    return 0.2126 * _linearise(_channel(color.r)) +
+        0.7152 * _linearise(_channel(color.g)) +
+        0.0722 * _linearise(_channel(color.b));
   }
+
+  /// Hugeuza kituo cha rangi (0.0–1.0) kuwa 0–255.
+  static int _channel(double value) => (value * 255.0).round().clamp(0, 255);
 
   /// Uwiano wa utofautishaji kati ya rangi mbili — 1.0 hadi 21.0.
   ///
@@ -84,16 +87,16 @@ abstract final class ContrastUtils {
   /// Muhimu kwa kupima rangi za tint: `brand.withOpacity(0.12)` **si** rangi
   /// halisi inayoonekana — ile inayoonekana ni mchanganyiko.
   static Color blend(Color foreground, Color background) {
-    final double a = foreground.opacity;
+    final double a = foreground.a;
     if (a >= 1.0) return foreground;
 
     int mix(int f, int b) => (f * a + b * (1 - a)).round();
 
     return Color.fromARGB(
       255,
-      mix(foreground.red, background.red),
-      mix(foreground.green, background.green),
-      mix(foreground.blue, background.blue),
+      mix(_channel(foreground.r), _channel(background.r)),
+      mix(_channel(foreground.g), _channel(background.g)),
+      mix(_channel(foreground.b), _channel(background.b)),
     );
   }
 
@@ -119,9 +122,9 @@ abstract final class ContrastUtils {
       final double factor = 1.0 - (i / steps) * 0.92;
       final Color candidate = Color.fromARGB(
         255,
-        (brand.red * factor).round(),
-        (brand.green * factor).round(),
-        (brand.blue * factor).round(),
+        (_channel(brand.r) * factor).round(),
+        (_channel(brand.g) * factor).round(),
+        (_channel(brand.b) * factor).round(),
       );
       if (ratio(candidate, background) >= target) return candidate;
     }

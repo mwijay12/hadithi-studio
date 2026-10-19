@@ -477,7 +477,7 @@ class _ShelfBanner extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: <Color>[shelf.accent, shelf.accent.withOpacity(0.65)],
+                      colors: <Color>[shelf.accent, shelf.accent.withValues(alpha: 0.65)],
                     ),
                   ),
                 ),
@@ -490,8 +490,8 @@ class _ShelfBanner extends StatelessWidget {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: <Color>[
-                      shelf.accent.withOpacity(0.55),
-                      shelf.accent.withOpacity(0.05),
+                      shelf.accent.withValues(alpha: 0.55),
+                      shelf.accent.withValues(alpha: 0.05),
                     ],
                   ),
                 ),
@@ -506,7 +506,7 @@ class _ShelfBanner extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: <Color>[
                       Colors.transparent,
-                      Colors.black.withOpacity(0.55),
+                      Colors.black.withValues(alpha: 0.55),
                     ],
                     stops: const <double>[0.45, 1.0],
                   ),

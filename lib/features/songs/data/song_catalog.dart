@@ -167,7 +167,7 @@ abstract final class SongCatalog {
         .split(RegExp(r'\s+'))
         .map((String w) => w.isEmpty
             ? w
-            : (w[0].toUpperCase() + w.substring(1).toLowerCase()))
+            : (w[0].toUpperCase() + w.substring(1).toLowerCase()),)
         .join(' ');
   }
 }

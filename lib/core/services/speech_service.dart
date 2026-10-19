@@ -37,7 +37,6 @@ library;
 // kifungu cha `show` huficha kila kitu kingine — `debugPrint`,
 // `debugPrintStack` na `visibleForTesting` — na faili hili linahitaji vyote.
 // `VoidCallback` hutoka `dart:ui`.
-import 'dart:ui' show VoidCallback;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 

@@ -35,7 +35,6 @@ dependencies:
   # ---------- UI ----------
   cached_network_image: ^3.3.1
   shimmer: ^3.0.0
-  google_fonts: ^9.0.0
 
   # ---------- Speech / Audio ----------
   flutter_tts: ^3.8.5
@@ -88,32 +87,31 @@ flutter:
     - assets/fonts/
 
   # ---------------------------------------------------------------------
-  # FONTS — kwa sasa tunatumia package `google_fonts` (tazama
-  # lib/config/theme/typography.dart) ili project i-build bila binary assets.
+  # FONTS — zote zimefungwa ndani ya app (assets/fonts/), hakuna mtandao.
+  # AppTypography (lib/config/theme/typography.dart) hutumia majina haya.
   #
-  # KWA PRODUCTION (na ili kufanya kazi OFFLINE — muhimu kwa Tanzania):
-  # 1. Pakua Nunito, Merriweather na Baloo 2 (.ttf) kutoka Google Fonts.
-  # 2. Weka kwenye assets/fonts/
-  # 3. Ondoa alama za maoni (comment) kwenye bloku hapa chini.
-  # 4. Badilisha AppTypography kutoka GoogleFonts.* kwenda TextStyle ya kawaida.
-  #
-  # fonts:
-  #   - family: Nunito
-  #     fonts:
-  #       - asset: assets/fonts/Nunito-Light.ttf
-  #         weight: 300
-  #       - asset: assets/fonts/Nunito-Regular.ttf
-  #       - asset: assets/fonts/Nunito-SemiBold.ttf
-  #         weight: 600
-  #       - asset: assets/fonts/Nunito-Bold.ttf
-  #         weight: 700
-  #   - family: Merriweather
-  #     fonts:
-  #       - asset: assets/fonts/Merriweather-Regular.ttf
-  #       - asset: assets/fonts/Merriweather-Bold.ttf
-  #         weight: 700
-  #   - family: Baloo2
-  #     fonts:
-  #       - asset: assets/fonts/Baloo2-Regular.ttf
-  #       - asset: assets/fonts/Baloo2-Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Nunito-Bold.ttf
+          weight: 700
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Merriweather
+      fonts:
+        - asset: assets/fonts/Merriweather-Regular.ttf
+        - asset: assets/fonts/Merriweather-Bold.ttf
+          weight: 700
+    - family: Baloo2
+      fonts:
+        - asset: assets/fonts/Baloo2-Regular.ttf
+        - asset: assets/fonts/Baloo2-Bold.ttf
+          weight: 700

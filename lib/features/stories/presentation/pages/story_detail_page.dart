@@ -323,7 +323,7 @@ class _HeroArtwork extends StatelessWidget {
                 child: Icon(
                   Icons.auto_stories_rounded,
                   size: AppSpacing.iconXl * 2,
-                  color: Colors.white.withOpacity(0.35),
+                  color: Colors.white.withValues(alpha: 0.35),
                 ),
               ),
             );
@@ -336,9 +336,9 @@ class _HeroArtwork extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: <Color>[
-                Colors.black.withOpacity(0.35),
+                Colors.black.withValues(alpha: 0.35),
                 Colors.transparent,
-                Colors.black.withOpacity(0.8),
+                Colors.black.withValues(alpha: 0.8),
               ],
               stops: const <double>[0.0, 0.45, 1.0],
             ),
@@ -417,7 +417,7 @@ class _InfoChip extends StatelessWidget {
           vertical: AppSpacing.xs + 2,
         ),
         decoration: BoxDecoration(
-          color: AppColors.kangaOrange.withOpacity(0.15),
+          color: AppColors.kangaOrange.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           border: Border.all(
             color: AppColors.kangaOrange,
@@ -526,7 +526,7 @@ class _Dot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       child: Text(
         '•',
         style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
@@ -1180,7 +1180,7 @@ class _OfflineControl extends StatelessWidget {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     // `onSurface` kwa uwazi mdogo: maandishi ya pili daraja, si kitufe cha
     // kuchukua hatua.
-    final Color muted = scheme.onSurface.withOpacity(0.7);
+    final Color muted = scheme.onSurface.withValues(alpha: 0.7);
     final OfflineReport? current = report;
 
     if (current == null) {
@@ -1396,7 +1396,7 @@ class _TagChip extends StatelessWidget {
     // ukurasa. Hii ni muhimu: kupima `color` yenyewe kungeonyesha uwiano
     // ambao mtumiaji **hauoni**.
     final Color tint = ContrastUtils.blend(
-      color.withOpacity(0.12),
+      color.withValues(alpha: 0.12),
       AppColors.background,
     );
 
@@ -1407,7 +1407,7 @@ class _TagChip extends StatelessWidget {
     final Color ink = ContrastUtils.readableInk(color, tint);
 
     return Material(
-      color: color.withOpacity(0.12),
+      color: color.withValues(alpha: 0.12),
       borderRadius: AppSpacing.borderRadiusPill,
       child: InkWell(
         onTap: onTap,
@@ -1505,7 +1505,6 @@ class _SimilarStoriesSection extends StatelessWidget {
               TextButton(
                 onPressed: () =>
                     context.pushNamed(AppRoutes.allStoriesName),
-                child: Text(l10n.viewAll),
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.safariGreen,
                   textStyle: const TextStyle(
@@ -1513,6 +1512,7 @@ class _SimilarStoriesSection extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                child: Text(l10n.viewAll),
               ),
             ],
           ),
@@ -1642,22 +1642,22 @@ class _StoryDetailSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             // Jalada.
-            const AppShimmerBox(
+            AppShimmerBox(
               width: double.infinity,
               height: 320,
               borderRadius: BorderRadius.zero,
             ),
-            const SizedBox(height: AppSpacing.xl),
+            SizedBox(height: AppSpacing.xl),
             // Chipu.
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Row(
-                children: const <Widget>[
+                children: <Widget>[
                   AppShimmerBox(width: 96, height: 30),
                   SizedBox(width: AppSpacing.sm),
                   AppShimmerBox(width: 84, height: 30),
@@ -1666,12 +1666,12 @@ class _StoryDetailSkeleton extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
+            SizedBox(height: AppSpacing.lg),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
+                children: <Widget>[
                   AppShimmerBox(width: 160, height: 18),
                   SizedBox(height: AppSpacing.lg),
                   AppShimmerBox(width: double.infinity, height: 72),

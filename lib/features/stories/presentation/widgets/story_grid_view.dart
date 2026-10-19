@@ -181,16 +181,16 @@ class _ShimmerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Expanded(
+        Expanded(
           child: AppShimmerBox(borderRadius: AppSpacing.borderRadiusMd),
         ),
-        const SizedBox(height: AppSpacing.xs),
-        const AppShimmerBox(height: 12, borderRadius: AppSpacing.borderRadiusSm),
-        const SizedBox(height: AppSpacing.xxs),
-        const SizedBox(
+        SizedBox(height: AppSpacing.xs),
+        AppShimmerBox(height: 12, borderRadius: AppSpacing.borderRadiusSm),
+        SizedBox(height: AppSpacing.xxs),
+        SizedBox(
           width: 56,
           child: AppShimmerBox(
             height: 12,

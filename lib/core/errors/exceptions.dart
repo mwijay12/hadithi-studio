@@ -45,28 +45,28 @@ class ServerException extends AppException {
 /// na `code`/`cause` hubaki za hiari kama named.
 class NetworkException extends AppException {
   const NetworkException(
-    String message, {
-    String? code = 'NETWORK',
-    Object? cause,
-  }) : super(message, code: code, cause: cause);
+    super.message, {
+    super.code = 'NETWORK',
+    super.cause,
+  });
 }
 
 /// Ombi lilichukua muda mrefu kuliko ilivyoruhusiwa.
 class TimeoutException extends AppException {
   const TimeoutException(
-    String message, {
-    String? code = 'TIMEOUT',
-    Object? cause,
-  }) : super(message, code: code, cause: cause);
+    super.message, {
+    super.code = 'TIMEOUT',
+    super.cause,
+  });
 }
 
 /// Cache/Hive imeshindwa kusoma au kuandika.
 class CacheException extends AppException {
   const CacheException(
-    String message, {
-    String? code = 'CACHE',
-    Object? cause,
-  }) : super(message, code: code, cause: cause);
+    super.message, {
+    super.code = 'CACHE',
+    super.cause,
+  });
 }
 
 /// Secure storage (fluter_secure_storage) imeshindwa.
@@ -76,10 +76,10 @@ class CacheException extends AppException {
 /// hubadilisha PIN mara nyingi.
 class SecureStorageException extends AppException {
   const SecureStorageException(
-    String message, {
-    String? code = 'SECURE_STORAGE',
-    Object? cause,
-  }) : super(message, code: code, cause: cause);
+    super.message, {
+    super.code = 'SECURE_STORAGE',
+    super.cause,
+  });
 }
 
 /// Kosa la uthibitisho (401/403).
@@ -140,10 +140,10 @@ class TtsException extends AppException {
 /// Taarifa haipo (404).
 class NotFoundException extends AppException {
   const NotFoundException(
-    String message, {
-    String? code = 'NOT_FOUND',
-    Object? cause,
-  }) : super(message, code: code, cause: cause);
+    super.message, {
+    super.code = 'NOT_FOUND',
+    super.cause,
+  });
 }
 
 /// Taarifa zilizotumwa haziko sahihi (422).

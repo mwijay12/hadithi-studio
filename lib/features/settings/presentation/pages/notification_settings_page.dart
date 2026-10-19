@@ -319,16 +319,22 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   swahili: 'Muda unaopendelea',
                   english: 'Preferred time',
                 ),
-                for (final _TimeOption option in _timeOptions)
-                  RadioListTile<String>(
-                    value: option.value,
-                    groupValue: _preferredTime,
-                    onChanged: _onPreferredTimeChanged,
-                    title: Text(
-                      context.isSwahili ? option.swahili : option.english,
-                      style: TextStyle(color: scheme.onSurface),
-                    ),
+                RadioGroup<String>(
+                  groupValue: _preferredTime,
+                  onChanged: _onPreferredTimeChanged,
+                  child: Column(
+                    children: <Widget>[
+                      for (final _TimeOption option in _timeOptions)
+                        RadioListTile<String>(
+                          value: option.value,
+                          title: Text(
+                            context.isSwahili ? option.swahili : option.english,
+                            style: TextStyle(color: scheme.onSurface),
+                          ),
+                        ),
+                    ],
                   ),
+                ),
 
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
@@ -428,7 +434,7 @@ class _NoticeBox extends StatelessWidget {
         // bado"), sivyo kosa — rangi ya theme yenye upole inafaa zaidi na
         // haitishi mtumiaji.
         decoration: BoxDecoration(
-          color: scheme.primary.withOpacity(0.09),
+          color: scheme.primary.withValues(alpha: 0.09),
           borderRadius: AppSpacing.borderRadiusMd,
           border: Border.all(color: scheme.outlineVariant),
         ),

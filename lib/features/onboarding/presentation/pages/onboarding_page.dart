@@ -399,8 +399,8 @@ class _AnimatedBackdropState extends State<_AnimatedBackdrop>
           shape: BoxShape.circle,
           gradient: RadialGradient(
             colors: <Color>[
-              accent.withOpacity(opacity),
-              accent.withOpacity(0.0),
+              accent.withValues(alpha: opacity),
+              accent.withValues(alpha: 0.0),
             ],
           ),
         ),
@@ -960,8 +960,8 @@ class _IllustrationStage extends StatelessWidget {
                   gradient: RadialGradient(
                     radius: 0.72,
                     colors: <Color>[
-                      accent.withOpacity(0.24),
-                      accent.withOpacity(0.0),
+                      accent.withValues(alpha: 0.24),
+                      accent.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -982,8 +982,8 @@ class _IllustrationStage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
                     gradient: RadialGradient(
                       colors: <Color>[
-                        Colors.black.withOpacity(0.14),
-                        Colors.black.withOpacity(0.0),
+                        Colors.black.withValues(alpha: 0.14),
+                        Colors.black.withValues(alpha: 0.0),
                       ],
                     ),
                   ),
@@ -1026,7 +1026,7 @@ class _IllustrationStage extends StatelessWidget {
                       child: Icon(
                         fallbackIcon,
                         size: AppSpacing.iconXl,
-                        color: Colors.white.withOpacity(0.95),
+                        color: Colors.white.withValues(alpha: 0.95),
                       ),
                     ),
                   ),
@@ -1180,9 +1180,9 @@ class _SlideBadge extends StatelessWidget {
         vertical: AppSpacing.xs + 2,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.78),
+        color: Colors.white.withValues(alpha: 0.78),
         borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-        border: Border.all(color: accent.withOpacity(0.35)),
+        border: Border.all(color: accent.withValues(alpha: 0.35)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1246,14 +1246,18 @@ class _FeaturePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Kikomo cha upana huhakikisha kidonge hakivuki skrini, lakini
+    // tunaruhusu maandishi yeyote marefu ("Ukubwa wa Maandishi") kupata
+    // nafasi yake kamili badala ya kukatwa kwa ellipsis.
+    final double maxPillWidth = MediaQuery.sizeOf(context).width * 0.8;
     return Container(
-      constraints: const BoxConstraints(maxWidth: 148),
+      constraints: BoxConstraints(maxWidth: maxPillWidth),
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs + 2,
       ),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.09),
+        color: accent.withValues(alpha: 0.09),
         borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
       ),
       child: Row(
@@ -1264,7 +1268,7 @@ class _FeaturePill extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: accent,
@@ -1307,10 +1311,10 @@ class _LanguageChip extends StatelessWidget {
           vertical: AppSpacing.md,
         ),
         decoration: BoxDecoration(
-          color: selected ? accent : accent.withOpacity(0.08),
+          color: selected ? accent : accent.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           border: Border.all(
-            color: selected ? accent : accent.withOpacity(0.30),
+            color: selected ? accent : accent.withValues(alpha: 0.30),
           ),
         ),
         child: Text(
@@ -1370,7 +1374,7 @@ class _DotsIndicator extends StatelessWidget {
                 height: AppSpacing.sm,
                 decoration: BoxDecoration(
                   color:
-                      active ? accent : AppColors.mutedText.withOpacity(0.30),
+                      active ? accent : AppColors.mutedText.withValues(alpha: 0.30),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
                 ),
               ),

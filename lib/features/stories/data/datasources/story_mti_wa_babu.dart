@@ -39,13 +39,13 @@ const Story storyMtiWaBabu = Story(
   readingLevel: ReadingLevel.darasa_1_2,
   coverAsset: 'assets/images/stories/mti_wa_babu_cover.webp',
   accent: AppColors.brightGreen,
-  shelves: const <StoryShelf>[
+  shelves: <StoryShelf>[
     StoryShelf.science,
     StoryShelf.moralsWisdom,
   ],
   rating: 4.7,
   readCount: 0,
-  pages: const <StoryPage>[
+  pages: <StoryPage>[
     // Ukurasa 1 — Babu na Neema wamepiga magoti shambani, wanapanda mti mdogo.
     StoryPage(
       textSw: 'Babu alinipa mti mdogo wa embe. Tulipiga magoti kwenye '
@@ -55,7 +55,7 @@ const Story storyMtiWaBabu = Story(
           'soil and planted it together. Grandfather said, "This tree is '
           'yours, Neema. Take care of it."',
       illustration: 'assets/images/stories/pages/mti-wa-babu/page_01.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
     // Ukurasa 2 — Neema anamwaga maji na kuchungulia udongo; hana subira.
     StoryPage(
@@ -67,7 +67,7 @@ const Story storyMtiWaBabu = Story(
           'Grandfather laughed and said, "Everything good grows slowly. '
           'Wait."',
       illustration: 'assets/images/stories/pages/mti-wa-babu/page_02.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
     // Ukurasa 3 — Miaka mingi baadaye, Neema amekua na anaketi chini ya mti.
     StoryPage(
@@ -78,7 +78,7 @@ const Story storyMtiWaBabu = Story(
           'us cool shade. I remembered Grandfather\'s words: "Everything '
           'good grows slowly."',
       illustration: 'assets/images/stories/pages/mti-wa-babu/page_03.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
   ],
 );

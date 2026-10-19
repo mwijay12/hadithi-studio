@@ -77,7 +77,7 @@ class StoryChoiceChip extends StatelessWidget {
     final Color background = selected
         ? (isPill
             ? AppColors.safariGreen
-            : AppColors.kangaOrange.withOpacity(0.20))
+            : AppColors.kangaOrange.withValues(alpha: 0.20))
         : (isPill ? AppColors.cardBackground : Colors.transparent);
     final Color border = selected
         ? (isPill ? AppColors.safariGreen : AppColors.kangaOrange)

@@ -126,7 +126,7 @@ extension ContextX on BuildContext {
   ///
   /// Sehemu za kusoma (Reader) hutumia thamani hii kukata ukubwa wa herufi
   /// ili maandishi yasivunjike kwenye skrini ndogo za Tecno/Itel.
-  double get textScaleFactor => MediaQuery.of(this).textScaleFactor;
+  double get textScaleFactor => MediaQuery.of(this).textScaler.scale(1.0);
 
   // ---------------------------------------------------------------------------
   // Vitendo (actions)

@@ -40,13 +40,13 @@ const Story storyTwigaMrefu = Story(
   readingLevel: ReadingLevel.mtoto_mdogo,
   coverAsset: 'assets/images/stories/twiga_mrefu_cover.webp',
   accent: AppColors.sunsetGold,
-  shelves: const <StoryShelf>[
+  shelves: <StoryShelf>[
     StoryShelf.animalStories,
     StoryShelf.moralsWisdom,
   ],
   rating: 4.8,
   readCount: 0,
-  pages: const <StoryPage>[
+  pages: <StoryPage>[
     // Ukurasa 1 — Twiga yupo peke yake juu, wanyama wanacheza chini.
     StoryPage(
       textSw: 'Twiga alikuwa mrefu sana. Wanyama wadogo walicheza '
@@ -56,7 +56,7 @@ const Story storyTwigaMrefu = Story(
           'legs. Twiga wanted to play with them, but she could not '
           'reach down to them.',
       illustration: 'assets/images/stories/pages/twiga-mrefu/page_01.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
     // Ukurasa 2 — Twiga anainama kwa huzuni; wanyama wanamwangalia.
     StoryPage(
@@ -67,7 +67,7 @@ const Story storyTwigaMrefu = Story(
           'Rabbit told her, "Do not be sad." But Twiga still felt '
           'alone.',
       illustration: 'assets/images/stories/pages/twiga-mrefu/page_02.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
     // Ukurasa 3 — Twiga akiinua kichwa, anaona mawingu na kuwaonya wote.
     StoryPage(
@@ -78,7 +78,7 @@ const Story storyTwigaMrefu = Story(
           'far away. "A storm is coming!" she called. The animals '
           'climbed up the rock, and the rain passed safely.',
       illustration: 'assets/images/stories/pages/twiga-mrefu/page_03.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
   ],
 );

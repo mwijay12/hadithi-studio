@@ -14,7 +14,6 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hadithi_studio/config/theme/app_theme.dart';
 import 'package:hadithi_studio/config/theme/colors.dart';
 import 'package:hadithi_studio/config/theme/dark_theme.dart';
@@ -38,7 +37,7 @@ void _auditScheme(ColorScheme scheme, String label) {
     // **Kitufe cha `Switch` kilicho ZIMWA** hutumia `outline` juu ya
     // `surfaceVariant`. Hii ilikuwa 1.05:1 kwenye light — hakionekani.
     // Ukaguzi wa macho uliipata; jaribio hili huizuia kurudi.
-    ('outline / surfaceVariant', scheme.outline, scheme.surfaceVariant, 3.0),
+    ('outline / surfaceVariant', scheme.outline, scheme.surfaceContainerHighest, 3.0),
   ];
 
   for (final (String name, Color fg, Color bg, double need) in pairs) {
@@ -53,23 +52,13 @@ void _auditScheme(ColorScheme scheme, String label) {
 }
 
 void main() {
-  // **Kwa nini hii ni lazima:** `AppTheme.light` hujenga `AppTypography`,
-  // ambayo hutumia `google_fonts`. `google_fonts` hupakua fonti kwa **HTTP**
-  // wakati wa kujenga, hivyo kwenye majaribio (bila mtandao) inatupa
-  // exception — na jaribio hili lilikuwa linashindwa kwa sababu hiyo, sivyo
-  // kwa contrast.
-  //
-  // Kuzima runtime fetching hufanya google_fonts itumie fonti ya akiba.
-  //
-  // **Hii pia ni onyo la production:** kwenye simu ya Tanzania isiyo na
-  // mtandao, typography hii huanguka kwenye fonti ya mfumo. Kuweka fonti
-  // ndani ya app (kama `assets/fonts/`) ni kazi inayosubiri.
+  // Fonti zote zimefungwa ndani ya app (assets/fonts/), hivyo hakuna
+  // upakuaji wa mtandao — typography inafanya kazi bila mtandao.
   TestWidgetsFlutterBinding.ensureInitialized();
-  GoogleFonts.config.allowRuntimeFetching = false;
 
   group('ColorScheme ya light hukidhi WCAG AA', () {
     test('jozi zote muhimu', () {
-      // Scheme PEKEE — haiitaji typography/`google_fonts`.
+      // Scheme PEKEE — haiitaji typography.
       _auditScheme(AppTheme.lightScheme, 'LIGHT');
     });
   });

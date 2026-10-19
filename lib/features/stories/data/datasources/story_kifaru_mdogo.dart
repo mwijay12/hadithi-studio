@@ -50,10 +50,10 @@ const Story storyKifaruMdogo = Story(
   readingLevel: ReadingLevel.mtoto_mdogo,
   coverAsset: 'assets/images/stories/kifaru_mdogo_cover.webp',
   accent: AppColors.safariGreen,
-  shelves: const <StoryShelf>[StoryShelf.animalStories],
+  shelves: <StoryShelf>[StoryShelf.animalStories],
   rating: 4.7,
   readCount: 0,
-  pages: const <StoryPage>[
+  pages: <StoryPage>[
     // Ukurasa wa 1 — kukutana: kifaru anatembea, ndege anafika.
     StoryPage(
       textSw: 'Kifaru mdogo anatembea kwenye nyasi ndefu. Ndege mdogo '
@@ -61,7 +61,7 @@ const Story storyKifaruMdogo = Story(
       textEn: 'Little Rhino walks in the tall grass. Little Bird sits on '
           'his back. Little Rhino says, "Go away!"',
       illustration: 'assets/images/stories/pages/kifaru-mdogo/page_01.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
 
     // Ukurasa wa 2 — msaada wa kwanza: ndege humtoa kupe.
@@ -71,7 +71,7 @@ const Story storyKifaruMdogo = Story(
       textEn: 'Little Bird picks the ticks off Rhino\'s back. Little Rhino '
           'breathes with ease. "Ah! That is nice," he says.',
       illustration: 'assets/images/stories/pages/kifaru-mdogo/page_02.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
 
     // Ukurasa wa 3 — msaada wa pili: ndege anaona hatari, wote wako salama.
@@ -81,7 +81,7 @@ const Story storyKifaruMdogo = Story(
       textEn: 'The sun goes down. Little Bird sees dust: danger! "Run!" he '
           'warns. Little Rhino runs, and both of them are safe.',
       illustration: 'assets/images/stories/pages/kifaru-mdogo/page_03.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
   ],
 );

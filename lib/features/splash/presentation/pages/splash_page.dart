@@ -151,16 +151,16 @@ class _SplashPageState extends State<SplashPage>
                         l10n.splashTagline,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white.withOpacity(0.85),
+                              color: Colors.white.withValues(alpha: 0.85),
                             ),
                       ),
                       const SizedBox(height: AppSpacing.xxxl),
                       // `SizedBox` yenye upana hudhibiti ukubwa wa spinner
                       // bila kuathiri layout ya column.
-                      SizedBox(
+                      const SizedBox(
                         width: AppSpacing.iconMd,
                         height: AppSpacing.iconMd,
-                        child: const CircularProgressIndicator(
+                        child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
                             AppColors.sunsetGold,
                           ),
@@ -172,7 +172,7 @@ class _SplashPageState extends State<SplashPage>
                         l10n.splashLoading,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white.withOpacity(0.75),
+                              color: Colors.white.withValues(alpha: 0.75),
                             ),
                       ),
                     ],
@@ -213,7 +213,7 @@ class _SplashLogo extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.28),
+            color: Colors.black.withValues(alpha: 0.28),
             blurRadius: 30,
             offset: const Offset(0, 14),
           ),
@@ -225,7 +225,7 @@ class _SplashLogo extends StatelessWidget {
           width: 3,
         ),
       ),
-      child: ClipOval(
+      child: const ClipOval(
         child: Center(
           // **LEO** — pose ya salamu. Splash ni mahali pa kwanza mtumiaji
           // anamuona, hivyo "mkono juu" ni salamu ya kwanza.

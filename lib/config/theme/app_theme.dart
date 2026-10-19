@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'colors.dart';
 import 'spacing.dart';
@@ -16,14 +15,10 @@ abstract final class AppTheme {
   /// ColorScheme ya mwanga — **mahali pamoja**.
   ///
   /// **Kwa nini imetolewa peke yake:** `AppTheme.light` hujenga `ThemeData`
-  /// NZIMA, ikiwemo `AppTypography`, ambayo hutumia `google_fonts`.
-  /// `google_fonts` hupakua fonti kwa **HTTP** wakati wa kujenga. Kwenye
-  /// majaribio (bila mtandao, au bila fonti zilizowekwa ndani ya app),
-  /// kurudisha theme nzima **hutupa exception** — hivyo theme yenyewe
-  /// **haingeweza kupimwa kamwe**.
-  ///
-  /// Kwa kutenganisha scheme, tunaipima bila typography. Hii ni sababu
-  /// ya kweli ya kupima, sivyo ya kupamba.
+  /// NZIMA, ikiwemo `AppTypography`. Kutenganisha scheme huturuhusu
+  /// kuipima (WCAG) bila typography — scheme ni data tupu, theme ni widget
+  /// tree. Fonti zote zimefungwa ndani ya app, hivyo hakuna upakuaji wa
+  /// mtandao wakati wa kujenga.
   ///
   static ColorScheme get lightScheme => ColorScheme.fromSeed(
           seedColor: AppColors.safariGreen,
@@ -124,7 +119,7 @@ abstract final class AppTheme {
       ),
 
       chipTheme: ChipThemeData(
-        backgroundColor: scheme.primary.withOpacity(0.08),
+        backgroundColor: scheme.primary.withValues(alpha: 0.08),
         selectedColor: scheme.primary,
         labelStyle: textTheme.bodySmall?.copyWith(
           fontWeight: FontWeight.w600,
@@ -145,11 +140,12 @@ abstract final class AppTheme {
           minimumSize: const Size.fromHeight(AppSpacing.buttonHeight),
           backgroundColor: scheme.primary,
           foregroundColor: scheme.onPrimary,
-          disabledBackgroundColor: scheme.primary.withOpacity(0.35),
+          disabledBackgroundColor: scheme.primary.withValues(alpha: 0.35),
           shape: const RoundedRectangleBorder(
             borderRadius: AppSpacing.borderRadiusMd,
           ),
-          textStyle: GoogleFonts.nunito(
+          textStyle: const TextStyle(
+            fontFamily: AppTypography.uiFontFamily,
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -165,7 +161,8 @@ abstract final class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: AppSpacing.borderRadiusMd,
           ),
-          textStyle: GoogleFonts.nunito(
+          textStyle: const TextStyle(
+            fontFamily: AppTypography.uiFontFamily,
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -176,11 +173,12 @@ abstract final class AppTheme {
         style: OutlinedButton.styleFrom(
           minimumSize: const Size.fromHeight(AppSpacing.buttonHeight),
           foregroundColor: scheme.primary,
-          side: BorderSide(color: scheme.primary.withOpacity(0.5)),
+          side: BorderSide(color: scheme.primary.withValues(alpha: 0.5)),
           shape: const RoundedRectangleBorder(
             borderRadius: AppSpacing.borderRadiusMd,
           ),
-          textStyle: GoogleFonts.nunito(
+          textStyle: const TextStyle(
+            fontFamily: AppTypography.uiFontFamily,
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -190,7 +188,8 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: scheme.primary,
-          textStyle: GoogleFonts.nunito(
+          textStyle: const TextStyle(
+            fontFamily: AppTypography.uiFontFamily,
             fontSize: 15,
             fontWeight: FontWeight.w700,
           ),
@@ -200,7 +199,8 @@ abstract final class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: scheme.onSurface,
-        contentTextStyle: GoogleFonts.nunito(
+        contentTextStyle: TextStyle(
+          fontFamily: AppTypography.bodyFontFamily,
           fontSize: 14,
           color: scheme.surface,
         ),
@@ -213,11 +213,13 @@ abstract final class AppTheme {
         backgroundColor: navBackground,
         selectedItemColor: navSelected,
         unselectedItemColor: navUnselected,
-        selectedLabelStyle: GoogleFonts.nunito(
+        selectedLabelStyle: const TextStyle(
+          fontFamily: AppTypography.uiFontFamily,
           fontSize: 11,
           fontWeight: FontWeight.w700,
         ),
-        unselectedLabelStyle: GoogleFonts.nunito(
+        unselectedLabelStyle: const TextStyle(
+          fontFamily: AppTypography.uiFontFamily,
           fontSize: 11,
           fontWeight: FontWeight.w500,
         ),
@@ -227,7 +229,7 @@ abstract final class AppTheme {
 
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: scheme.primary,
-        linearTrackColor: scheme.primary.withOpacity(0.15),
+        linearTrackColor: scheme.primary.withValues(alpha: 0.15),
       ),
 
       listTileTheme: ListTileThemeData(

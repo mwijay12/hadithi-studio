@@ -482,11 +482,11 @@ class _SearchHeader extends StatelessWidget {
       decoration: BoxDecoration(
         // 0.95 si weupe kamili: kijani kinaonekana kidogo kupitia, kwa hivyo
         // upau unaonekana **ndani ya** kichwa badala ya juu yake.
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(barRadius),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             offset: const Offset(0, 2),
             blurRadius: 8,
           ),

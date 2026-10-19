@@ -246,7 +246,7 @@ class _AppTextFieldState extends State<AppTextField> {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: context.textTheme.bodyMedium?.copyWith(
-          color: context.colorScheme.onSurface.withOpacity(0.4),
+          color: context.colorScheme.onSurface.withValues(alpha: 0.4),
         ),
         helperText: helper,
         helperMaxLines: 2,
@@ -289,7 +289,7 @@ class _AppTextFieldState extends State<AppTextField> {
         disabledBorder: OutlineInputBorder(
           borderRadius: border,
           borderSide: BorderSide(
-            color: context.theme.dividerColor.withOpacity(0.6),
+            color: context.theme.dividerColor.withValues(alpha: 0.6),
           ),
         ),
       ),
@@ -368,7 +368,7 @@ class _AppTextFieldState extends State<AppTextField> {
     return Icon(
       icon,
       size: AppSpacing.iconMd,
-      color: context.colorScheme.onSurface.withOpacity(0.55),
+      color: context.colorScheme.onSurface.withValues(alpha: 0.55),
     );
   }
 

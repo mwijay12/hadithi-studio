@@ -135,7 +135,7 @@ class DraftPageEditor extends StatelessWidget {
               // Rangi nyepesi ya `onSurface` hufanya kazi kwenye mandhari
               // zote mbili: nyeupe inakuwa kijivu hafifu, nyeusi inakuwa
               // kijivu hafifu pia.
-              fillColor: scheme.onSurface.withOpacity(0.04),
+              fillColor: scheme.onSurface.withValues(alpha: 0.04),
               border: OutlineInputBorder(
                 borderRadius: AppSpacing.borderRadiusSm,
                 borderSide: BorderSide(color: scheme.outlineVariant),

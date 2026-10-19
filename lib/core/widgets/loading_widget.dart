@@ -148,17 +148,17 @@ class AppLoadingOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!isLoading) return child;
 
-    return WillPopScope(
+    return PopScope(
       // Zima "nyuma" ya Android wakati kazi inaendelea — bila hii mtumiaji
       // anaweza kufunga skrini ya malipo kwa kitufe cha nyuma.
-      onWillPop: () async => false,
+      canPop: false,
       child: Stack(
         children: <Widget>[
           child,
           // Skrini nzito inayomeza miguso yote ya chini NA kuzuia kubonyeza nje.
           ModalBarrier(
             dismissible: false,
-            color: context.colorScheme.onSurface.withOpacity(0.45),
+            color: context.colorScheme.onSurface.withValues(alpha: 0.45),
           ),
           Center(
             child: Container(
@@ -233,8 +233,8 @@ class AppShimmerBox extends StatelessWidget {
     if (kIsWeb) return placeholder;
 
     return Shimmer.fromColors(
-      baseColor: base.withOpacity(0.06),
-      highlightColor: base.withOpacity(0.13),
+      baseColor: base.withValues(alpha: 0.06),
+      highlightColor: base.withValues(alpha: 0.13),
       child: placeholder,
     );
   }
@@ -277,9 +277,9 @@ class AppShimmerCard extends StatelessWidget {
           const AppShimmerBox(height: 14, borderRadius: AppSpacing.borderRadiusSm),
           if (showSubtitle) ...<Widget>[
             const SizedBox(height: AppSpacing.xs),
-            SizedBox(
+            const SizedBox(
               width: 96,
-              child: const AppShimmerBox(
+              child: AppShimmerBox(
                 height: 12,
                 borderRadius: AppSpacing.borderRadiusSm,
               ),

@@ -324,7 +324,7 @@ class AppResponsiveBuilder extends StatelessWidget {
           context,
           AppDeviceInfo.fromSize(
             size,
-            textScaleFactor: media.textScaleFactor,
+            textScaleFactor: media.textScaler.scale(1.0),
           ),
         );
       },

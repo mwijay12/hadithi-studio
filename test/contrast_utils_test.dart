@@ -12,6 +12,12 @@ import 'package:hadithi_studio/config/theme/colors.dart';
 import 'package:hadithi_studio/core/utils/contrast_utils.dart';
 import 'package:hadithi_studio/features/stories/domain/entities/story_shelf.dart';
 
+/// Kituo cha rangi (0–255) — `Color.red` imepitwa na wakati.
+int _red(Color color) => (color.r * 255.0).round().clamp(0, 255);
+
+/// Kituo cha rangi (0–255) — `Color.green` imepitwa na wakati.
+int _green(Color color) => (color.g * 255.0).round().clamp(0, 255);
+
 void main() {
   group('ratio', () {
     test('nyeusi juu ya nyeupe ni 21:1', () {
@@ -42,7 +48,7 @@ void main() {
   group('blend', () {
     test('alpha 1 hurudisha rangi yenyewe', () {
       final Color blended = ContrastUtils.blend(
-        AppColors.safariGreen.withOpacity(1.0),
+        AppColors.safariGreen.withValues(alpha: 1.0),
         AppColors.background,
       );
       expect(blended, AppColors.safariGreen);
@@ -50,12 +56,12 @@ void main() {
 
     test('tint husogea kuelekea mandhari', () {
       final Color tint = ContrastUtils.blend(
-        AppColors.spiceRed.withOpacity(0.12),
+        AppColors.spiceRed.withValues(alpha: 0.12),
         AppColors.background,
       );
       // Tint ni nyepesi kuliko rangi kamili, lakini bado ina hue ya spiceRed.
-      expect(tint.red, greaterThan(AppColors.spiceRed.red));
-      expect(tint.red, greaterThan(tint.green));
+      expect(_red(tint), greaterThan(_red(AppColors.spiceRed)));
+      expect(_red(tint), greaterThan(_green(tint)));
     });
   });
 
@@ -63,7 +69,7 @@ void main() {
     for (final StoryShelf shelf in StoryShelf.values) {
       test('${shelf.name} — maandishi yanasomeka juu ya tint yake', () {
         final Color tint = ContrastUtils.blend(
-          shelf.accent.withOpacity(0.12),
+          shelf.accent.withValues(alpha: 0.12),
           AppColors.background,
         );
         final Color ink = ContrastUtils.readableInk(shelf.accent, tint);

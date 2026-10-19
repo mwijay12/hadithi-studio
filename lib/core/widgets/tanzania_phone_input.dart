@@ -287,7 +287,7 @@ class _TanzaniaPhoneInputState extends State<TanzaniaPhoneInput> {
             child: Text(
               international,
               style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurface.withOpacity(0.75),
+                color: context.colorScheme.onSurface.withValues(alpha: 0.75),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -324,7 +324,7 @@ class _ProviderHintChip extends StatelessWidget {
       decoration: BoxDecoration(
         // Uwazi wa 0.10 — kama `chipTheme` ya app (0.08), lakini kidogo zaidi
         // ili kisichanganyike na kibonge cha kuchagua.
-        color: tint.withOpacity(0.10),
+        color: tint.withValues(alpha: 0.10),
         borderRadius: AppSpacing.borderRadiusPill,
       ),
       child: Text(

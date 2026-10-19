@@ -179,7 +179,7 @@ class _InteractiveHotspotState extends State<InteractiveHotspot>
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: accent.withOpacity(0.18 + (t * 0.22)),
+                          color: accent.withValues(alpha: 0.18 + (t * 0.22)),
                         ),
                       ),
                     ),
@@ -192,14 +192,14 @@ class _InteractiveHotspotState extends State<InteractiveHotspot>
                 height: buttonSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: accent.withOpacity(0.92),
+                  color: accent.withValues(alpha: 0.92),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.85),
+                    color: Colors.white.withValues(alpha: 0.85),
                     width: 2,
                   ),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.30),
+                      color: Colors.black.withValues(alpha: 0.30),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -308,7 +308,7 @@ class _HotspotSpeechBubbleState extends State<HotspotSpeechBubble>
               border: Border.all(color: accent, width: 2),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
+                  color: Colors.black.withValues(alpha: 0.25),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -418,7 +418,7 @@ class _HotspotSpeechBubbleState extends State<HotspotSpeechBubble>
                       child: LinearProgressIndicator(
                         value: 1.0 - _life.value,
                         minHeight: 3,
-                        backgroundColor: accent.withOpacity(0.15),
+                        backgroundColor: accent.withValues(alpha: 0.15),
                         valueColor: AlwaysStoppedAnimation<Color>(accent),
                       ),
                     );

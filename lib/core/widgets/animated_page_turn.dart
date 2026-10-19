@@ -121,7 +121,7 @@ class AppPageTurn extends StatelessWidget {
           alignment: Alignment.centerLeft,
           transform: transform
             ..rotateY(angle)
-            ..scale(math.max(scale, 0.1)),
+            ..scaleByDouble(math.max(scale, 0.1), math.max(scale, 0.1), 1.0, 1.0),
           child: child,
         );
       },

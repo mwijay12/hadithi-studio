@@ -416,7 +416,7 @@ abstract final class AppDateUtils {
   /// mwezi. Kama [from] ipo baada ya siku hiyo, tunarudi mwezi unaofuata —
   /// hivyo matokeo huwa **daima** ya baadaye.
   static DateTime nextPayoutDate(DateTime from) {
-    final day = AppConstants.payoutDayOfMonth;
+    const day = AppConstants.payoutDayOfMonth;
     final thisMonth = DateTime(from.year, from.month, day);
     if (from.isBefore(thisMonth) || isSameDay(from, thisMonth)) {
       return thisMonth;

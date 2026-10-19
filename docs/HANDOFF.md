@@ -41,7 +41,9 @@ flutter gen-l10n
 flutter analyze
 flutter test
 flutter build web -t lib/main_web_preview.dart --release \
-  --web-renderer=html --pwa-strategy=none
+  --web-renderer=html
+# ↑ Service worker huwashwa (offline PWA). Kwa preview ya haraka (bila cache):
+#   ongeza --pwa-strategy=none
 python3 tool/hadithi_preview_server.py build/web 8080
 bash tool/hadithi_keepalive.sh      # huanzisha cloudflared + hulog URL
 cat /tmp/hadithi_url.txt            # URL ya sasa
@@ -51,9 +53,9 @@ cat /tmp/hadithi_url.txt            # URL ya sasa
 
 1. **`git config safe.directory`** — bila hii Flutter huripoti `0.0.0-unknown` na
    `pub get` **hushindwa kwenye kila package**. Inaonekana kama "packages hazipo".
-2. **`google_fonts` LAZIMA ibaki `6.1.0`** (imedungwa, si `^6.1.0`).
-   `6.2.0` inatumia `FontFeature` bila kuingiza `dart:ui`, na `dart2js` **hushindwa
-   kukusanya** (Flutter 3.16 haitoi `FontFeature` kwenye `painting.dart`).
+2. ~~**`google_fonts` LAZIMA ibaki `6.1.0`**~~ — **imeondolewa kabisa.** Fonti
+   zimefungwa ndani ya app (`assets/fonts/`), hivyo hakuna utegemezi wa
+   mtandao na hakuna mgongano wa `dart2js`.
 3. **`--web-renderer=html`, sivyo canvaskit.** CanvasKit ni **4.7 MB** ya wasm; over
    tunnel ya bure (27 KB/s) ni **dakika 5** za skrini nyeupe — mtumiaji hudhani
    link imekufa. HTML renderer = inaanza.
@@ -211,15 +213,15 @@ mkataba wa uaminifu. Usiyaondoe bila kujenga kitu halisi.
 
 | # | Tatizo | Ushahidi | Ukubwa |
 |---|---|---|---|
-| **I-1** | **Onboarding slide 2: kwenye skrini fupi (1280×600) aya ya maelezo + chipu 3 zinapotea KIMYA** | Ukaguzi wa browser | Bug halisi |
-| **I-2** | **Picha hazihusiani na hadithi.** Hadithi 6 zinatumia picha **10 za jumla**. `mlima-kilimanjaro` → `cat_culture.png` (sivyo Kilimanjaro). Kila ukurasa hurudia | `story_sample_data.dart` | **Kubwa** |
+| **I-1** | ✅ **IMESHUGHULIKA** — slide iko kwenye `SingleChildScrollView`; maudhui hayapotei kwenye skrini fupi | `onboarding_page.dart` | Imefungwa |
+| **I-2** | **Picha za hadithi 3 za zamani** (`ngoma`, `kuku`, `chapati`) bado ni za branding; hadithi 7 zina michoro yao halisi (kurasa 29) | `story_sample_data.dart` | Kubwa (maudhui) |
 | **I-3** | **Sauti ya Kiswahili ni mbovu** — injini za simu hazina Kiswahili, hivyo husoma maandishi ya Kiswahili kwa sauti ya Kiingereza | Mtumiaji | **Kubwa** |
-| **I-4** | Fonti hutoka mtandaoni (`google_fonts`) — **mbaya kwa offline** | `pubspec.yaml` (fonts imefungwa kwa comment) | Kubwa (TZ) |
-| **I-5** | `--pwa-strategy=none` → **hakuna service worker** → hakuna offline PWA; script yoyote ya SW ingepata 404 | build command | Kubwa (TZ) |
+| **I-4** | ✅ **IMESHUGHULIKA** — fonti zote (Nunito, Poppins, Merriweather, Baloo2) zimefungwa ndani ya `assets/fonts/`; `google_fonts` imeondolewa | `pubspec.yaml`, `lib/config/theme/typography.dart` | Imefungwa |
+| **I-5** | ✅ **IMESHUGHULIKA** — build ya default sasa huwasha service worker; app hufanya kazi offline | `README.md`, `docs/HANDOFF.md` | Imefungwa |
 | **I-6** | Renderer ya HTML **haistawishi shaders** → `shimmer` imelindwa; `Rive` ya baadaye itashindwa | browser console | Wastani |
-| **I-7** | Chipu "Ukubwa wa Ma…" imekatwa (ellipsis) | Ukaguzi wa browser | Ndogo |
+| **I-7** | ✅ **IMESHUGHULIKA** — kidonge huruhusu mistari 2 na upana wa 80% wa skrini; hakuna ellipsis | `onboarding_page.dart` | Imefungwa |
 | **I-8** | `assets/images/badges/` **tupu** → badges hutumia emoji | `find assets` | Ndogo |
-| **I-9** | Hakuna `.git` | `ls -d .git` | Ndogo |
+| **I-9** | ✅ **IMESHUGHULIKA** — repo ipo na remote `github.com/mwijay12/hadithi-studio` | `git remote -v` | Imefungwa |
 | **I-10** | Tunnel ni quick tunnel — URL hubadilika | `hadithi_keepalive.sh` | Ndogo |
 | **I-11** | **Ukaguzi wa click-through wa detail → reader HAUKUFANYIKA KAMWE** | — | **Kubwa (hatari)** |
 | **I-12** | Palette ya skrini **nyingine** (home/onboarding/shelf/night) **haijapimwa WCAG** | — | Wastani |

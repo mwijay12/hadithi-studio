@@ -448,7 +448,7 @@ class AppSyllableText extends StatelessWidget {
               Text(
                 separator,
                 style: base.copyWith(
-                  color: context.colorScheme.onSurface.withOpacity(0.35),
+                  color: context.colorScheme.onSurface.withValues(alpha: 0.35),
                 ),
               ),
             Container(
@@ -462,7 +462,7 @@ class AppSyllableText extends StatelessWidget {
                       // `withOpacity(0.35)` badala ya rangi kamili: silabi
                       // zisizosomwa sasa zionekane, lakini mandhari
                       // isivute macho kuliko maandishi yenyewe.
-                      color: tint.withOpacity(0.35),
+                      color: tint.withValues(alpha: 0.35),
                       borderRadius: AppSpacing.borderRadiusSm,
                     ),
               child: Text(syllables[i], style: base),

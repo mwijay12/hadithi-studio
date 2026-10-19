@@ -40,13 +40,13 @@ const Story storySafariYaMatone = Story(
   readingLevel: ReadingLevel.darasa_1_2,
   coverAsset: 'assets/images/stories/safari_ya_matone_cover.webp',
   accent: AppColors.skyBlue,
-  shelves: const <StoryShelf>[
+  shelves: <StoryShelf>[
     StoryShelf.science,
     StoryShelf.safari,
   ],
   rating: 4.7,
   readCount: 0,
-  pages: const <StoryPage>[
+  pages: <StoryPage>[
     // Ukurasa 1 — Tone anaruka kutoka baharini chini ya jua.
     StoryPage(
       textSw: 'Bahari ilikuwa ya bluu na tulivu. Jua la asubuhi '
@@ -57,7 +57,7 @@ const Story storySafariYaMatone = Story(
           'leaped up into the sky!',
       illustration:
           'assets/images/stories/pages/safari-ya-matone/page_01.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
     // Ukurasa 2 — Tone ni mvuke; upepo unampeleka kwenye wingu kubwa.
     StoryPage(
@@ -69,7 +69,7 @@ const Story storySafariYaMatone = Story(
           'white cloud. Many vapours met there and became one big cloud.',
       illustration:
           'assets/images/stories/pages/safari-ya-matone/page_02.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
     // Ukurasa 3 — mvua inanyesha kwenye kilele cha Kilimanjaro, maji
     // yanarudi baharini.
@@ -84,7 +84,7 @@ const Story storySafariYaMatone = Story(
           'sea — ready for a new journey!',
       illustration:
           'assets/images/stories/pages/safari-ya-matone/page_03.webp',
-      hotspots: const <StoryHotspot>[],
+      hotspots: <StoryHotspot>[],
     ),
   ],
 );

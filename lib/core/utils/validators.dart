@@ -251,7 +251,7 @@ abstract final class Validators {
     final national = TanzaniaPhoneUtils.nationalNumber(value!);
 
     if (national == null) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: fieldSw,
         fieldEn: fieldEn,
         reasonSw:
@@ -264,7 +264,7 @@ abstract final class Validators {
     }
 
     if (!TanzaniaPhoneUtils.isMobile(value)) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: fieldSw,
         fieldEn: fieldEn,
         reasonSw: 'namba hii si ya simu ya mkononi (anza na 06 au 07)',
@@ -297,7 +297,7 @@ abstract final class Validators {
     }
 
     if (trimmed.length < AppConstants.minPasswordLength) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: fieldSw,
         fieldEn: fieldEn,
         reasonSw:
@@ -308,7 +308,7 @@ abstract final class Validators {
     }
 
     if (trimmed.length > AppConstants.maxPasswordLength) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: fieldSw,
         fieldEn: fieldEn,
         reasonSw:
@@ -386,7 +386,7 @@ abstract final class Validators {
 
     final digits = value!.trim();
     if (digits.length != AppConstants.otpLength || !_isAllDigits(digits)) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: fieldSw,
         fieldEn: fieldEn,
         reasonSw: 'weka tarakimu ${AppConstants.otpLength} pekee',
@@ -406,7 +406,7 @@ abstract final class Validators {
 
     final digits = value!.trim();
     if (digits.length != AppConstants.pinLength || !_isAllDigits(digits)) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: fieldSw,
         fieldEn: fieldEn,
         reasonSw: 'PIN iwe na tarakimu ${AppConstants.pinLength} pekee',
@@ -537,7 +537,7 @@ abstract final class Validators {
     }
     if (value < AppConstants.minStoryPages ||
         value > AppConstants.maxStoryPages) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: pageCountFieldSw,
         fieldEn: pageCountFieldEn,
         reasonSw:
@@ -566,7 +566,7 @@ abstract final class Validators {
 
     if (value < AppConstants.minStoryPriceTZS ||
         value > AppConstants.maxStoryPriceTZS) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: priceFieldSw,
         fieldEn: priceFieldEn,
         reasonSw:
@@ -595,7 +595,7 @@ abstract final class Validators {
       );
     }
     if (value < AppConstants.minChildAge || value > AppConstants.maxChildAge) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: ageFieldSw,
         fieldEn: ageFieldEn,
         reasonSw:
@@ -615,7 +615,7 @@ abstract final class Validators {
   static ValidationFailure? storyTags(List<String>? tags) {
     final list = tags ?? const <String>[];
     if (list.length > AppConstants.maxStoryTags) {
-      return ValidationFailure(
+      return const ValidationFailure(
         fieldSw: tagsFieldSw,
         fieldEn: tagsFieldEn,
         reasonSw: 'chagua lebo zisizozidi ${AppConstants.maxStoryTags}',

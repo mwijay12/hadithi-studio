@@ -22,7 +22,6 @@ library;
 
 // `FontFeature` ni ya `dart:ui`; `material.dart` haitoi hiyo — hivyo
 // tunaileta kwa `show` ili tusivute `Color`/`Offset` zinazogongana.
-import 'dart:ui' show FontFeature;
 
 import 'package:flutter/material.dart';
 
@@ -103,7 +102,7 @@ class TtsControls extends StatelessWidget {
         ),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             blurRadius: 20,
             offset: const Offset(0, -6),
           ),
@@ -417,7 +416,7 @@ class _PlayButton extends StatelessWidget {
             boxShadow: enabled
                 ? <BoxShadow>[
                     BoxShadow(
-                      color: AppColors.safariGreen.withOpacity(0.55),
+                      color: AppColors.safariGreen.withValues(alpha: 0.55),
                       blurRadius: 18,
                       spreadRadius: 2,
                     ),
@@ -503,8 +502,8 @@ class _ReaderChip extends StatelessWidget {
       label: semanticLabel,
       child: Material(
         color: selected
-            ? selectedColor.withOpacity(0.18)
-            : ink.withOpacity(0.06),
+            ? selectedColor.withValues(alpha: 0.18)
+            : ink.withValues(alpha: 0.06),
         borderRadius: AppSpacing.borderRadiusPill,
         child: InkWell(
           onTap: onTap,
@@ -574,7 +573,7 @@ class _NoAudioNotice extends StatelessWidget {
                 english: 'Audio is not available on this device — you can '
                     'still read along.',
               ),
-              style: TextStyle(fontSize: 12, color: ink.withOpacity(0.75)),
+              style: TextStyle(fontSize: 12, color: ink.withValues(alpha: 0.75)),
             ),
           ),
         ],

@@ -89,7 +89,7 @@ abstract final class StorySampleData {
     // =====================================================================
     // 1. Safari ya Simba — hadithi ya kwanza kabisa (Nyumbani, "Hadithi ya Leo")
     // =====================================================================
-    Story(
+    const Story(
       id: 'safari-ya-simba',
       titleSw: 'Safari ya Simba',
       titleEn: "Simba's Safari",
@@ -107,13 +107,13 @@ abstract final class StorySampleData {
       readingLevel: ReadingLevel.mtoto_mdogo,
       coverAsset: 'assets/images/stories/safari_ya_simba_cover.webp',
       accent: AppColors.safariGreen,
-      shelves: const <StoryShelf>[
+      shelves: <StoryShelf>[
         StoryShelf.animalStories,
         StoryShelf.safari,
       ],
       rating: 4.8,
       readCount: 1240,
-      pages: const <StoryPage>[
+      pages: <StoryPage>[
         StoryPage(
           textSw: 'Simba aliamka asubuhi mapema. Jua lilikuwa linachomoza '
               'juu ya Serengeti. "Leo nitaenda safari!" alisema Simba kwa '
@@ -263,7 +263,7 @@ abstract final class StorySampleData {
     // =====================================================================
     // 2. Mlima Kilimanjaro — makundi: Utamaduni + Sayansi
     // =====================================================================
-    Story(
+    const Story(
       id: 'mlima-kilimanjaro',
       titleSw: 'Mlima Kilimanjaro',
       titleEn: 'Mount Kilimanjaro',
@@ -282,13 +282,13 @@ abstract final class StorySampleData {
       readingLevel: ReadingLevel.darasa_1_2,
       coverAsset: 'assets/images/stories/mlima_kilimanjaro_cover.webp',
       accent: AppColors.kilimanjaroBlue,
-      shelves: const <StoryShelf>[
+      shelves: <StoryShelf>[
         StoryShelf.culture,
         StoryShelf.science,
       ],
       rating: 4.7,
       readCount: 980,
-      pages: const <StoryPage>[
+      pages: <StoryPage>[
         StoryPage(
           textSw: 'Kilimanjaro ni mlima mrefu zaidi barani Afrika. Uko '
               'Tanzania, karibu na mji wa Moshi. Mlima huu una kilele '
@@ -411,7 +411,7 @@ abstract final class StorySampleData {
     // =====================================================================
     // 3. Nyota za Usiku — kadi ya pili ya "Hadithi Bora" kwenye Nyumbani
     // =====================================================================
-    Story(
+    const Story(
       id: 'nyota-za-usiku',
       titleSw: 'Nyota za Usiku',
       titleEn: 'Stars of the Night',
@@ -429,13 +429,13 @@ abstract final class StorySampleData {
       readingLevel: ReadingLevel.darasa_1_2,
       coverAsset: 'assets/images/stories/nyota_za_usiku_cover.webp',
       accent: AppColors.purpleFun,
-      shelves: const <StoryShelf>[
+      shelves: <StoryShelf>[
         StoryShelf.moralsWisdom,
         StoryShelf.science,
       ],
       rating: 4.6,
       readCount: 720,
-      pages: const <StoryPage>[
+      pages: <StoryPage>[
         StoryPage(
           textSw: 'Kijiji chetu hakina umeme. Usiku, tunaketi nje kwenye '
               'mkeka na kuangalia juu. Bibi alisema, "Anga ndiyo runinga ya '
@@ -550,7 +550,7 @@ abstract final class StorySampleData {
     // =====================================================================
     // 4. Ngoma ya Furaha — kadi ya tatu ya "Hadithi Bora" kwenye Nyumbani
     // =====================================================================
-    Story(
+    const Story(
       id: 'ngoma-ya-furaha',
       titleSw: 'Ngoma ya Furaha',
       titleEn: 'The Happy Drum',
@@ -568,13 +568,13 @@ abstract final class StorySampleData {
       readingLevel: ReadingLevel.darasa_1_2,
       coverAsset: 'assets/images/stories/ngoma_ya_furaha_cover.webp',
       accent: AppColors.kangaOrange,
-      shelves: const <StoryShelf>[
+      shelves: <StoryShelf>[
         StoryShelf.poemsSongs,
         StoryShelf.culture,
       ],
       rating: 4.5,
       readCount: 640,
-      pages: const <StoryPage>[
+      pages: <StoryPage>[
         StoryPage(
           textSw: 'Kwenye ukumbi wa kijiji kulikuwa na ngoma kubwa. Ilikuwa '
               'imetulia kimya kwa miaka mingi. Kila mtu alikuwa na shughuli '
@@ -684,7 +684,7 @@ abstract final class StorySampleData {
     // =====================================================================
     // 5. Kuku na Mwewe — ngano ya jadi; rafu ya wanyama na ya maadili
     // =====================================================================
-    Story(
+    const Story(
       id: 'kuku-na-mwewe',
       titleSw: 'Kuku na Mwewe',
       titleEn: 'The Hen and the Hawk',
@@ -702,13 +702,13 @@ abstract final class StorySampleData {
       readingLevel: ReadingLevel.mtoto_mdogo,
       coverAsset: 'assets/images/stories/kuku_na_mwewe_cover.webp',
       accent: AppColors.brightGreen,
-      shelves: const <StoryShelf>[
+      shelves: <StoryShelf>[
         StoryShelf.animalStories,
         StoryShelf.moralsWisdom,
       ],
       rating: 4.4,
       readCount: 1560,
-      pages: const <StoryPage>[
+      pages: <StoryPage>[
         StoryPage(
           textSw: 'Zamani sana, Kuku na Mwewe walikuwa majirani. Wakakaa '
               'pamoja, wakala pamoja, wakacheka pamoja.',
@@ -800,7 +800,7 @@ abstract final class StorySampleData {
     // =====================================================================
     // 6. Chapati za Mama — hadithi ya maadili kwa watoto wakubwa
     // =====================================================================
-    Story(
+    const Story(
       id: 'chapati-za-mama',
       titleSw: 'Chapati za Mama',
       titleEn: 'Mama\'s Chapati',
@@ -818,13 +818,13 @@ abstract final class StorySampleData {
       readingLevel: ReadingLevel.darasa_3_4,
       coverAsset: 'assets/images/stories/chapati_za_mama_cover.webp',
       accent: AppColors.spiceRed,
-      shelves: const <StoryShelf>[
+      shelves: <StoryShelf>[
         StoryShelf.culture,
         StoryShelf.moralsWisdom,
       ],
       rating: 4.6,
       readCount: 830,
-      pages: const <StoryPage>[
+      pages: <StoryPage>[
         StoryPage(
           textSw: 'Kila Ijumaa jioni, mama yangu hupika chapati. Harufu '
               'yake huenea kwenye mtaa mzima wa Arusha. Siku moja '

@@ -6,7 +6,8 @@ import 'colors.dart';
 /// Theme ya usiku (dark) — muhimu kwa kusoma usiku (bedtime stories).
 abstract final class DarkTheme {
   /// ColorScheme ya usiku — **mahali pamoja** (sababu ile ile ya
-  /// `AppTheme.lightScheme`: `google_fonts` hufanya theme nzima isipimwe).
+  /// `AppTheme.lightScheme`: kutenganisha scheme huturuhusu kuipima WCAG
+  /// bila typography).
   ///
   static ColorScheme get darkScheme => ColorScheme.fromSeed(
           seedColor: AppColors.zanzibarTurquoise,
@@ -31,7 +32,7 @@ abstract final class DarkTheme {
           // #1C1F27 ni karibu asiyeonekana kama mstari — tunatumia kijivu
           // cha kati kwa mipaka, na `outline` kwa vidhibiti.
           outline: AppColors.readerNightPastText,
-          outlineVariant: AppColors.readerNightPastText.withOpacity(0.28),
+          outlineVariant: AppColors.readerNightPastText.withValues(alpha: 0.28),
         );
 
   static ThemeData get dark => AppTheme.build(

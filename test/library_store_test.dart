@@ -149,16 +149,16 @@ void main() {
         id: 'draft-1',
         titleSw: 'Simba Mdogo',
         titleEn: 'Little Lion',
-        pagesSw: <String>['Ukurasa wa kwanza.'],
-        pagesEn: <String>[],
+        pagesSw: const <String>['Ukurasa wa kwanza.'],
+        pagesEn: const <String>[],
         createdAt: DateTime(2026, 1, 1),
       );
       final DraftStory newer = DraftStory(
         id: 'draft-2',
         titleSw: 'Tembo',
         titleEn: 'Elephant',
-        pagesSw: <String>['Tembo mkubwa.', 'Tembo mdogo.'],
-        pagesEn: <String>[],
+        pagesSw: const <String>['Tembo mkubwa.', 'Tembo mdogo.'],
+        pagesEn: const <String>[],
         createdAt: DateTime(2026, 2, 1),
       );
 
@@ -183,8 +183,8 @@ void main() {
           id: 'draft-1',
           titleSw: 'Hadithi',
           titleEn: 'Story',
-          pagesSw: <String>['Moja.'],
-          pagesEn: <String>[],
+          pagesSw: const <String>['Moja.'],
+          pagesEn: const <String>[],
           createdAt: DateTime(2026, 1, 1),
         ),
       );

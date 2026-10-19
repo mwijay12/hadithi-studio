@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Typography ya Hadithi Studio.
 ///
-/// Font zinatoka `google_fonts` kwa sasa ili project i-build bila binary
-/// assets. Kwa production (na kufanya kazi offline) badilisha GoogleFonts.*
-/// kwenda `TextStyle(fontFamily: 'Nunito', ...)` baada ya kuweka .ttf
-/// kwenye assets/fonts/ — tazama maelezo kwenye pubspec.yaml.
+/// Font zote ziko **ndani ya app** (`assets/fonts/`), zimefungwa kwenye
+/// `pubspec.yaml`. Hakuna `google_fonts` tena — kwa hivyo app inaonyesha
+/// maandishi sahihi **bila mtandao**, tangu sekunde ya kwanza. Hii ni
+/// muhimu kwa Tanzania ambapo data ni ghali na mtandao si wa kuaminika.
 ///
 /// Fonts:
 /// - Nunito          → maandishi ya jumla (nzuri kwa Kiswahili + watoto)
@@ -14,7 +13,6 @@ import 'package:google_fonts/google_fonts.dart';
 /// - Merriweather    → maandishi ya hadithi (serif, rahisi kusoma)
 /// - Baloo 2         → vichwa vya habari (playful)
 abstract final class AppTypography {
-  // Jina la font — hutumika baadaye tunapo-bundle .ttf.
   static const String bodyFontFamily = 'Nunito';
   static const String uiFontFamily = 'Poppins';
   static const String storyFontFamily = 'Merriweather';
@@ -40,75 +38,86 @@ abstract final class AppTypography {
     required Color bodyColor,
     required Color mutedColor,
   }) {
-    final heading = TextStyle(color: bodyColor);
+    final TextStyle heading = TextStyle(color: bodyColor);
     return TextTheme(
       // displayLarge  → Display 32sp
-      displayLarge: GoogleFonts.baloo2(
+      displayLarge: TextStyle(
+        fontFamily: displayFontFamily,
         fontSize: sizeDisplay,
         fontWeight: FontWeight.w700,
         height: 1.2,
         color: heading.color,
       ),
       // displayMedium → H1 28sp
-      displayMedium: GoogleFonts.baloo2(
+      displayMedium: TextStyle(
+        fontFamily: displayFontFamily,
         fontSize: sizeH1,
         fontWeight: FontWeight.w700,
         height: 1.25,
         color: heading.color,
       ),
       // displaySmall  → H2 24sp
-      displaySmall: GoogleFonts.baloo2(
+      displaySmall: TextStyle(
+        fontFamily: displayFontFamily,
         fontSize: sizeH2,
         fontWeight: FontWeight.w600,
         height: 1.3,
         color: heading.color,
       ),
       // headlineSmall → H3 20sp
-      headlineSmall: GoogleFonts.poppins(
+      headlineSmall: TextStyle(
+        fontFamily: uiFontFamily,
         fontSize: sizeH3,
         fontWeight: FontWeight.w600,
         height: 1.35,
         color: heading.color,
       ),
-      // titleLarge — AppBar, sheet headers
-      titleLarge: GoogleFonts.poppins(
+      // titleLarge → AppBar, sheet headers
+      titleLarge: TextStyle(
+        fontFamily: uiFontFamily,
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: heading.color,
       ),
-      titleMedium: GoogleFonts.poppins(
+      titleMedium: TextStyle(
+        fontFamily: uiFontFamily,
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: heading.color,
       ),
       // bodyLarge → 18sp
-      bodyLarge: GoogleFonts.nunito(
+      bodyLarge: TextStyle(
+        fontFamily: bodyFontFamily,
         fontSize: sizeBodyLarge,
         fontWeight: FontWeight.w400,
         height: 1.5,
         color: bodyColor,
       ),
       // bodyMedium → 16sp (body default)
-      bodyMedium: GoogleFonts.nunito(
+      bodyMedium: TextStyle(
+        fontFamily: bodyFontFamily,
         fontSize: sizeBody,
         fontWeight: FontWeight.w400,
         height: 1.5,
         color: bodyColor,
       ),
       // bodySmall → 14sp
-      bodySmall: GoogleFonts.nunito(
+      bodySmall: TextStyle(
+        fontFamily: bodyFontFamily,
         fontSize: sizeBodySmall,
         fontWeight: FontWeight.w400,
         height: 1.45,
         color: mutedColor,
       ),
-      labelLarge: GoogleFonts.nunito(
+      labelLarge: TextStyle(
+        fontFamily: bodyFontFamily,
         fontSize: sizeBody,
         fontWeight: FontWeight.w700,
         color: heading.color,
       ),
       // labelSmall → caption 12sp
-      labelSmall: GoogleFonts.nunito(
+      labelSmall: TextStyle(
+        fontFamily: bodyFontFamily,
         fontSize: sizeCaption,
         fontWeight: FontWeight.w500,
         color: mutedColor,
@@ -127,7 +136,8 @@ abstract final class AppTypography {
     double height = 1.8,
     bool isBilingual = false,
   }) {
-    return GoogleFonts.merriweather(
+    return TextStyle(
+      fontFamily: storyFontFamily,
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
@@ -143,7 +153,8 @@ abstract final class AppTypography {
     Color? color,
     FontWeight fontWeight = FontWeight.w700,
   }) {
-    return GoogleFonts.baloo2(
+    return TextStyle(
+      fontFamily: displayFontFamily,
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,

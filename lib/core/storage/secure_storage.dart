@@ -332,7 +332,7 @@ class SecureStorageImpl implements SecureStorage {
   Future<void> setParentalPin(String pin) async {
     if (pin.length != AppConstants.parentalPinLength ||
         int.tryParse(pin) == null) {
-      throw ValidationException(
+      throw const ValidationException(
         'PIN ya mzazi lazima iwe tarakimu '
         '${AppConstants.parentalPinLength}.',
         code: 'PARENTAL_PIN_FORMAT',
@@ -381,7 +381,7 @@ class SecureStorageImpl implements SecureStorage {
       // `parentalPinLockRemaining` iseme "majaribio yameisha" (na si "bado
       // una majaribio") pindi kufungwa kumalizika bila PIN kupulizwa.
       await _writeInt(StorageKeys.parentalPinAttempts, attempts);
-      return PinCheckResult.lockedOut(
+      return const PinCheckResult.lockedOut(
         lockedFor: AppConstants.parentalPinLockoutDuration,
       );
     }

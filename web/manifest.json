@@ -1,11 +1,11 @@
 {
-    "name": "hadithi_studio",
-    "short_name": "hadithi_studio",
+    "name": "Hadithi Studio — Hadithi za Watoto",
+    "short_name": "Hadithi",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FAFAF8",
+    "theme_color": "#2E7D32",
+    "description": "Hadithi za Kiswahili zenye picha, sauti na michezo kwa watoto wa Tanzania.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -396,13 +396,12 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
             ? AppColors.readerNightBackground
             : AppColors.readerBackground;
 
-        return WillPopScope(
+        return PopScope(
           // Hifadhi maendeleo kabla ya kuondoka — mtoto aendelee hapo
           // alipoacha. `close()` pia huhifadhi, lakini hii inahakikisha
           // hata kama widget haiitwi `dispose` kwa utaratibu.
-          onWillPop: () async {
-            await cubit.saveProgressNow();
-            return true;
+          onPopInvokedWithResult: (bool didPop, Object? result) {
+            if (didPop) unawaited(cubit.saveProgressNow());
           },
           child: Scaffold(
             backgroundColor: backdrop,
@@ -527,7 +526,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
           GestureDetector(
             onTap: () => setState(() => _showSettings = false),
             child: ColoredBox(
-              color: Colors.black.withOpacity(0.35),
+              color: Colors.black.withValues(alpha: 0.35),
               child: const SizedBox.expand(),
             ),
           ),
@@ -628,7 +627,7 @@ class _StoryPageView extends StatelessWidget {
             page.illustration,
             fit: BoxFit.cover,
             // Mchoro haupo? Tusiangushe ukurasa — tunaonyesha mahali pake.
-            errorBuilder: (_, __, ___) => Center(
+            errorBuilder: (_, __, ___) => const Center(
               child: Icon(
                 Icons.image_outlined,
                 size: AppSpacing.iconXl,
@@ -708,9 +707,9 @@ class _TextOverlay extends StatelessWidget {
     // mweupe hupotea hata scrim ikiwa na nguvu.
     ).copyWith(
       shadows: <Shadow>[
-        Shadow(color: Colors.black.withOpacity(0.42), blurRadius: 10),
+        Shadow(color: Colors.black.withValues(alpha: 0.42), blurRadius: 10),
         Shadow(
-          color: Colors.black.withOpacity(0.28),
+          color: Colors.black.withValues(alpha: 0.28),
           blurRadius: 3,
           offset: const Offset(0, 1),
         ),
@@ -727,14 +726,14 @@ class _TextOverlay extends StatelessWidget {
       // Sasa kuna kituo cha kati: 0.55 kwa 42%, na 0.92 chini.
       colors: <Color>[
         night
-            ? AppColors.readerNightBackground.withOpacity(0.0)
+            ? AppColors.readerNightBackground.withValues(alpha: 0.0)
             : Colors.transparent,
         night
-            ? AppColors.readerNightBackground.withOpacity(0.78)
-            : Colors.black.withOpacity(0.55),
+            ? AppColors.readerNightBackground.withValues(alpha: 0.78)
+            : Colors.black.withValues(alpha: 0.55),
         night
-            ? AppColors.readerNightBackground.withOpacity(0.96)
-            : Colors.black.withOpacity(0.92),
+            ? AppColors.readerNightBackground.withValues(alpha: 0.96)
+            : Colors.black.withValues(alpha: 0.92),
       ],
       stops: const <double>[0.0, 0.42, 1.0],
     );
@@ -751,7 +750,7 @@ class _TextOverlay extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: scrim,
-            borderRadius: BorderRadius.vertical(
+            borderRadius: const BorderRadius.vertical(
               top: Radius.circular(AppSpacing.readerOverlayRadius),
             ),
           ),
@@ -822,7 +821,7 @@ class _TextOverlay extends StatelessWidget {
                         color: (night
                                 ? AppColors.readerNightPastText
                                 : Colors.white)
-                            .withOpacity(0.82),
+                            .withValues(alpha: 0.82),
                       ),
                     ),
                   ),
@@ -851,7 +850,7 @@ class _TapHint extends StatelessWidget {
           vertical: AppSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: AppColors.playfulYellow.withOpacity(isNight ? 0.22 : 0.30),
+          color: AppColors.playfulYellow.withValues(alpha: isNight ? 0.22 : 0.30),
           borderRadius: AppSpacing.borderRadiusPill,
         ),
         child: Row(
@@ -925,7 +924,7 @@ class _TopControls extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: <Color>[
-                  Colors.black.withOpacity(0.54),
+                  Colors.black.withValues(alpha: 0.54),
                   Colors.transparent,
                 ],
               ),

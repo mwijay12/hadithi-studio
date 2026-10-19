@@ -4,10 +4,11 @@
 
 Hadithi Studio ni Flutter app inayompa mtoto hadithi **10** zenye michoro, sauti,
 na mwingiliano — na inafanya kazi **bila mtandao** tangu sekunde ya kwanza.
+Fonti, picha na hadithi zote zimefungwa ndani ya app.
 
-> **Hali ya mradi:** `1.0.0-dev` — inajengwa, inajaribiwa (majaribio 153), na
-> inaweza kufunguliwa kwenye kivinjari. Hii bado si toleo la duka la app:
-> tazama [Kinachobaki](#kinachobaki) kabla ya kuchapisha.
+> **Hali ya mradi:** `0.1.0` — inajengwa, inajaribiwa (majaribio 153), na
+> inaweza kufunguliwa kwenye kivinjari au simu. Hii bado si toleo la duka la
+> app: tazama [Kinachobaki](#kinachobaki) kabla ya kuchapisha.
 
 ---
 
@@ -21,7 +22,7 @@ imejengwa kinyume:
 |---|---|
 | **Kiswahili kwanza, sivyo tafsiri** | Kila hadithi imeandikwa kwa Kiswahili halisi, kisha Kiingereza. Si `translate()` |
 | **Tanzania si mandhari — ni nyumbani** | Serengeti, Kilimanjaro, Zanzibar, ngoma, chapati za mama. Mtoto anajiona |
-| **Bila mtandao ni hali ya kawaida** | Hadithi, michoro na sauti ziko ndani ya app. Hakuna "loading" ya mtandao |
+| **Bila mtandao ni hali ya kawaida** | Hadithi, michoro, sauti na **fonti** ziko ndani ya app. Hakuna "loading" ya mtandao |
 | **Sauti ya mtu, sivyo TTS** | TTS ni *akiba* tu. Sauti halisi ya Kiswahili ndiyo njia kuu |
 | **Ukweli, sivyo ujanja** | Kitu kisichofanya kazi kinaonyeshwa kama hakifanyi kazi. Hakuna vitufe vya kubuni |
 | **Simu ya bei ndogo kwanza** | Picha WebP, hakuna shader, hakuna animation nzito, `reduce motion` inaheshimiwa |
@@ -113,26 +114,6 @@ flutter test                 # 153 majaribio
 
 ### Kujenga APK
 
-### APK ya majaribio (imejengwa)
-
-APK za **debug** zipo kwenye mzizi wa mradi:
-
-| Faili | Ukubwa | Inafaa |
-|---|---|---|
-| `hadithi-studio-1.0.0-arm64-debug.apk` | 146 MB | Simu za kisasa (2017+) |
-| `hadithi-studio-1.0.0-armv7-debug.apk` | 81 MB | Simu za zamani (32-bit) |
-
-Sakinisha kwa: `adb install hadithi-studio-1.0.0-arm64-debug.apk`
-
-**Hali:** debug APK ina **JIT** (polepole), haina kupunguzwa ukubwa, na
-**haifai Play Store**. Build ya `--release` ilishindikana kwenye mazingira
-haya kwenye `compileFlutterBuildRelease` (uchunguzi haukukamilika kwa sababu
-matokeo yalipunguzwa); endesha tena ukiwa na RAM zaidi ya 4 GB:
-
-```bash
-flutter build apk --release --target-platform android-arm64 --verbose
-```
-
 ```bash
 # 1. Ongeza folda ya Android ikiwa haipo
 flutter create --platforms=android .
@@ -144,6 +125,13 @@ flutter build apk --release
 # build/app/outputs/flutter-apk/app-release.apk
 ```
 
+Kwa build ya haraka ya majaribio (haipendekezwi kwa usambazaji):
+
+```bash
+flutter build apk --debug
+adb install build/app/outputs/flutter-apk/app-debug.apk
+```
+
 **Kwa toleo la duka**, tengeneza keystore na usanidi `android/key.properties`
 (tazama [hati ya Flutter](https://docs.flutter.dev/deployment/android)).
 Bila keystore, `--release` hutumia **debug key** — hiyo haifai kwa Play Store.
@@ -151,6 +139,10 @@ Bila keystore, `--release` hutumia **debug key** — hiyo haifai kwa Play Store.
 ### Kujenga web
 
 ```bash
+# Toleo la offline/PWA (service worker huwasha, app hufanya kazi bila mtandao)
+flutter build web -t lib/main_web_preview.dart --release
+
+# Toleo la haraka la preview (hakuna cache — kila reload inapata toleo jipya)
 flutter build web -t lib/main_web_preview.dart --release --pwa-strategy=none
 ```
 
@@ -177,6 +169,20 @@ assets/audio/<story-id>/page_01.json     # muda wa maneno (karaoke)
 
 Ukikosa faili, app hurudi kwenye **TTS** — haianguki.
 
+### Fonti
+
+Fonti zote zimefungwa ndani ya app — **hakuna upakuaji wa mtandao**:
+
+```
+assets/fonts/Nunito-{Regular,SemiBold,Bold}.ttf
+assets/fonts/Poppins-{Regular,SemiBold,Bold}.ttf
+assets/fonts/Merriweather-{Regular,Bold}.ttf
+assets/fonts/Baloo2-{Regular,Bold}.ttf
+```
+
+Zimetangazwa kwenye `pubspec.yaml` na kutumika kupitia
+`lib/config/theme/typography.dart`.
+
 ### Nyimbo
 
 ```
@@ -197,7 +203,7 @@ Hii ni orodha ya **ukweli**, sivyo ya matumaini:
 |---|---|
 | **Sauti iliyorekodiwa** | Hakuna faili yoyote ya MP3 bado — TTS inatumika |
 | **Karaoke kwa sauti halisi** | Timing JSON haijaunganishwa na `ReaderCubit` |
-| **Hadithi 3 za zamani** | `ngoma`, `kuku`, `chapati` bado zinatumia picha za branding (kurasa 16) |
+| **Hadithi 3 za zamani** | `ngoma`, `kuku`, `chapati` bado zinatumia picha za branding (kurasa 15) |
 | **Hadithi mpya 4** | Zina kurasa **3** pekee — hazijakamilika kwa maudhui |
 | **Mchezo** | Maoni na mpango pekee (`docs/GAME-IDEAS.md`) |
 | **Pakua / mtandao** | Hadithi zote ziko ndani; hakuna seva, hakuna upakuaji |

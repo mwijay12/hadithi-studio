@@ -9,6 +9,12 @@
 /// kwenye folder ya feature husika.
 library;
 
+// Majina ya Kiswahili yenye underscore ni **kwa makusudi**: yanasomeka kama
+// Kiswahili halisi (`mtoto_mdogo`, `sayansi_na_teknolojia`) na
+// yanatumika kama `name`/serialisation. Kubadilisha kwenda camelCase
+// kungebadilisha maana na kuvunja hifadhi ya data.
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/widgets.dart';
 
 // ---------------------------------------------------------------------------

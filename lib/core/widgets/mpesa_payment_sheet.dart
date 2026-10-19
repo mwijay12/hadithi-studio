@@ -132,7 +132,7 @@ class AppPaymentSummary extends StatelessWidget {
         // mandhari ya mchana na `zanzibarTurquoise` kwenye ya usiku, hivyo
         // kijani kibichi hakionekani kwenye mandhari ya usiku (tazama
         // `dark_theme.dart`).
-        color: scheme.primary.withOpacity(0.06),
+        color: scheme.primary.withValues(alpha: 0.06),
         borderRadius: AppSpacing.borderRadiusMd,
       ),
       child: Column(
@@ -164,7 +164,7 @@ class AppPaymentSummary extends StatelessWidget {
             ),
           Divider(
             height: AppSpacing.xl,
-            color: scheme.onSurface.withOpacity(0.12),
+            color: scheme.onSurface.withValues(alpha: 0.12),
           ),
           _SummaryRow(
             label: context.localised(
@@ -378,7 +378,7 @@ Widget _dragHandle(BuildContext context) => Center(
         width: 40,
         height: AppSpacing.xs,
         decoration: BoxDecoration(
-          color: context.colorScheme.onSurface.withOpacity(0.20),
+          color: context.colorScheme.onSurface.withValues(alpha: 0.20),
           borderRadius: AppSpacing.borderRadiusPill,
         ),
       ),
@@ -403,7 +403,7 @@ Widget _sectionLabel(BuildContext context, String text) => Padding(
 /// kwenye project hii (tazama `AppTheme`), kwa hivyo haitoi kauli yetu ya
 /// kijani/turquoise. Tunaitoa kwa uwazi kutoka `onSurface`.
 Color _muted(BuildContext context) =>
-    context.colorScheme.onSurface.withOpacity(0.60);
+    context.colorScheme.onSurface.withValues(alpha: 0.60);
 
 /// Ikoni ya mtoa huduma — simu kwa malipo ya simu, kadi kwa kadi.
 IconData _providerIcon(PaymentProvider provider) => provider.isMobileMoney
@@ -449,7 +449,7 @@ class _ProviderOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme scheme = context.colorScheme;
     final Color tint =
-        isSelected ? scheme.primary : scheme.onSurface.withOpacity(0.60);
+        isSelected ? scheme.primary : scheme.onSurface.withValues(alpha: 0.60);
     final String label = TanzaniaCurrencyUtils.providerLabel(
       provider,
       swahili: context.isSwahili,
@@ -478,12 +478,12 @@ class _ProviderOption extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           decoration: BoxDecoration(
-            color: isSelected ? scheme.primary.withOpacity(0.10) : null,
+            color: isSelected ? scheme.primary.withValues(alpha: 0.10) : null,
             borderRadius: AppSpacing.borderRadiusMd,
             border: Border.all(
               color: isSelected
                   ? scheme.primary
-                  : scheme.onSurface.withOpacity(0.20),
+                  : scheme.onSurface.withValues(alpha: 0.20),
               width: isSelected ? 1.5 : 1,
             ),
           ),

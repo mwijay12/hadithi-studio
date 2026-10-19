@@ -137,14 +137,14 @@ class ReaderSettingsPanel extends StatelessWidget {
                         const SizedBox(width: AppSpacing.xxs),
                         Text(
                           'sp',
-                          style: TextStyle(color: ink.withOpacity(0.7)),
+                          style: TextStyle(color: ink.withValues(alpha: 0.7)),
                         ),
                         const Spacer(),
                         Text(
                           swahili ? 'Ndogo' : 'Small',
                           style: TextStyle(
                             fontSize: 11,
-                            color: ink.withOpacity(0.6),
+                            color: ink.withValues(alpha: 0.6),
                           ),
                         ),
                         const SizedBox(width: AppSpacing.sm),
@@ -152,7 +152,7 @@ class ReaderSettingsPanel extends StatelessWidget {
                           swahili ? 'Kubwa' : 'Large',
                           style: TextStyle(
                             fontSize: 11,
-                            color: ink.withOpacity(0.6),
+                            color: ink.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -179,7 +179,7 @@ class ReaderSettingsPanel extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(AppSpacing.md),
                       decoration: BoxDecoration(
-                        color: ink.withOpacity(0.05),
+                        color: ink.withValues(alpha: 0.05),
                         borderRadius: AppSpacing.borderRadiusSm,
                       ),
                       child: Text(
@@ -203,7 +203,7 @@ class ReaderSettingsPanel extends StatelessWidget {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       value: state.isNightMode,
-                      activeColor: AppColors.safariGreen,
+                      activeThumbColor: AppColors.safariGreen,
                       title: Text(
                         l10n.nightMode,
                         style: TextStyle(color: ink, fontWeight: FontWeight.w600),
@@ -213,7 +213,7 @@ class ReaderSettingsPanel extends StatelessWidget {
                           swahili: 'Rangi nyeupe hupunguza uchovu wa macho',
                           english: 'Softer colours, easier at night',
                         ),
-                        style: TextStyle(fontSize: 12, color: ink.withOpacity(0.7)),
+                        style: TextStyle(fontSize: 12, color: ink.withValues(alpha: 0.7)),
                       ),
                       onChanged: (_) => cubit.toggleNightMode(),
                     ),
@@ -224,23 +224,27 @@ class ReaderSettingsPanel extends StatelessWidget {
                     // 3. HALI YA KUSOMA
                     // ---------------------------------------------------------
                     _SectionTitle(label: l10n.readingMode, ink: ink),
-                    for (final ReadingMode mode in ReadingMode.values)
-                      RadioListTile<ReadingMode>(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        value: mode,
-                        // `groupValue` inaweza kuwa null kwenye Flutter 3.16
-                        // bila kosa — hivyo hakuna `!`.
-                        groupValue: state.readingMode,
-                        activeColor: AppColors.safariGreen,
-                        title: Text(
-                          readingModeLabel(l10n, mode),
-                          style: TextStyle(color: ink),
-                        ),
-                        onChanged: (ReadingMode? value) {
-                          if (value != null) cubit.setReadingMode(value);
-                        },
+                    RadioGroup<ReadingMode>(
+                      groupValue: state.readingMode,
+                      onChanged: (ReadingMode? value) {
+                        if (value != null) cubit.setReadingMode(value);
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          for (final ReadingMode mode in ReadingMode.values)
+                            RadioListTile<ReadingMode>(
+                              contentPadding: EdgeInsets.zero,
+                              dense: true,
+                              value: mode,
+                              activeColor: AppColors.safariGreen,
+                              title: Text(
+                                readingModeLabel(l10n, mode),
+                                style: TextStyle(color: ink),
+                              ),
+                            ),
+                        ],
                       ),
+                    ),
 
                     const SizedBox(height: AppSpacing.lg),
 
@@ -250,7 +254,7 @@ class ReaderSettingsPanel extends StatelessWidget {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       value: state.autoPageTurn,
-                      activeColor: AppColors.safariGreen,
+                      activeThumbColor: AppColors.safariGreen,
                       title: Text(
                         l10n.autoPageTurn,
                         style: TextStyle(color: ink, fontWeight: FontWeight.w600),
@@ -268,7 +272,7 @@ class ReaderSettingsPanel extends StatelessWidget {
                               label: Text(l10n.delaySeconds(seconds)),
                               selected: state.autoTurnDelay == seconds,
                               selectedColor:
-                                  AppColors.safariGreen.withOpacity(0.20),
+                                  AppColors.safariGreen.withValues(alpha: 0.20),
                               onSelected: (_) => cubit.setAutoTurnDelay(seconds),
                             ),
                         ],
@@ -286,7 +290,7 @@ class ReaderSettingsPanel extends StatelessWidget {
                         Icon(
                           Icons.music_note_rounded,
                           size: AppSpacing.iconSm,
-                          color: ink.withOpacity(0.5),
+                          color: ink.withValues(alpha: 0.5),
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
@@ -297,16 +301,16 @@ class ReaderSettingsPanel extends StatelessWidget {
                             ),
                             style: TextStyle(
                               fontSize: 12,
-                              color: ink.withOpacity(0.6),
+                              color: ink.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
                         // Kimezimwa kwa makusudi: hatuweki swichi inayofanya
                         // kitu ambacho hakipo.
-                        Switch(
+                        const Switch(
                           value: false,
                           onChanged: null,
-                          activeColor: AppColors.safariGreen,
+                          activeThumbColor: AppColors.safariGreen,
                         ),
                       ],
                     ),
@@ -397,7 +401,7 @@ class _SectionTitle extends StatelessWidget {
           fontSize: 11,
           letterSpacing: 0.8,
           fontWeight: FontWeight.w700,
-          color: ink.withOpacity(0.55),
+          color: ink.withValues(alpha: 0.55),
         ),
       ),
     );

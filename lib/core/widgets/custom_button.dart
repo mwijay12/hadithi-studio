@@ -163,48 +163,48 @@ class AppButton extends StatelessWidget {
   ButtonStyle _style(BuildContext context, ColorScheme scheme) {
     final visual = switch (variant) {
       AppButtonVariant.primary => ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll<Color>(scheme.primary),
-          foregroundColor: MaterialStatePropertyAll<Color>(scheme.onPrimary),
+          backgroundColor: WidgetStatePropertyAll<Color>(scheme.primary),
+          foregroundColor: WidgetStatePropertyAll<Color>(scheme.onPrimary),
         ),
       AppButtonVariant.secondary => ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll<Color>(scheme.secondary),
-          foregroundColor: const MaterialStatePropertyAll<Color>(Colors.white),
+          backgroundColor: WidgetStatePropertyAll<Color>(scheme.secondary),
+          foregroundColor: const WidgetStatePropertyAll<Color>(Colors.white),
         ),
       AppButtonVariant.outline => ButtonStyle(
-          backgroundColor: const MaterialStatePropertyAll<Color>(
+          backgroundColor: const WidgetStatePropertyAll<Color>(
             Colors.transparent,
           ),
-          foregroundColor: MaterialStatePropertyAll<Color>(scheme.primary),
-          side: MaterialStatePropertyAll<BorderSide>(
-            BorderSide(color: scheme.primary.withOpacity(0.5)),
+          foregroundColor: WidgetStatePropertyAll<Color>(scheme.primary),
+          side: WidgetStatePropertyAll<BorderSide>(
+            BorderSide(color: scheme.primary.withValues(alpha: 0.5)),
           ),
         ),
       AppButtonVariant.text => ButtonStyle(
-          backgroundColor: const MaterialStatePropertyAll<Color>(
+          backgroundColor: const WidgetStatePropertyAll<Color>(
             Colors.transparent,
           ),
-          foregroundColor: MaterialStatePropertyAll<Color>(scheme.primary),
+          foregroundColor: WidgetStatePropertyAll<Color>(scheme.primary),
         ),
       AppButtonVariant.danger => ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll<Color>(scheme.error),
-          foregroundColor: MaterialStatePropertyAll<Color>(scheme.onError),
+          backgroundColor: WidgetStatePropertyAll<Color>(scheme.error),
+          foregroundColor: WidgetStatePropertyAll<Color>(scheme.onError),
         ),
     };
 
     return visual.copyWith(
       // `Size(0, height)` badala ya `Size.fromHeight` ili kitufe kisichopanuka
       // kiwe na upana wa maudhui yake, si upana wote.
-      minimumSize: MaterialStatePropertyAll<Size>(
+      minimumSize: WidgetStatePropertyAll<Size>(
         Size(0, size.height),
       ),
-      padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(size.padding),
+      padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(size.padding),
       // `elevation: 0` — vivuli hupunguza utendaji kwenye simu za 2GB RAM
       // wakati wa kusogeza orodha ndefu.
-      elevation: const MaterialStatePropertyAll<double>(0),
-      shape: const MaterialStatePropertyAll<OutlinedBorder>(
+      elevation: const WidgetStatePropertyAll<double>(0),
+      shape: const WidgetStatePropertyAll<OutlinedBorder>(
         RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusMd),
       ),
-      textStyle: MaterialStatePropertyAll<TextStyle?>(
+      textStyle: WidgetStatePropertyAll<TextStyle?>(
         context.textTheme.labelLarge?.copyWith(fontSize: size.fontSize),
       ),
     );
@@ -302,7 +302,7 @@ class AppIconButton extends StatelessWidget {
     final tooltip = context.localised(swahili: tooltipSw, english: tooltipEn);
     final tint = color ??
         (onPressed == null
-            ? context.colorScheme.onSurface.withOpacity(0.38)
+            ? context.colorScheme.onSurface.withValues(alpha: 0.38)
             : context.colorScheme.primary);
 
     final button = IconButton(

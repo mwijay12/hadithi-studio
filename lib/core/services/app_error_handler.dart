@@ -25,7 +25,6 @@
 library;
 
 import 'dart:collection';
-import 'dart:ui' show PlatformDispatcher;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';

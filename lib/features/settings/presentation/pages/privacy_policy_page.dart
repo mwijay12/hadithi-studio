@@ -85,7 +85,7 @@ class PrivacyPolicyPage extends StatelessWidget {
               height: 132,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: scheme.primary.withOpacity(0.10),
+                color: scheme.primary.withValues(alpha: 0.10),
                 border: Border.all(color: scheme.outlineVariant),
               ),
               child: ClipOval(
@@ -144,7 +144,7 @@ class PrivacyPolicyPage extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.lg),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Utangulizi',
             titleEn: 'Introduction',
             bodySw: 'Hadithi Studio ni app ya kusoma hadithi kwa watoto, '
@@ -160,7 +160,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 'of the Personal Data Protection Commission (PDPC).',
           ),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Taarifa tunazoshughulikia',
             titleEn: 'Information we handle',
             bodySw: 'Kila kitu kinabaki kwenye kifaa chako. App huhifadhi:',
@@ -181,7 +181,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             ],
           ),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Taarifa ambazo HATUZOKUSANYA',
             titleEn: 'What we do NOT collect',
             bodySw: 'Kwa uwazi, toleo hili halikusanyi:',
@@ -202,7 +202,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             ],
           ),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Watoto',
             titleEn: 'Children',
             bodySw: 'App hii imeundwa kwa watoto wa miaka 3–8. Hatukusanyi '
@@ -217,7 +217,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 'stays on the device and a parent can remove it at any time.',
           ),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Malipo',
             titleEn: 'Payments',
             bodySw: 'Toleo hili halina malipo yoyote. M-Pesa, Tigo Pesa na '
@@ -232,7 +232,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 'the app will not store PINs or full phone numbers.',
           ),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Haki zako',
             titleEn: 'Your rights',
             bodySw: 'Chini ya Sheria ya Ulinzi wa Taarifa Binafsi ya Mwaka '
@@ -278,7 +278,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             ),
           ),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Usalama',
             titleEn: 'Security',
             bodySw: 'Data yote iko kwenye kifaa chako, ndani ya hifadhi ya '
@@ -293,7 +293,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 'because there is no online profile.',
           ),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Mabadiliko ya sera hii',
             titleEn: 'Changes to this policy',
             bodySw: 'Tukiongeza huduma inayohitaji mtandao — kama akaunti au '
@@ -304,7 +304,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 'that feature goes live, and explain what changed.',
           ),
 
-          _PolicySection(
+          const _PolicySection(
             titleSw: 'Mawasiliano',
             titleEn: 'Contact',
             bodySw: 'Kwa maswali kuhusu sera hii, tunaweza kufikiwa kupitia '

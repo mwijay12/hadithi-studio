@@ -160,7 +160,7 @@ class AppShell extends StatelessWidget {
           // Kivuli chepesi hutenganisha nav na maudhui bila mstari mzito.
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 12,
               offset: const Offset(0, -2),
             ),
@@ -415,7 +415,7 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
               padding:
                   const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Material(
-                color: AppColors.safariGreen.withOpacity(0.10),
+                color: AppColors.safariGreen.withValues(alpha: 0.10),
                 borderRadius: AppSpacing.borderRadiusMd,
                 child: InkWell(
                   borderRadius: AppSpacing.borderRadiusMd,
@@ -669,7 +669,7 @@ class CreateTabPage extends StatelessWidget {
                           // mpya zaidi; Flutter 3.16 haina. `surfaceVariant`
                           // ndiyo jukumu lake hapa.
                           color:
-                              theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                              theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                           borderRadius: AppSpacing.borderRadiusMd,
                           border: Border.all(
                             color: theme.colorScheme.outlineVariant,
@@ -994,7 +994,7 @@ class ProfileTabPage extends StatelessWidget {
                       // kuandika `/settings` mwenyewe. Safu ya chini
                       // ilikuwa chini ya skrini. Sasa ni kadi ya kwanza.
                       Material(
-                        color: theme.colorScheme.primary.withOpacity(0.08),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.08),
                         borderRadius: AppSpacing.borderRadiusMd,
                         child: InkWell(
                           borderRadius: AppSpacing.borderRadiusMd,
@@ -1182,7 +1182,7 @@ class ProfileTabPage extends StatelessWidget {
                                         'are not live yet',
                                   ),
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: Colors.white.withOpacity(0.92),
+                                    color: Colors.white.withValues(alpha: 0.92),
                                   ),
                                 ),
                               ],

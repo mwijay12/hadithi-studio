@@ -36,7 +36,7 @@ class StoryDetailCubit extends Cubit<StoryDetailState> {
               ? StoryDetailStatus.initial
               : StoryDetailStatus.success,
           story: initialStory,
-        ));
+        ),);
 
   final StoryRepository _repository;
 
@@ -56,7 +56,7 @@ class StoryDetailCubit extends Cubit<StoryDetailState> {
       emit(state.copyWith(
         status: StoryDetailStatus.loading,
         clearFailure: true,
-      ));
+      ),);
     }
 
     final Either<Failure, Story> result = await _repository.getStoryById(id);
@@ -67,13 +67,13 @@ class StoryDetailCubit extends Cubit<StoryDetailState> {
         emit(StoryDetailState(
           status: StoryDetailStatus.failure,
           failure: failure,
-        ));
+        ),);
       },
       (Story story) {
         emit(StoryDetailState(
           status: StoryDetailStatus.success,
           story: story,
-        ));
+        ),);
       },
     );
   }

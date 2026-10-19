@@ -150,7 +150,7 @@ class AppErrorWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: context.textTheme.headlineSmall,
                 ),
-                SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.sm),
 
                 Text(
                   detail,
@@ -162,7 +162,7 @@ class AppErrorWidget extends StatelessWidget {
                 // hahitaji kuona 'NETWORK_ERROR'; msanidi anayeangalia log
                 // anaihitaji ili kulinganisha na Sentry.
                 if (AppConfig.enableLogging && failure.code != null) ...[
-                  SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: AppSpacing.md),
                   Text(
                     failure.code!,
                     textAlign: TextAlign.center,
@@ -247,7 +247,7 @@ class _ErrorGlyph extends StatelessWidget {
         decoration: BoxDecoration(
           // `0.10` inatosha kuonekana kwenye `cardBackground` nyeupe na
           // kwenye `darkSurface`; kwa hivyo thamani moja inafaa mandhari zote.
-          color: tone.withOpacity(0.10),
+          color: tone.withValues(alpha: 0.10),
           shape: BoxShape.circle,
         ),
         alignment: Alignment.center,

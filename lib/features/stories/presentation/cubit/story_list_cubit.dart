@@ -58,7 +58,7 @@ class StoryListCubit extends Cubit<StoryListState> {
       query: '',
       shelf: shelf,
       clearFailure: true,
-    ));
+    ),);
 
     final Either<Failure, List<Story>> result =
         await _repository.getStoriesByShelf(shelf);
@@ -76,7 +76,7 @@ class StoryListCubit extends Cubit<StoryListState> {
       query: '',
       clearShelf: true,
       clearFailure: true,
-    ));
+    ),);
 
     final Either<Failure, List<Story>> result = await _repository.getAllStories();
     if (isClosed || id != _requestId) return;
@@ -95,7 +95,7 @@ class StoryListCubit extends Cubit<StoryListState> {
       stories: const <Story>[],
       query: trimmed,
       clearFailure: true,
-    ));
+    ),);
 
     final Either<Failure, List<Story>> result =
         await _repository.searchStories(trimmed);
@@ -145,7 +145,7 @@ class StoryListCubit extends Cubit<StoryListState> {
           query: query,
           shelf: shelf,
           failure: failure,
-        ));
+        ),);
       },
       (List<Story> stories) {
         emit(StoryListState(
@@ -153,7 +153,7 @@ class StoryListCubit extends Cubit<StoryListState> {
           stories: stories,
           query: query,
           shelf: shelf,
-        ));
+        ),);
       },
     );
   }

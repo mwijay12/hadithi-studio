@@ -120,7 +120,7 @@ abstract final class SwahiliTextUtils {
           start: start,
           end: index,
           isWord: false,
-        ));
+        ),);
         continue;
       }
 
@@ -140,7 +140,7 @@ abstract final class SwahiliTextUtils {
           start: start,
           end: index,
           isWord: true,
-        ));
+        ),);
         continue;
       }
 
@@ -155,7 +155,7 @@ abstract final class SwahiliTextUtils {
         start: start,
         end: index,
         isWord: false,
-      ));
+      ),);
     }
     return tokens;
   }

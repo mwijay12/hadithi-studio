@@ -84,7 +84,7 @@ class StoryArtwork extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: accent.withOpacity(0.20),
+            color: accent.withValues(alpha: 0.20),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -108,7 +108,7 @@ class StoryArtwork extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: <Color>[accent, accent.withOpacity(0.65)],
+                  colors: <Color>[accent, accent.withValues(alpha: 0.65)],
                 ),
               ),
             ),
@@ -120,8 +120,8 @@ class StoryArtwork extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: <Color>[
-                  Colors.black.withOpacity(0.0),
-                  Colors.black.withOpacity(0.72),
+                  Colors.black.withValues(alpha: 0.0),
+                  Colors.black.withValues(alpha: 0.72),
                 ],
                 stops: const <double>[0.40, 1.0],
               ),
@@ -171,7 +171,7 @@ class StoryArtwork extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: Colors.white.withOpacity(0.30),
+                      backgroundColor: Colors.white.withValues(alpha: 0.30),
                       valueColor: const AlwaysStoppedAnimation<Color>(
                         AppColors.sunsetGold,
                       ),

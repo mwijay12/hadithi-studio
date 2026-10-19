@@ -49,7 +49,7 @@ class HomeStoriesCubit extends Cubit<HomeStoriesState> {
     emit(state.copyWith(
       status: HomeStoriesStatus.loading,
       clearFailure: true,
-    ));
+    ),);
 
     // -------------------------------------------------------------------
     // 1. Orodha kamili — hii inaamua kama skrini ina kitu au la.
@@ -64,7 +64,7 @@ class HomeStoriesCubit extends Cubit<HomeStoriesState> {
       emit(state.copyWith(
         status: HomeStoriesStatus.failure,
         failure: allFailure,
-      ));
+      ),);
       return;
     }
 
@@ -98,7 +98,7 @@ class HomeStoriesCubit extends Cubit<HomeStoriesState> {
       daily: all.first,
       featured: featured,
       trending: trending,
-    ));
+    ),);
   }
 
   /// Hupakia upya — hutumika kwa "Jaribu tena" na kwa kuvuta-chini.

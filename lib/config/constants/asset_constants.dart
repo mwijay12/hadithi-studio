@@ -186,10 +186,8 @@ abstract final class AssetConstants {
   // Fonts (bundled — offline)
   // ─────────────────────────────────────────────────────────────
 
-  /// Njia za fonts zilizopangwa. Kwa sasa `pubspec.yaml` ina `fonts:`
-  /// iliyofungwa (commented) na tunatumia `google_fonts`. Kwa production
-  /// (offline-first!), pakua .ttf hapa na uwashe `fonts:` kwenye pubspec,
-  /// kisha uondoe GoogleFonts kwenye `typography.dart`.
+  /// Njia za fonts zilizopangwa. Fonts zote zimefungwa ndani ya app na
+  /// kutangazwa kwenye `pubspec.yaml` — app hufanya kazi **bila mtandao**.
   static const String fontsDirectory = _fonts;
   static const String fontNunitoRegular = '$_fonts/Nunito-Regular.ttf';
   static const String fontNunitoBold = '$_fonts/Nunito-Bold.ttf';

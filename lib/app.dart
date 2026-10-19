@@ -139,9 +139,9 @@ class _HadithiStudioAppState extends State<HadithiStudioApp> {
           // project hii (Dart 3.2 / Flutter 3.16) ni sahihi.
           builder: (BuildContext context, Widget? child) {
             final MediaQueryData media = MediaQuery.of(context);
-            final double clamped = media.textScaleFactor.clamp(1.0, 1.3);
+            final double clamped = media.textScaler.scale(1.0).clamp(1.0, 1.3);
             return MediaQuery(
-              data: media.copyWith(textScaleFactor: clamped),
+              data: media.copyWith(textScaler: TextScaler.linear(clamped)),
               // Ukuta wa makosa huzungukwa HAPA — ndani ya `MaterialApp`
               // (skrini ya kurejesha inahitaji `Theme`, `Directionality` na
               // l10n). Vilevile: `MaterialApp` hairuhusu `builder` mbili, hivyo

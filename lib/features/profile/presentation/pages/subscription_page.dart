@@ -243,9 +243,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: scheme.surfaceVariant.withOpacity(0.30),
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.30),
               borderRadius: AppSpacing.borderRadiusMd,
-              border: Border.all(color: scheme.outline.withOpacity(0.4)),
+              border: Border.all(color: scheme.outline.withValues(alpha: 0.4)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,9 +327,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: scheme.surfaceVariant.withOpacity(0.30),
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.30),
               borderRadius: AppSpacing.borderRadiusMd,
-              border: Border.all(color: scheme.outline.withOpacity(0.4)),
+              border: Border.all(color: scheme.outline.withValues(alpha: 0.4)),
             ),
             child: SwitchListTile(
               value: _notify,
@@ -465,7 +465,7 @@ class _PlanRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: scheme.surfaceVariant.withOpacity(0.22),
+        color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
         borderRadius: AppSpacing.borderRadiusMd,
       ),
       child: Row(
@@ -519,7 +519,7 @@ class _ComingBadge extends StatelessWidget {
         vertical: AppSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: scheme.primary.withOpacity(0.12),
+        color: scheme.primary.withValues(alpha: 0.12),
         borderRadius: AppSpacing.borderRadiusPill,
       ),
       child: Text(

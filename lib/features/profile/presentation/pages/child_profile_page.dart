@@ -209,7 +209,7 @@ class _ChildProfilePageState extends State<ChildProfilePage> {
               filled: true,
               // Kijazo ni `surfaceVariant` iliyo hafifu — `surface` ile ile
               // ya ukurasa ingefanya uwanja usionekane kabisa.
-              fillColor: scheme.surfaceVariant.withOpacity(0.35),
+              fillColor: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.lg,
                 vertical: AppSpacing.lg,
@@ -217,13 +217,13 @@ class _ChildProfilePageState extends State<ChildProfilePage> {
               border: OutlineInputBorder(
                 borderRadius: AppSpacing.borderRadiusSm,
                 borderSide: BorderSide(
-                  color: scheme.outline.withOpacity(0.5),
+                  color: scheme.outline.withValues(alpha: 0.5),
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: AppSpacing.borderRadiusSm,
                 borderSide: BorderSide(
-                  color: scheme.outline.withOpacity(0.5),
+                  color: scheme.outline.withValues(alpha: 0.5),
                 ),
               ),
               focusedBorder: OutlineInputBorder(

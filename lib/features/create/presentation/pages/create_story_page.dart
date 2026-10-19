@@ -177,7 +177,7 @@ class _CreateStoryPageState extends State<CreateStoryPage> {
       labelText: label,
       hintText: hint,
       filled: true,
-      fillColor: scheme.onSurface.withOpacity(0.04),
+      fillColor: scheme.onSurface.withValues(alpha: 0.04),
       border: OutlineInputBorder(
         borderRadius: AppSpacing.borderRadiusSm,
         borderSide: BorderSide(color: scheme.outlineVariant),
@@ -409,7 +409,7 @@ class _DraftOnlyNotice extends StatelessWidget {
       decoration: BoxDecoration(
         // `onSurface` hafifu hufanya "kadi ya habari" ionekane kwenye
         // mandhari zote mbili bila rangi ya brand iliyowekwa kwa mkono.
-        color: scheme.onSurface.withOpacity(0.05),
+        color: scheme.onSurface.withValues(alpha: 0.05),
         borderRadius: AppSpacing.borderRadiusSm,
       ),
       child: Row(
@@ -456,9 +456,9 @@ class _ErrorBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: scheme.error.withOpacity(0.10),
+        color: scheme.error.withValues(alpha: 0.10),
         borderRadius: AppSpacing.borderRadiusSm,
-        border: Border.all(color: scheme.error.withOpacity(0.5)),
+        border: Border.all(color: scheme.error.withValues(alpha: 0.5)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

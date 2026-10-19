@@ -72,7 +72,7 @@ class AppAssetIcon extends StatelessWidget {
       errorBuilder: (_, __, ___) => Icon(
         fallbackIcon,
         size: size,
-        color: color ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+        color: color ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
       ),
     );
   }
@@ -285,7 +285,7 @@ class AppCachedImage extends StatelessWidget {
       assetPath: AppImageUtils.errorPlaceholder,
       fallbackIcon: Icons.broken_image_outlined,
       size: _placeholderIconSize,
-      color: Theme.of(context).colorScheme.error.withOpacity(0.5),
+      color: Theme.of(context).colorScheme.error.withValues(alpha: 0.5),
     );
   }
 

@@ -121,7 +121,7 @@ class ReaderCubit extends Cubit<ReaderState> {
       isSpeaking: false,
       isPaused: false,
       clearFailure: true,
-    ));
+    ),);
     _prepareTokens();
     // Alama za kurasa zilizohifadhiwa hurejeshwa chinichini; hazizuii
     // kuonyesha ukurasa (tazama `_restoreBookmarks`).
@@ -136,7 +136,7 @@ class ReaderCubit extends Cubit<ReaderState> {
       status: ReaderStatus.loading,
       clearHighlight: true,
       clearFailure: true,
-    ));
+    ),);
 
     final Either<Failure, Story> result = await _repository.getStoryById(id);
     if (isClosed) return;
@@ -147,7 +147,7 @@ class ReaderCubit extends Cubit<ReaderState> {
           status: ReaderStatus.failure,
           failure: failure,
           speechAvailable: state.speechAvailable,
-        ));
+        ),);
       },
       (Story story) {
         emit(state.copyWith(
@@ -156,7 +156,7 @@ class ReaderCubit extends Cubit<ReaderState> {
           pageIndex: 0,
           clearHighlight: true,
           clearFailure: true,
-        ));
+        ),);
         _prepareTokens();
         unawaited(_restoreBookmarks());
         if (autoPlay) startReadAloud();
@@ -219,7 +219,7 @@ class ReaderCubit extends Cubit<ReaderState> {
       unawaited(_audio.playPage(
         storyId: state.story!.id,
         pageIndex: index,
-      ));
+      ),);
     }
     if (state.autoPageTurn && state.isSpeaking) startReadAloud();
   }
@@ -232,7 +232,7 @@ class ReaderCubit extends Cubit<ReaderState> {
       pageIndex: index,
       clearHighlight: true,
       isPaused: false,
-    ));
+    ),);
     _prepareTokens();
     unawaited(_persistProgress());
     if (wasSpeaking) startReadAloud();
@@ -291,7 +291,7 @@ class ReaderCubit extends Cubit<ReaderState> {
       isPaused: false,
       speechAvailable: ready,
       clearHighlight: true,
-    ));
+    ),);
 
     if (ready) {
       // Tunaanza TTS **na** kipima-muda chetu. Kipima-muda ni chetu kwa
@@ -319,7 +319,7 @@ class ReaderCubit extends Cubit<ReaderState> {
       isSpeaking: false,
       isPaused: false,
       clearHighlight: true,
-    ));
+    ),);
     await _audio.stop();
     await _speech.stop();
   }
@@ -612,7 +612,7 @@ class ReaderCubit extends Cubit<ReaderState> {
     emit(state.copyWith(
       highlightStart: token.start,
       highlightEnd: token.end,
-    ));
+    ),);
 
     _karaokeTimer = Timer(_durationForToken(token), () {
       _tokenIndex += 1;
