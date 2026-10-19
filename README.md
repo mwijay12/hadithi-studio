@@ -217,6 +217,7 @@ Hii ni orodha ya **ukweli**, sivyo ya matumaini:
 
 | Hati | Inaeleza |
 |---|---|
+| [`PLAN.md`](PLAN.md) | **Mpango kamili:** backend, database, malipo, sauti, nyimbo, Creator Studio |
 | [`docs/HANDOFF.md`](docs/HANDOFF.md) | Hali kamili, usanifu, vitu vilivyobaki, mwendelezo |
 | [`docs/GAME-IDEAS.md`](docs/GAME-IDEAS.md) | Maoni matatu ya mchezo + mpango wa utekelezaji |
 | [`docs/PRODUCT-VISION.md`](docs/PRODUCT-VISION.md) | Utambulisho wa bidhaa na mwelekeo wa kipekee |
