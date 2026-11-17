@@ -7,7 +7,7 @@ on:
       - 'arena/7fa735da-hadithi-studio'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   apk:
@@ -47,10 +47,3 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
           retention-days: 14
-      - name: Stage resolved lockfile
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const blob = await github.rest.git.createBlob({owner: context.repo.owner, repo: context.repo.repo, content: fs.readFileSync('pubspec.lock', 'utf8'), encoding: 'utf-8'});
-            core.warning('LOCKFILE_BLOB ' + blob.data.sha);
