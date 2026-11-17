@@ -17,6 +17,8 @@ void main() {
       'safari-ya-matone': 3,
       'ngoma-ya-furaha': 5,
       'twiga-mrefu': 3,
+      'kuku-na-mwewe': 5,
+      'chapati-za-mama': 6,
     };
     for (final entry in pageCounts.entries) {
       for (var page = 0; page < entry.value; page++) {
