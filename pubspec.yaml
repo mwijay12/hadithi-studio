@@ -27,6 +27,9 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   shared_preferences: ^2.2.2
+  # 2.5.0/2.5.1 can crash Android release builds at startup (JNI/R8).
+  # Keep the fixed Android implementation until the lockfile is refreshed.
+  shared_preferences_android: 2.5.2
   flutter_secure_storage: ^11.2.0
 
   # ---------- Navigation ----------
