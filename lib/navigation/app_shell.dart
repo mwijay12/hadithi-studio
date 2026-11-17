@@ -26,6 +26,7 @@ import '../core/enums/app_enums.dart';
 import '../core/extensions/context_extensions.dart';
 import '../core/services/library_store.dart';
 import '../core/widgets/leo_mascot.dart';
+import '../core/widgets/story_clouds.dart';
 import '../l10n/app_locale_controller.dart';
 import '../../config/theme/colors.dart';
 import '../../config/theme/spacing.dart';
@@ -311,9 +312,14 @@ class HomeTabPage extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
           children: <Widget>[
-            _TabHeader(
-              title: l10n.appName,
-              subtitle: l10n.splashTagline,
+            Stack(
+              children: <Widget>[
+                const Positioned.fill(child: StoryClouds()),
+                _TabHeader(
+                  title: l10n.appName,
+                  subtitle: l10n.splashTagline,
+                ),
+              ],
             ),
             // Kadi kuu — hadithi ya leo. Ni kubwa kuliko kadi nyingine kwa
             // sababu ndiyo hatua moja tunayotaka mtumiaji aichukue kwanza.

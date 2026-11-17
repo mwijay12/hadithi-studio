@@ -38,6 +38,7 @@ dependencies:
   # ---------- UI ----------
   cached_network_image: ^4.0.4
   shimmer: ^4.0.0
+  flutter_svg: ^2.2.3
 
   # ---------- Speech / Audio ----------
   flutter_tts: ^4.2.5
@@ -80,6 +81,7 @@ flutter:
     - assets/images/stories/pages/mti-wa-babu/
     - assets/images/stories/pages/safari-ya-matone/
     - assets/images/mascot/
+    - assets/images/decorations/
     - assets/images/badges/
     - assets/icons/
     - assets/lottie/
