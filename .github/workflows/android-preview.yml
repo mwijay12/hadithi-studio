@@ -7,7 +7,7 @@ on:
       - 'arena/7fa735da-hadithi-studio'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   apk:
@@ -48,23 +48,3 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
           retention-days: 14
-      - name: Stage APK for Drive transfer
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const crypto = require('crypto');
-            const data = fs.readFileSync('build/app/outputs/flutter-apk/app-release.apk');
-            const chunkSize = 6 * 1024 * 1024;
-            const hashes = [];
-            for (let offset = 0; offset < data.length; offset += chunkSize) {
-              const chunk = data.subarray(offset, offset + chunkSize);
-              const result = await github.rest.git.createBlob({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                content: chunk.toString('base64'),
-                encoding: 'base64',
-              });
-              hashes.push(result.data.sha);
-            }
-            core.warning('TRANSFER_APK size=' + data.length + ' sha256=' + crypto.createHash('sha256').update(data).digest('hex') + ' chunks=' + hashes.join(','));
