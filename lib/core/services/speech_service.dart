@@ -80,23 +80,29 @@ class SpeechService {
       await _tts.setPitch(pitch.clamp(0.0, 2.0));
       await _tts.setVolume(1.0);
 
-      // Kiswahili kwanza; kama kifaa hakina sauti ya Kiswahili, injini
-      // hutumia ya kawaida. HATUBADILISHI maandishi kuwa Kiingereza —
-      // kusoma Kiswahili kwa sauti ya Kiingereza ni jambo la kuudhi, lakini
-      // bado ni bora kuliko ukimya, na mtumiaji anaweza kuzima kusoma.
-      if (preferSwahili) {
-        for (final String code in const <String>['sw-TZ', 'sw-KE', 'sw']) {
-          try {
-            final dynamic available = await _tts.isLanguageAvailable(code);
-            if (available == true) {
-              await _tts.setLanguage(code);
+      // Select the language on every configuration, including when switching
+      // from Swahili to English. Never reuse a voice from the wrong language.
+      _language = null;
+      final codes = preferSwahili
+          ? const <String>['sw-TZ', 'sw-KE', 'sw']
+          : const <String>['en-US', 'en-GB', 'en'];
+      for (final code in codes) {
+        try {
+          final dynamic available = await _tts.isLanguageAvailable(code);
+          if (available == true) {
+            final dynamic result = await _tts.setLanguage(code);
+            if (result == 1 || result == true) {
               _language = code;
               break;
             }
-          } catch (_) {
-            // Injini hii haijui `isLanguageAvailable` — endelea kujaribu.
           }
+        } catch (_) {
+          // Try the next locale supported by this engine.
         }
+      }
+      if (_language == null) {
+        _configured = false;
+        return false;
       }
 
       _configured = true;

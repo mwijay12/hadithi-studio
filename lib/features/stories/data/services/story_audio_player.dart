@@ -107,6 +107,7 @@ class StoryAudioPlayer {
   Future<bool> playPage({
     required String storyId,
     required int pageIndex,
+    double speed = 1.0,
   }) async {
     final String asset = BundledStories.pageAudioAsset(storyId, pageIndex);
     try {
@@ -114,8 +115,7 @@ class StoryAudioPlayer {
         return false;
       }
       await _player.setAsset(asset);
-      // Sauti ya hadithi ya watoto: kasi ya kawaida, si 1.0 ya haraka.
-      await _player.setSpeed(1.0);
+      await _player.setSpeed(speed);
       unawaited(_player.play().catchError((Object error) {
         debugPrint('StoryAudioPlayer: kucheza kimeshindwa — $error');
       }));
@@ -123,6 +123,15 @@ class StoryAudioPlayer {
     } catch (error) {
       debugPrint('StoryAudioPlayer: kucheza kimeshindwa ($asset) — $error');
       return false;
+    }
+  }
+
+  /// Changes speed without restarting the current recording.
+  Future<void> setSpeed(double speed) async {
+    try {
+      await _player.setSpeed(speed);
+    } catch (error) {
+      debugPrint('StoryAudioPlayer: kubadilisha kasi kumeshindwa — $error');
     }
   }
 

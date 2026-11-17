@@ -277,6 +277,7 @@ class ReaderCubit extends Cubit<ReaderState> {
     if (_swahili && await _audio.playPage(
       storyId: state.story!.id,
       pageIndex: state.pageIndex,
+      speed: state.rateMultiplier,
     )) {
       if (isClosed) return;
       _usingRecordedAudio = true;
@@ -458,7 +459,11 @@ class ReaderCubit extends Cubit<ReaderState> {
     final bool wasSpeaking = state.isSpeaking;
     _stopKaraoke();
     emit(state.copyWith(rateMultiplier: clamped));
-    if (wasSpeaking) startReadAloud();
+    if (_usingRecordedAudio) {
+      unawaited(_audio.setSpeed(clamped));
+    } else if (wasSpeaking) {
+      startReadAloud();
+    }
   }
 
   /// Hubadilisha sauti (Mama/Baba/Mtoto).
