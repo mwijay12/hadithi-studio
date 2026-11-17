@@ -149,7 +149,7 @@ class TtsControls extends StatelessWidget {
                       child: Center(
                         child: _PlayButton(
                           state: state,
-                          onPressed: state.speechAvailable && state.allowsAudio
+                          onPressed: state.allowsAudio
                               ? cubit.toggleReadAloud
                               : null,
                         ),
@@ -542,7 +542,7 @@ class _ReaderChip extends StatelessWidget {
 /// Onyo la wazi: kifaa hiki hakiwezi kutoa sauti.
 ///
 /// Kwa nini tunasema hivi: spec inataka uaminifu. Kitufe cha kucheza
-/// kinazimwa, lakini mtumiaji asielewe kwa nini — hivyo tunasema.
+/// bado huruhusu kujaribu tena au kubadili lugha/ukurasa.
 class _NoAudioNotice extends StatelessWidget {
   const _NoAudioNotice({required this.ink});
 
@@ -568,10 +568,8 @@ class _NoAudioNotice extends StatelessWidget {
           Expanded(
             child: Text(
               context.localised(
-                swahili: 'Sauti haipatikani kwenye kifaa hiki — unaweza '
-                    'kusoma kwa macho.',
-                english: 'Audio is not available on this device — you can '
-                    'still read along.',
+                swahili: 'Sauti haipatikani kwa lugha au ukurasa huu. Badili lugha au jaribu tena.',
+                english: 'Audio is unavailable for this language or page. Change language or try again.',
               ),
               style: TextStyle(fontSize: 12, color: ink.withValues(alpha: 0.75)),
             ),

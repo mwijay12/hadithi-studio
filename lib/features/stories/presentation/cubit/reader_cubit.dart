@@ -282,7 +282,10 @@ class ReaderCubit extends Cubit<ReaderState> {
       if (isClosed) return;
       _usingRecordedAudio = true;
       _resumeAfterTurn = false;
-      emit(state.copyWith(isSpeaking: true, isPaused: false, clearHighlight: true));
+      emit(state.copyWith(
+        isSpeaking: true, isPaused: false, speechAvailable: true,
+        clearHighlight: true,
+      ));
       return;
     }
 
@@ -296,7 +299,7 @@ class ReaderCubit extends Cubit<ReaderState> {
     _resumeAfterTurn = false;
     _tokenIndex = 0;
     emit(state.copyWith(
-      isSpeaking: true,
+      isSpeaking: ready,
       isPaused: false,
       speechAvailable: ready,
       clearHighlight: true,
@@ -311,14 +314,11 @@ class ReaderCubit extends Cubit<ReaderState> {
         onDone: _onSpeechFinished,
         onCancel: _onSpeechCancelled,
       );
+      _scheduleNextToken();
     } else {
-      // Hakuna injini ya sauti: mwanga unaendelea kama "kusoma kwa macho".
-      // Hatuonyeshi kosa — tunaonyesha tu hali ya ukweli kwenye UI.
-      debugPrint(
-        'ReaderCubit: injini ya sauti haipatikani — mwanga wa neno pekee.',
-      );
+      // Do not advance pages or highlight words when there is no audio.
+      debugPrint('ReaderCubit: sauti ya lugha hii haipatikani.');
     }
-    _scheduleNextToken();
   }
 
   /// Husimamisha kusoma kabisa.
