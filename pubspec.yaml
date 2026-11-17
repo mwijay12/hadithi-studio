@@ -99,6 +99,7 @@ flutter:
     - assets/audio/kuku-na-mwewe/
     - assets/audio/chapati-za-mama/
     - assets/audio/songs/
+    - assets/audio/music/
     - assets/fonts/
 
   # ---------------------------------------------------------------------

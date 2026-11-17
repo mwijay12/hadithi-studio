@@ -43,6 +43,7 @@ import '../../../../config/constants/app_constants.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/services/reading_progress_store.dart';
 import '../../data/services/story_audio_player.dart';
+import '../../data/services/background_music_player.dart';
 import '../../../../core/services/speech_service.dart';
 import '../../../../core/utils/text_utils.dart';
 import '../../domain/entities/story.dart';
@@ -63,10 +64,12 @@ class ReaderCubit extends Cubit<ReaderState> {
     SpeechService? speech,
     ReadingProgressStore? progressStore,
     StoryAudioPlayer? audioPlayer,
+    BackgroundMusicPlayer? musicPlayer,
   })  : _repository = repository ?? resolveStoryRepository(),
         _speech = speech ?? SpeechService(),
         _progress = progressStore ?? const ReadingProgressStore(),
         _audio = audioPlayer ?? StoryAudioPlayer(),
+        _music = musicPlayer ?? BackgroundMusicPlayer(),
         super(const ReaderState()) {
     _audioSubscription = _audio.processingStateStream.listen((processingState) {
       if (processingState == ProcessingState.completed &&
@@ -84,6 +87,7 @@ class ReaderCubit extends Cubit<ReaderState> {
   ///
   /// Huanguka kimya kama ukurasa hauna faili — tazama `startReadAloud`.
   final StoryAudioPlayer _audio;
+  final BackgroundMusicPlayer _music;
   late final StreamSubscription<ProcessingState> _audioSubscription;
   bool _usingRecordedAudio = false;
 
@@ -416,6 +420,25 @@ class ReaderCubit extends Cubit<ReaderState> {
   // =========================================================================
   // Mapendeleo
   // =========================================================================
+
+  /// Music is opt-in, independent of narrated audio and limited to this reader.
+  Future<void> setMusicEnabled(bool enabled) async {
+    if (state.musicBusy || enabled == state.musicEnabled) return;
+    emit(state.copyWith(musicBusy: true));
+    if (enabled) {
+      final started = await _music.start(state.musicVolume);
+      if (!isClosed) emit(state.copyWith(musicEnabled: started, musicBusy: false));
+    } else {
+      await _music.stop();
+      if (!isClosed) emit(state.copyWith(musicEnabled: false, musicBusy: false));
+    }
+  }
+
+  void setMusicVolume(double volume) {
+    final value = volume.clamp(0.0, 0.5);
+    emit(state.copyWith(musicVolume: value));
+    unawaited(_music.setVolume(value));
+  }
 
   /// Huongeza ukubwa wa maandishi kwa hatua.
   void increaseTextScale() =>
@@ -750,6 +773,7 @@ class ReaderCubit extends Cubit<ReaderState> {
   Future<void> close() async {
     await _audioSubscription.cancel();
     await _audio.dispose();
+    await _music.dispose();
     // Hifadhi ya mwisho: mtoto anaweza kufunga reader bila kugeuza ukurasa,
     // na hapo ndipo `saveProgressNow` pekee inayoweza kuokoa mahali alipo.
     await _persistProgress();
