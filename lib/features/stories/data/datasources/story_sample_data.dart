@@ -582,7 +582,7 @@ abstract final class StorySampleData {
           textEn: 'In the village hall there was a big drum. It had rested '
               'silent for many years. Everyone had their own work, and '
               'nobody remembered to strike it.',
-          illustration: _Art.songs,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_01.webp',
         ),
         StoryPage(
           textSw: 'Juma alipapasa vumbi kwa kitambaa. Akapiga mara moja: '
@@ -591,7 +591,7 @@ abstract final class StorySampleData {
           textEn: 'Juma wiped the dust away with a cloth. He struck it once: '
               '"Pa!" The sound left the hall, crossed the playground and '
               'reached the fields.',
-          illustration: _Art.songs,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_02.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.sound_effect,
@@ -602,10 +602,10 @@ abstract final class StorySampleData {
                   'na ndefu.',
               revealEn: 'This drum is made from mvule wood, goatskin and '
                   'leather cords. That is why its sound is deep and long.',
-              left: 0.26,
-              top: 0.18,
-              width: 0.46,
-              height: 0.50,
+              left: 0.10,
+              top: 0.34,
+              width: 0.42,
+              height: 0.30,
             ),
           ],
         ),
@@ -616,7 +616,7 @@ abstract final class StorySampleData {
           textEn: 'Mzee Hamisi arrived at a run. "This is my grandfather\'s '
               'drum!" he said. He taught Juma the rhythm: "Once, once, '
               'twice." Juma tried, made a mistake, and tried again.',
-          illustration: _Art.culture,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_03.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.mini_game,
@@ -626,10 +626,10 @@ abstract final class StorySampleData {
                   'Mdundo ni lugha — hauhitaji maneno!',
               revealEn: 'Try clapping: ONCE, ONCE, TWICE. Rhythm is a '
                   'language — it needs no words!',
-              left: 0.10,
+              left: 0.30,
               top: 0.44,
-              width: 0.30,
-              height: 0.34,
+              width: 0.42,
+              height: 0.22,
             ),
           ],
         ),
@@ -640,7 +640,7 @@ abstract final class StorySampleData {
           textEn: 'Many people came. Mothers made tea, children played, '
               'grandmothers sang the old songs. There was a joy in the yard '
               'that had been missing for a long time.',
-          illustration: _Art.hero,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_04.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.animation,
@@ -650,10 +650,10 @@ abstract final class StorySampleData {
                   'ndiyo maana ni sehemu ya utamaduni wetu.',
               revealEn: 'A drum brings people of every age together in one '
                   'place — that is why it is part of our culture.',
-              left: 0.34,
-              top: 0.30,
-              width: 0.42,
-              height: 0.44,
+              left: 0.62,
+              top: 0.36,
+              width: 0.30,
+              height: 0.27,
             ),
           ],
         ),

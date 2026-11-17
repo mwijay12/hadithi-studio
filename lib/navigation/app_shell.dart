@@ -1085,7 +1085,7 @@ class ProfileTabPage extends StatelessWidget {
                                   radius: AppSpacing.avatarSm,
                                   backgroundColor: AppColors.playfulYellow,
                                   backgroundImage: AssetImage(
-                                    'assets/images/mascot_lion.png',
+                                    'assets/images/mascot/leo_reading.webp',
                                   ),
                                 ),
                                 const SizedBox(width: AppSpacing.md),

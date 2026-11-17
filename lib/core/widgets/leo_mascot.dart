@@ -1,12 +1,9 @@
 /// **LEO** — mascot wa Hadithi Studio (simba mdogo).
 ///
-/// ## Kutoka wapi
+/// ## Poses
 ///
-/// Poses hizi zinatoka kwenye **character sheet iliyoidhinishwa** (Leo mmoja,
-/// si simba mwingine) kupitia prototype ya Phase 2/3. Ni **PNG/WebP
-/// zilizokatwa**, zilizobadilishwa kuwa WebP **lossless** ili alpha
-/// ihifadhiwe kikamilifu — WebP ya kupoteza ingeacha **halos** kwenye kingo
-/// za manyoya, na hilo ni kosa moja kwenye orodha ya ukaguzi ya rig.
+/// Five complete, transparent storybook poses of Leo, with space around his
+/// ears, paws and tail. `BoxFit.contain` keeps the artwork intact.
 ///
 /// ## Hii ni nini — na nini HAIYO
 ///
