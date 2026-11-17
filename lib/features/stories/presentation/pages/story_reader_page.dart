@@ -51,6 +51,7 @@ import '../state/reader_state.dart';
 import '../widgets/interactive_hotspot.dart';
 import '../widgets/reader_settings_panel.dart';
 import '../widgets/tts_controls.dart';
+import '../widgets/tree_story_game.dart';
 import '../../../../core/widgets/leo_mascot.dart';
 
 /// Ukurasa wa kusoma/kusikiliza hadithi.
@@ -341,6 +342,14 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
               textAlign: TextAlign.center,
             ),
             actions: <Widget>[
+              if (state.story?.id == 'mti-wa-babu')
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    unawaited(TreeStoryGame.show(context));
+                  },
+                  child: Text(context.localised(swahili: 'Cheza na Leo', english: 'Play with Leo')),
+                ),
               TextButton(
                 onPressed: () async {
                   Navigator.of(dialogContext).pop();
@@ -823,6 +832,15 @@ class _TextOverlay extends StatelessWidget {
                                 : Colors.white)
                             .withValues(alpha: 0.82),
                       ),
+                    ),
+                  ),
+                if (isCurrent && state.isLastPage && state.story?.id == 'mti-wa-babu')
+                  Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.md),
+                    child: FilledButton.icon(
+                      onPressed: state.isSpeaking ? null : () => TreeStoryGame.show(context),
+                      icon: const Icon(Icons.auto_awesome_rounded),
+                      label: Text(context.localised(swahili: 'Cheza na Leo', english: 'Play with Leo')),
                     ),
                   ),
               ],
