@@ -29,6 +29,10 @@ jobs:
       - name: Run Flutter tests
         run: flutter test
         continue-on-error: true
+      - name: Configure memory for CI
+        run: |
+          sed -i 's/-Xmx1024m/-Xmx3g/' android/gradle.properties
+          sed -i 's/android.enableJetifier=true/android.enableJetifier=false/' android/gradle.properties
       - name: Build debug APK
         shell: bash
         run: |
