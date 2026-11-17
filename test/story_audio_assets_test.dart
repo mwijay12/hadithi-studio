@@ -15,6 +15,8 @@ void main() {
       'kifaru-mdogo': 3,
       'mti-wa-babu': 3,
       'safari-ya-matone': 3,
+      'ngoma-ya-furaha': 5,
+      'twiga-mrefu': 3,
     };
     for (final entry in pageCounts.entries) {
       for (var page = 0; page < entry.value; page++) {
