@@ -117,23 +117,27 @@ class _LeoMascotState extends State<LeoMascot>
         LeoPose.curious => 'assets/images/mascot/leo_curious.webp',
       };
 
+  // Listen to system accessibility changes as well as the widget override.
+  // Avoid running a ticker when motion is disabled.
+  void _syncMotion() {
+    if (_shouldStill(context)) {
+      _controller.stop();
+      _controller.value = 0;
+    } else if (!_controller.isAnimating) {
+      _controller.repeat();
+    }
+  }
+
   @override
-  void initState() {
-    super.initState();
-    _controller.repeat();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncMotion();
   }
 
   @override
   void didUpdateWidget(covariant LeoMascot oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Upendeleo wa mfumo unaweza kubadilika wakati app inaendesha —
-    // tunaukagua kwenye `build`, lakini tunasimamisha controller hapa.
-    if (widget.reduceMotion) {
-      _controller.stop();
-      _controller.value = 0;
-    } else if (oldWidget.reduceMotion) {
-      _controller.repeat();
-    }
+    if (oldWidget.reduceMotion != widget.reduceMotion) _syncMotion();
   }
 
   @override

@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/spacing.dart';
 import '../../../../core/extensions/context_extensions.dart';
+import '../../../../core/widgets/leo_mascot.dart';
 import '../../../../l10n/l10n.dart';
 import '../cubit/reader_cubit.dart';
 import '../state/reader_state.dart';
@@ -97,6 +98,12 @@ class ReaderSettingsPanel extends StatelessWidget {
                 ),
                 child: Row(
                   children: <Widget>[
+                    // Leo is a friendly guide here, but the controls remain
+                    // accessible without needing to interact with the mascot.
+                    const ExcludeSemantics(
+                      child: LeoMascot(pose: LeoPose.reading, height: 44),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
                         l10n.readingSettings,
