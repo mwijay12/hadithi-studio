@@ -42,12 +42,14 @@ class StoryDetailCubit extends Cubit<StoryDetailState> {
 
   /// Namba ya ombi — hutupa majibu ya ombi la zamani.
   int _requestId = 0;
+  String? _lastRequestedId;
 
   /// Hupakia hadithi kwa [id].
   ///
   /// Haina hoja ya `force`: kwa data ya ndani (bila mtandao) ombi hili
   /// linakamilika papo hapo, hivyo kulazimisha upakiaji upya hakuna faida.
   Future<void> load(String id) async {
+    _lastRequestedId = id;
     final int requestId = ++_requestId;
 
     // Tunabadilisha `status` tu ikiwa hatuna hadithi tayari — tazama doc ya
@@ -80,7 +82,7 @@ class StoryDetailCubit extends Cubit<StoryDetailState> {
 
   /// Hurudia ombi la mwisho — "Jaribu tena".
   Future<void> retry() async {
-    final String? id = state.story?.id;
+    final String? id = _lastRequestedId;
     if (id == null) return;
     await load(id);
   }

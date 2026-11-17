@@ -12,7 +12,7 @@
 /// ## Kwa nini huduma hii huchunguza faili zenyewe
 ///
 /// Mtumiaji (au agent) anaweka faili kwenye `assets/audio/<story-id>/` na
-/// **hakuna kitu kingine cha kufanya**. Huduma husoma `AssetManifest.json`
+/// **hakuna kitu kingine cha kufanya**. Huduma husoma `AssetManifest`
 /// mara moja, kisha hujua ukurasa upi una sauti. Ukurasa usio na sauti
 /// huangukia TTS **bila kosa** — hivyo hadithi mpya (au ukurasa ambao
 /// haujarekodiwa) bado hufanya kazi.
@@ -26,10 +26,9 @@
 library;
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show debugPrint;
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 import 'package:just_audio/just_audio.dart';
 
 import '../bundled_stories.dart';
@@ -50,6 +49,10 @@ class StoryAudioPlayer {
   /// `true` = kicheza kina sauti inayopiga sasa.
   bool get isPlaying => _player.playing;
 
+  /// Matukio ya mwisho wa kucheza, kwa reader kuendelea au kusimama.
+  Stream<ProcessingState> get processingStateStream =>
+      _player.processingStateStream;
+
   /// Muda wa faili inayopiga (`null` = haijulikani).
   Duration? get duration => _player.duration;
 
@@ -62,13 +65,9 @@ class StoryAudioPlayer {
     if (cached != null) return cached;
 
     try {
-      // `AssetManifest.json` ni njia thabiti zaidi kwa Flutter 3.16 (API ya
-      // `AssetManifest.loadFromAssetBundle` ilibadilika kwenye Matoleo ya
-      // baadaye). Hii husoma faili moja lenye majina ya assets zote.
-      final String raw = await rootBundle.loadString('AssetManifest.json');
-      final Map<String, dynamic> map =
-          jsonDecode(raw) as Map<String, dynamic>;
-      final Set<String> found = map.keys.toSet();
+      final AssetManifest manifest =
+          await AssetManifest.loadFromAssetBundle(rootBundle);
+      final Set<String> found = manifest.listAssets().toSet();
       _assets = found;
       return found;
     } catch (error) {
@@ -117,7 +116,9 @@ class StoryAudioPlayer {
       await _player.setAsset(asset);
       // Sauti ya hadithi ya watoto: kasi ya kawaida, si 1.0 ya haraka.
       await _player.setSpeed(1.0);
-      unawaited(_player.play());
+      unawaited(_player.play().catchError((Object error) {
+        debugPrint('StoryAudioPlayer: kucheza kimeshindwa — $error');
+      }));
       return true;
     } catch (error) {
       debugPrint('StoryAudioPlayer: kucheza kimeshindwa ($asset) — $error');
@@ -137,7 +138,9 @@ class StoryAudioPlayer {
   /// Huendelea kusoma.
   Future<void> resume() async {
     try {
-      unawaited(_player.play());
+      unawaited(_player.play().catchError((Object error) {
+        debugPrint('StoryAudioPlayer: kucheza kimeshindwa — $error');
+      }));
     } catch (error) {
       debugPrint('StoryAudioPlayer: kuendelea kumeshindwa — $error');
     }

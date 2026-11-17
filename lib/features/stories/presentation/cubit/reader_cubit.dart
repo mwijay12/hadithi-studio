@@ -37,6 +37,7 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio/just_audio.dart' show ProcessingState;
 
 import '../../../../config/constants/app_constants.dart';
 import '../../../../core/errors/failures.dart';
@@ -66,7 +67,15 @@ class ReaderCubit extends Cubit<ReaderState> {
         _speech = speech ?? SpeechService(),
         _progress = progressStore ?? const ReadingProgressStore(),
         _audio = audioPlayer ?? StoryAudioPlayer(),
-        super(const ReaderState());
+        super(const ReaderState()) {
+    _audioSubscription = _audio.processingStateStream.listen((processingState) {
+      if (processingState == ProcessingState.completed &&
+          _usingRecordedAudio && !isClosed && state.isSpeaking) {
+        _usingRecordedAudio = false;
+        _onPageReadFinished();
+      }
+    });
+  }
 
   final StoryRepository _repository;
   final SpeechService _speech;
@@ -75,6 +84,8 @@ class ReaderCubit extends Cubit<ReaderState> {
   ///
   /// Huanguka kimya kama ukurasa hauna faili — tazama `startReadAloud`.
   final StoryAudioPlayer _audio;
+  late final StreamSubscription<ProcessingState> _audioSubscription;
+  bool _usingRecordedAudio = false;
 
   /// Huhifadhi ukurasa wa mwisho na alama za kurasa kwa kifaa.
   ///
@@ -213,15 +224,7 @@ class ReaderCubit extends Cubit<ReaderState> {
     _prepareTokens();
     unawaited(_persistProgress());
 
-    // Audio iliyorekodiwa ikipiga, ibadilishe kwa ukurasa mpya badala ya
-    // kuendelea na wa zamani. TTS inashughulikiwa na mstari wa chini.
-    if (_audio.isPlaying && state.story != null) {
-      unawaited(_audio.playPage(
-        storyId: state.story!.id,
-        pageIndex: index,
-      ),);
-    }
-    if (state.autoPageTurn && state.isSpeaking) startReadAloud();
+    if (state.isSpeaking) unawaited(startReadAloud());
   }
 
   /// Huhamisha ukurasa kwa vitendo vya mtumiaji (kitufe).
@@ -253,6 +256,11 @@ class ReaderCubit extends Cubit<ReaderState> {
 
     _stopAutoTurn();
 
+    _usingRecordedAudio = false;
+    await _audio.stop();
+    await _speech.stop();
+    if (isClosed) return;
+
     // ---------------------------------------------------------------
     // AUDIO ILIYOREKODIWA KWANZA, TTS KAMA AKIBA.
     // ---------------------------------------------------------------
@@ -266,13 +274,14 @@ class ReaderCubit extends Cubit<ReaderState> {
     // sababu audio haitoi muda wa maneno. Kuuangazia kwa **kukisia** kungeonyesha
     // mwanga unaochelewa — mbaya kuliko kutokuwa nao. Timestamps
     // (`page_NN.json`, tazama `hasPageTimings`) ndizo zitakazowasha.
-    if (await _audio.playPage(
+    if (_swahili && await _audio.playPage(
       storyId: state.story!.id,
       pageIndex: state.pageIndex,
     )) {
       if (isClosed) return;
+      _usingRecordedAudio = true;
       _resumeAfterTurn = false;
-      emit(state.copyWith(isSpeaking: true, isPaused: false));
+      emit(state.copyWith(isSpeaking: true, isPaused: false, clearHighlight: true));
       return;
     }
 
@@ -314,6 +323,7 @@ class ReaderCubit extends Cubit<ReaderState> {
   /// Husimamisha kusoma kabisa.
   Future<void> stopReadAloud() async {
     _resetPlayback();
+    _usingRecordedAudio = false;
     emit(state.copyWith(
       isSpeaking: false,
       isPaused: false,
@@ -331,7 +341,11 @@ class ReaderCubit extends Cubit<ReaderState> {
       return _resumePlayback();
     } else {
       _stopKaraoke();
-      await _speech.pause();
+      if (_usingRecordedAudio) {
+        await _audio.pause();
+      } else {
+        await _speech.pause();
+      }
       emit(state.copyWith(isPaused: true));
     }
   }
@@ -339,6 +353,11 @@ class ReaderCubit extends Cubit<ReaderState> {
   /// Huendeleza kusoma, au huanza upya ukurasa kama injini haitekelezi
   /// `resume` (Android/iOS).
   Future<void> _resumePlayback() async {
+    if (_usingRecordedAudio) {
+      await _audio.resume();
+      if (!isClosed) emit(state.copyWith(isPaused: false));
+      return;
+    }
     final bool resumed = await _speech.resume();
     if (resumed) {
       emit(state.copyWith(isPaused: false));
@@ -724,6 +743,7 @@ class ReaderCubit extends Cubit<ReaderState> {
 
   @override
   Future<void> close() async {
+    await _audioSubscription.cancel();
     await _audio.dispose();
     // Hifadhi ya mwisho: mtoto anaweza kufunga reader bila kugeuza ukurasa,
     // na hapo ndipo `saveProgressNow` pekee inayoweza kuokoa mahali alipo.

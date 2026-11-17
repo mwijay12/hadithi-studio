@@ -83,6 +83,10 @@ flutter:
     - assets/rive/
     - assets/sounds/
     - assets/audio/
+    - assets/audio/safari-ya-simba/
+    - assets/audio/mlima-kilimanjaro/
+    - assets/audio/nyota-za-usiku/
+    - assets/audio/kifaru-mdogo/
     - assets/audio/songs/
     - assets/fonts/
 
