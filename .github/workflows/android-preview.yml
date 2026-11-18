@@ -1,0 +1,57 @@
+name: Android preview APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'arena/7fa735da-hadithi-studio'
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.0
+          channel: stable
+          cache: true
+      - run: flutter --version
+      - run: flutter pub get
+      - name: Run Flutter tests
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! flutter test --reporter expanded test/home_activities_test.dart 2>&1 | tee /tmp/flutter-test.log; then
+            message=$(tail -100 /tmp/flutter-test.log | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error::$message"
+            exit 1
+          fi
+          flutter test
+      - name: Configure memory for CI
+        run: |
+          sed -i 's/-Xmx1024m/-Xmx3g/' android/gradle.properties
+          sed -i 's/android.enableJetifier=true/android.enableJetifier=false/' android/gradle.properties
+      - name: Build test APK
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! flutter build apk --release 2>&1 | tee /tmp/apk-build.log; then
+            message=$(tail -60 /tmp/apk-build.log | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error::$message"
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hadithi-studio-test-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 14

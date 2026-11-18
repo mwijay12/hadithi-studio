@@ -437,10 +437,10 @@ class _Header extends StatelessWidget {
         children: <Widget>[
           ClipOval(
             child: Image.asset(
-              'assets/images/mascot_lion.png',
+              'assets/images/mascot/leo_wave.webp',
               width: AppSpacing.avatarMd,
               height: AppSpacing.avatarMd,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               // Simba ni mapambo hapa — jina la app linatosha kwa
               // wasomaji wa screen reader.
               excludeFromSemantics: true,

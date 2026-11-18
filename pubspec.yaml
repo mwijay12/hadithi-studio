@@ -27,6 +27,9 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   shared_preferences: ^2.2.2
+  # 2.5.0/2.5.1 can crash Android release builds at startup (JNI/R8).
+  # Keep the fixed Android implementation until the lockfile is refreshed.
+  shared_preferences_android: 2.5.2
   flutter_secure_storage: ^11.2.0
 
   # ---------- Navigation ----------
@@ -35,6 +38,7 @@ dependencies:
   # ---------- UI ----------
   cached_network_image: ^4.0.4
   shimmer: ^4.0.0
+  flutter_svg: ^2.2.3
 
   # ---------- Speech / Audio ----------
   flutter_tts: ^4.2.5
@@ -72,18 +76,33 @@ flutter:
     - assets/images/stories/pages/safari-ya-simba/
     - assets/images/stories/pages/mlima-kilimanjaro/
     - assets/images/stories/pages/nyota-za-usiku/
+    - assets/images/stories/pages/ngoma-ya-furaha/
+    - assets/images/stories/pages/kuku-na-mwewe/
+    - assets/images/stories/pages/chapati-za-mama/
     - assets/images/stories/pages/kifaru-mdogo/
     - assets/images/stories/pages/twiga-mrefu/
     - assets/images/stories/pages/mti-wa-babu/
     - assets/images/stories/pages/safari-ya-matone/
     - assets/images/mascot/
+    - assets/images/decorations/
     - assets/images/badges/
     - assets/icons/
     - assets/lottie/
     - assets/rive/
     - assets/sounds/
     - assets/audio/
+    - assets/audio/safari-ya-simba/
+    - assets/audio/mlima-kilimanjaro/
+    - assets/audio/nyota-za-usiku/
+    - assets/audio/kifaru-mdogo/
+    - assets/audio/mti-wa-babu/
+    - assets/audio/safari-ya-matone/
+    - assets/audio/ngoma-ya-furaha/
+    - assets/audio/twiga-mrefu/
+    - assets/audio/kuku-na-mwewe/
+    - assets/audio/chapati-za-mama/
     - assets/audio/songs/
+    - assets/audio/music/
     - assets/fonts/
 
   # ---------------------------------------------------------------------

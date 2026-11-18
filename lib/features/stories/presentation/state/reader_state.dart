@@ -96,6 +96,9 @@ class ReaderState extends Equatable {
     this.isSpeaking = false,
     this.isPaused = false,
     this.speechAvailable = true,
+    this.musicEnabled = false,
+    this.musicBusy = false,
+    this.musicVolume = 0.15,
     this.textScale = defaultTextScale,
     this.rateMultiplier = defaultRateMultiplier,
     this.voice = ReaderVoice.mama,
@@ -183,16 +186,14 @@ class ReaderState extends Equatable {
   /// `true` = TTS imesimamishwa kwa muda (inaweza kuendelezwa).
   final bool isPaused;
 
-  /// `true` = kifaa hiki kina injini ya sauti inayofanya kazi.
-  ///
-  /// Kwenye simu nyingi za bei nafuu (na kwenye vivinjari vingi vya kompyuta)
-  /// injini ya Kiswahili haipo, na `flutter_tts` hushindwa kusoma. Hali hii
-  /// huruhusu UI kusema ukweli: mwanga wa neno (karaoke) unaendelea, lakini
-  /// **hakuna sauti** — badala ya kuonyesha "inaSoma" wakati wa ukimya.
-  ///
-  /// Hii ni tofauti na [isSpeaking]: [isSpeaking] ni "mtumiaji ameanza
-  /// kusoma", [speechAvailable] ni "kifaa kinaweza kutoa sauti".
+  /// Whether the most recent audio attempt succeeded for the current page.
+  /// A failed attempt does not disable retry or bundled audio in another language.
   final bool speechAvailable;
+
+  /// Music is optional and starts off; volume is independent of narration.
+  final bool musicEnabled;
+  final bool musicBusy;
+  final double musicVolume;
 
   /// Kizidishi cha ukubwa wa maandishi.
   final double textScale;
@@ -342,6 +343,9 @@ class ReaderState extends Equatable {
     bool? isSpeaking,
     bool? isPaused,
     bool? speechAvailable,
+    bool? musicEnabled,
+    bool? musicBusy,
+    double? musicVolume,
     double? textScale,
     double? rateMultiplier,
     ReaderVoice? voice,
@@ -362,6 +366,9 @@ class ReaderState extends Equatable {
       isSpeaking: isSpeaking ?? this.isSpeaking,
       isPaused: isPaused ?? this.isPaused,
       speechAvailable: speechAvailable ?? this.speechAvailable,
+      musicEnabled: musicEnabled ?? this.musicEnabled,
+      musicBusy: musicBusy ?? this.musicBusy,
+      musicVolume: musicVolume ?? this.musicVolume,
       textScale: textScale ?? this.textScale,
       rateMultiplier: rateMultiplier ?? this.rateMultiplier,
       voice: voice ?? this.voice,
@@ -386,6 +393,9 @@ class ReaderState extends Equatable {
         isSpeaking,
         isPaused,
         speechAvailable,
+        musicEnabled,
+        musicBusy,
+        musicVolume,
         textScale,
         rateMultiplier,
         voice,

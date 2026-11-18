@@ -12,8 +12,7 @@
 /// 3. **Hali ya kusoma** — redio tatu (`Soma na Sikiliza` ndiyo ya kawaida).
 /// 4. **Kugeuza kurasa kiotomatiki** — swichi + kichaguzi cha sekunde
 ///    (`1`, `2`, `3`, `5`).
-/// 5. **Muziki wa mandhari** — kielelezo cha mahali (placeholder), kimezimwa
-///    kwa makusudi hadi Prompt 6.
+/// 5. **Muziki wa mandhari** — hiari, na sauti yake pekee.
 library;
 
 import 'package:flutter/material.dart';
@@ -21,6 +20,7 @@ import 'package:flutter/material.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/spacing.dart';
 import '../../../../core/extensions/context_extensions.dart';
+import '../../../../core/widgets/leo_mascot.dart';
 import '../../../../l10n/l10n.dart';
 import '../cubit/reader_cubit.dart';
 import '../state/reader_state.dart';
@@ -97,6 +97,12 @@ class ReaderSettingsPanel extends StatelessWidget {
                 ),
                 child: Row(
                   children: <Widget>[
+                    // Leo is a friendly guide here, but the controls remain
+                    // accessible without needing to interact with the mascot.
+                    const ExcludeSemantics(
+                      child: LeoMascot(pose: LeoPose.reading, height: 44),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
                         l10n.readingSettings,
@@ -282,38 +288,33 @@ class ReaderSettingsPanel extends StatelessWidget {
                     const SizedBox(height: AppSpacing.xl),
 
                     // ---------------------------------------------------------
-                    // 5. MUZIKI WA MANDHARI (kielelezo — Prompt 6)
-                    // ---------------------------------------------------------
+                    // 5. Muziki wa mandhari (hiari, hauathiri usimulizi).
                     _SectionTitle(label: l10n.backgroundMusic, ink: ink),
-                    Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.music_note_rounded,
-                          size: AppSpacing.iconSm,
-                          color: ink.withValues(alpha: 0.5),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: Text(
-                            context.localised(
-                              swahili: 'Itakuja na Prompt 6',
-                              english: 'Coming with Prompt 6',
-                            ),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: ink.withValues(alpha: 0.6),
-                            ),
-                          ),
-                        ),
-                        // Kimezimwa kwa makusudi: hatuweki swichi inayofanya
-                        // kitu ambacho hakipo.
-                        const Switch(
-                          value: false,
-                          onChanged: null,
-                          activeThumbColor: AppColors.safariGreen,
-                        ),
-                      ],
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: state.musicEnabled,
+                      onChanged: state.musicBusy ? null : cubit.setMusicEnabled,
+                      activeThumbColor: AppColors.safariGreen,
+                      title: Text(context.localised(
+                        swahili: 'Muziki wa utulivu', english: 'Calm background music',
+                      ), style: TextStyle(color: ink)),
+                      subtitle: Text(context.localised(
+                        swahili: 'Muziki wa mfano; unazimika ukitoka.',
+                        english: 'Sample music; stops when you leave.',
+                      )),
                     ),
+                    if (state.musicEnabled) ...<Widget>[
+                      Text(context.localised(swahili: 'Sauti ya muziki', english: 'Music volume'),
+                          style: TextStyle(color: ink)),
+                      Slider(
+                        value: state.musicVolume,
+                        min: 0,
+                        max: 0.5,
+                        divisions: 10,
+                        label: '${(state.musicVolume * 100).round()}%',
+                        onChanged: cubit.setMusicVolume,
+                      ),
+                    ],
 
                     const SizedBox(height: AppSpacing.lg),
 

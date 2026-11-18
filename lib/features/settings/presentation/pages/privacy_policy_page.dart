@@ -33,6 +33,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../config/theme/spacing.dart';
 import '../../../../core/extensions/context_extensions.dart';
+import '../../../../core/widgets/leo_mascot.dart';
 
 /// Ukurasa wa sera ya faragha.
 class PrivacyPolicyPage extends StatelessWidget {
@@ -71,53 +72,18 @@ class PrivacyPolicyPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
         children: <Widget>[
-          // ---- Kichwa: Leo ndani ya fremu ya mviringo ----
-          //
-          // **Kwa nini fremu:** picha ya Leo (`leo_curious.webp`) imekatwa
-          // kwenye ukingo wake wa kulia na chini kwenye faili yenyewe.
-          // Kuionyesha kama ilivyo kunafanya ionekane imekatwa kwa bahati
-          // mbaya. Fremu ya mviringo hubadilisha ukataji huo kuwa **bandiko
-          // la picha** lililokusudiwa — kingo sasa ni mduara, sivyo mstari
-          // uliokatika.
+          // The complete mascot fits inside its frame without cropping.
           Center(
             child: Container(
               width: 132,
               height: 132,
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: scheme.primary.withValues(alpha: 0.10),
                 border: Border.all(color: scheme.outlineVariant),
               ),
-              child: ClipOval(
-                // **Kwa nini `Transform.scale`:** picha ya Leo imekatwa
-                // kwa mstari mnyoofu upande wa kulia (sikio) na chini
-                // (kifua) ndani ya **faili yenyewe**. Kuionyesha kwa
-                // `BoxFit.cover` pekee kunafanya ukataji huo uonekane
-                // ndani ya duara. Kukuza picha kwa 1.55 huntoa kingo
-                // zote zilizokatwa nje ya duara — kinachobaki ni uso.
-                child: Transform.scale(
-                  scale: 1.55,
-                  child: Image.asset(
-                  'assets/images/mascot/leo_curious.webp',
-                  fit: BoxFit.cover,
-                  // Kichwa kiko juu na kulia kidogo; tunaipandisha na
-                  // kuisogeza kushoto ili uso uwe katikati ya duara.
-                  alignment: const Alignment(0.10, -0.30),
-                  filterQuality: FilterQuality.high,
-                  excludeFromSemantics: true,
-                  errorBuilder: (
-                    BuildContext context,
-                    Object error,
-                    StackTrace? stack,
-                  ) =>
-                      Icon(
-                    Icons.pets_rounded,
-                    size: 48,
-                    color: scheme.primary,
-                  ),
-                  ),
-                ),
-              ),
+              child: const LeoMascot(pose: LeoPose.curious, height: 108),
             ),
           ),
           const SizedBox(height: AppSpacing.md),

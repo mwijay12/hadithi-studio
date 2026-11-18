@@ -1,12 +1,9 @@
 /// **LEO** — mascot wa Hadithi Studio (simba mdogo).
 ///
-/// ## Kutoka wapi
+/// ## Poses
 ///
-/// Poses hizi zinatoka kwenye **character sheet iliyoidhinishwa** (Leo mmoja,
-/// si simba mwingine) kupitia prototype ya Phase 2/3. Ni **PNG/WebP
-/// zilizokatwa**, zilizobadilishwa kuwa WebP **lossless** ili alpha
-/// ihifadhiwe kikamilifu — WebP ya kupoteza ingeacha **halos** kwenye kingo
-/// za manyoya, na hilo ni kosa moja kwenye orodha ya ukaguzi ya rig.
+/// Five complete, transparent storybook poses of Leo, with space around his
+/// ears, paws and tail. `BoxFit.contain` keeps the artwork intact.
 ///
 /// ## Hii ni nini — na nini HAIYO
 ///
@@ -117,23 +114,27 @@ class _LeoMascotState extends State<LeoMascot>
         LeoPose.curious => 'assets/images/mascot/leo_curious.webp',
       };
 
+  // Listen to system accessibility changes as well as the widget override.
+  // Avoid running a ticker when motion is disabled.
+  void _syncMotion() {
+    if (_shouldStill(context)) {
+      _controller.stop();
+      _controller.value = 0;
+    } else if (!_controller.isAnimating) {
+      _controller.repeat();
+    }
+  }
+
   @override
-  void initState() {
-    super.initState();
-    _controller.repeat();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncMotion();
   }
 
   @override
   void didUpdateWidget(covariant LeoMascot oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Upendeleo wa mfumo unaweza kubadilika wakati app inaendesha —
-    // tunaukagua kwenye `build`, lakini tunasimamisha controller hapa.
-    if (widget.reduceMotion) {
-      _controller.stop();
-      _controller.value = 0;
-    } else if (oldWidget.reduceMotion) {
-      _controller.repeat();
-    }
+    if (oldWidget.reduceMotion != widget.reduceMotion) _syncMotion();
   }
 
   @override

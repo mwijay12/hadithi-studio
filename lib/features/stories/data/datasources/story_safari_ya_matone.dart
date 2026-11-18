@@ -4,7 +4,7 @@
 ///
 /// Kama `story_twiga_mrefu.dart`, hadithi hii ina faili yake ndogo ili
 /// mabadiliko ya hadithi moja yasiguse nyingine na `git diff` ubaki wa
-/// kusomeka. Haijaunganishwa kwenye orodha ya `story_sample_data.dart` bado.
+/// kusomeka. Imeunganishwa kwenye orodha ya `story_sample_data.dart`.
 ///
 /// ## Ujumbe
 ///

@@ -902,11 +902,8 @@ class OfflineReport {
   /// Faili za kusoma zisizopo ndani ya app.
   final List<String> missing;
 
-  /// Faili za sauti za kurasa zisizopo (sauti + timestamps).
-  ///
-  /// Hazizuii kusoma: `assets/audio/` ina `.gitkeep` pekee kwa sasa, na
-  /// usimulizi hutumia TTS ya simu. Tunazikagua ili tusiseme "ipo offline"
-  /// kwa usikilizaji wa kurekodiwa ambao haupo.
+  /// Idadi ya kurasa zisizo na faili ya usimulizi ndani ya app.
+  /// Timestamps si lazima kwa kusikiliza offline.
   final int audioMissing;
 
   /// Je, `AssetManifest` iliweza kusomwa?
@@ -914,6 +911,9 @@ class OfflineReport {
 
   /// Faili zote za kusoma zipo ndani ya app?
   bool get isComplete => manifestAvailable && missing.isEmpty;
+
+  /// Sauti zote za kurasa zipo ndani ya app.
+  bool get hasCompleteAudio => manifestAvailable && audioMissing == 0;
 }
 
 /// "Soma Sasa" / "Sikiliza" / hali ya offline.
@@ -930,20 +930,9 @@ class _ActionButtonsState extends State<_ActionButtons> {
   /// Ripoti ya ukaguzi — `null` humaanisha bado tunakagua.
   OfflineReport? _report;
 
-  /// Je, hadithi ilikuwa imehifadhiwa kama "ipo offline" nyakati zilizopita?
-  ///
-  /// Husomwa **mara moja** kwenye `initState`: hifadhi ni ukweli wa kudumu,
-  /// na kuisoma ndani ya `build` kungeifanya UI itegemee hali ya nje bila
-  /// sababu (na `setState` wakati wa `build` ni kosa).
-  bool _downloaded = false;
-
-  /// Kuzuia `setDownloaded` kuitwa kila `setState` — tunaandika mara moja.
-  bool _persisted = false;
-
   @override
   void initState() {
     super.initState();
-    _downloaded = LibraryStore.instance.isDownloaded(widget.story.id);
     // Ukaguzi ni wa faili (I/O): unaanza baada ya fremu ya kwanza ili
     // ukurasa uonekane mara moja, kisha hali ibadilike.
     unawaited(_verifyOffline());
@@ -984,14 +973,11 @@ class _ActionButtonsState extends State<_ActionButtons> {
           .where((String asset) => !bundled.contains(asset))
           .toList(growable: false);
 
-      // Sauti: `BundledStories` ina njia za kila ukurasa (sauti + timestamps).
+      // Timestamps are not needed for audio playback.
       int audioMissing = 0;
       for (int i = 0; i < widget.story.pages.length; i++) {
-        for (final String asset in <String>[
-          BundledStories.pageAudioAsset(widget.story.id, i),
-          BundledStories.pageTimingAsset(widget.story.id, i),
-        ]) {
-          if (!bundled.contains(asset)) audioMissing++;
+        if (!bundled.contains(BundledStories.pageAudioAsset(widget.story.id, i))) {
+          audioMissing++;
         }
       }
 
@@ -1009,21 +995,14 @@ class _ActionButtonsState extends State<_ActionButtons> {
 
     if (!mounted) return;
 
-    // Ukweli ulithibitishwa: huhifadhi mara moja ili hali ihimili urambazaji
-    // (Rafu Yangu, orodha ya "zilizopakuliwa"). `setDownloaded` haitoi
-    // thamani — ndiyo maana `unawaited` inafaa hapa.
-    final bool complete = report.isComplete;
-    if (complete && !_persisted) {
-      _persisted = true;
-      unawaited(
-        LibraryStore.instance.setDownloaded(widget.story.id, downloaded: true),
-      );
+    // Keep the library's reading availability in sync only when known.
+    if (report.manifestAvailable) {
+      unawaited(LibraryStore.instance.setDownloaded(
+        widget.story.id,
+        downloaded: report.isComplete,
+      ));
     }
-
-    setState(() {
-      _report = report;
-      if (complete) _downloaded = true;
-    });
+    setState(() => _report = report);
   }
 
   /// Hufungua reader. `autoPlay: listen` huanza kusikiliza mara moja.
@@ -1058,11 +1037,8 @@ class _ActionButtonsState extends State<_ActionButtons> {
     } else {
       final int present = report.checkedCount - report.missing.length;
       message = context.localised(
-        swahili: 'Faili $present kati ya ${report.checkedCount} '
-            'zinapatikana ndani ya app; zilizosalia zitakuja na upakuaji '
-            'wa seva.',
-        english: '$present of ${report.checkedCount} files are bundled in '
-            'the app; the rest arrive with the server download feature.',
+        swahili: 'Picha $present kati ya ${report.checkedCount} zipo ndani ya app. Kurasa ${report.audioMissing} hazina sauti iliyorekodiwa. Upakuaji bado haujapatikana.',
+        english: '$present of ${report.checkedCount} images are bundled. ${report.audioMissing} pages have no recorded audio. Downloads are not available yet.',
       );
     }
 
@@ -1139,7 +1115,6 @@ class _ActionButtonsState extends State<_ActionButtons> {
           // "Pakua" ya kubuni imebadilishwa na hali **inayothibitishwa**.
           _OfflineControl(
             report: _report,
-            downloaded: _downloaded,
             onExplain: () => _explainOffline(context),
           ),
           // Hadithi ya kulipia: `isPremium`/`priceTZS` hazipo. `isFree` ndiyo
@@ -1169,12 +1144,10 @@ class _ActionButtonsState extends State<_ActionButtons> {
 class _OfflineControl extends StatelessWidget {
   const _OfflineControl({
     required this.report,
-    required this.downloaded,
     required this.onExplain,
   });
 
   final OfflineReport? report;
-  final bool downloaded;
   final VoidCallback onExplain;
 
   @override
@@ -1207,7 +1180,7 @@ class _OfflineControl extends StatelessWidget {
     }
 
     // Imethibitishwa (au ilikuwa imehifadhiwa hapo awali): hali, sivyo kitufe.
-    if (current.isComplete || downloaded) {
+    if (current.isComplete) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -1220,8 +1193,12 @@ class _OfflineControl extends StatelessWidget {
           Flexible(
             child: Text(
               context.localised(
-                swahili: 'Ipo tayari offline',
-                english: 'Available offline',
+                swahili: current.hasCompleteAudio
+                    ? 'Kusoma na sauti ya Kiswahili vipo offline'
+                    : 'Kusoma kupo offline; sauti haijakamilika',
+                english: current.hasCompleteAudio
+                    ? 'Reading and Swahili audio available offline'
+                    : 'Reading is offline; audio is incomplete',
               ),
               style: TextStyle(
                 fontSize: 13,
@@ -1259,7 +1236,7 @@ class _OfflineControl extends StatelessWidget {
     return TextButton.icon(
       onPressed: onExplain,
       icon: Icon(Icons.download_rounded, size: AppSpacing.iconSm, color: muted),
-      label: Text(context.l10n.download),
+      label: Text(context.localised(swahili: 'Taarifa za offline', english: 'Offline details')),
       style: TextButton.styleFrom(
         foregroundColor: muted,
         textStyle: const TextStyle(fontSize: 14),

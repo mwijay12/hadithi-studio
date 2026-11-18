@@ -22,11 +22,8 @@
 ///
 /// ## Kurasa na picha
 ///
-/// Kwa sasa kuna picha 12 tu zilizopangwa kwenye `assets/images/`. Kwa hivyo
-/// kila ukurasa unatumia picha **inayolingana na mandhari** ya ukurasa
-/// (safari, wanyama, sayansi…) badala ya picha ya kubahatisha. Kurasa
-/// zinapopewa michoro halisi, mabadiliko ni ya `illustration:` pekee —
-/// hakuna skrini, widget wala BLoC inayohitaji kubadilishwa.
+/// Kila ukurasa umeunganishwa na faili yake ya mchoro. Maudhui na maeneo
+/// ya kugusa yanahitaji pia kukaguliwa kwenye kifaa baada ya mabadiliko.
 library;
 
 
@@ -39,26 +36,6 @@ import 'story_kifaru_mdogo.dart';
 import 'story_mti_wa_babu.dart';
 import 'story_safari_ya_matone.dart';
 import 'story_twiga_mrefu.dart';
-
-/// Picha zinazopatikana kwa sasa — majina mafupi kwa urahisi wa kusoma.
-///
-/// Ni `abstract final class` yenye `static const`, kwa hivyo hazitumii
-/// kumbukumbu wakati wa runtime: zote zinakunjwa kwenye compile.
-abstract final class _Art {
-  static const String hero = 'assets/images/hero_home.png';
-  static const String animals =
-      'assets/images/categories/cat_animal_stories.png';
-  static const String morals =
-      'assets/images/categories/cat_morals_wisdom.png';
-  static const String culture = 'assets/images/categories/cat_culture.png';
-  static const String songs = 'assets/images/categories/cat_poems_songs.png';
-  static const String listen =
-      'assets/images/onboarding/onboarding_listen.png';
-  static const String create =
-      'assets/images/onboarding/onboarding_create.png';
-  static const String language =
-      'assets/images/onboarding/onboarding_language.png';
-}
 
 /// Hadithi zote za kuanzia.
 abstract final class StorySampleData {
@@ -130,10 +107,10 @@ abstract final class StorySampleData {
               revealSw: 'Jua la Serengeti huamsha kila kitu asubuhi!',
               revealEn: 'The Serengeti sun wakes everything up in the '
                   'morning!',
-              left: 0.06,
-              top: 0.05,
-              width: 0.26,
-              height: 0.20,
+              left: 0.09,
+              top: 0.10,
+              width: 0.20,
+              height: 0.12,
             ),
           ],
         ),
@@ -154,10 +131,10 @@ abstract final class StorySampleData {
                   'kwenye miti.',
               revealEn: 'A giraffe has a long neck so she can reach the '
                   'highest leaves on the trees.',
-              left: 0.52,
-              top: 0.10,
-              width: 0.34,
-              height: 0.48,
+              left: 0.50,
+              top: 0.03,
+              width: 0.45,
+              height: 0.60,
             ),
           ],
         ),
@@ -178,10 +155,10 @@ abstract final class StorySampleData {
                   'Ndiyo mnyama mkubwa zaidi ardhini!',
               revealEn: 'An elephant drinks many litres of water a day. He '
                   'is the biggest animal on land!',
-              left: 0.20,
-              top: 0.22,
-              width: 0.50,
-              height: 0.50,
+              left: 0.05,
+              top: 0.17,
+              width: 0.44,
+              height: 0.36,
             ),
           ],
         ),
@@ -202,10 +179,10 @@ abstract final class StorySampleData {
                   'wadogo — wanaweza kuona kile tusichokiona.',
               revealEn: 'Hare is small, but he is clever. Listen to the '
                   'small ones — they may see what we cannot.',
-              left: 0.30,
-              top: 0.40,
-              width: 0.36,
-              height: 0.40,
+              left: 0.36,
+              top: 0.51,
+              width: 0.15,
+              height: 0.35,
             ),
           ],
         ),
@@ -226,10 +203,10 @@ abstract final class StorySampleData {
                   'mahali pakavu!',
               revealEn: 'A cave is a good shelter. When the sky opens up, '
                   'find somewhere dry!',
-              left: 0.58,
-              top: 0.28,
-              width: 0.32,
-              height: 0.42,
+              left: 0.08,
+              top: 0.02,
+              width: 0.40,
+              height: 0.16,
             ),
           ],
         ),
@@ -250,10 +227,10 @@ abstract final class StorySampleData {
                   'furaha ni kuwa na marafiki.',
               revealEn: 'Simba is strong, but he always remembers: joy is '
                   'having friends.',
-              left: 0.34,
-              top: 0.42,
+              left: 0.23,
+              top: 0.45,
               width: 0.32,
-              height: 0.38,
+              height: 0.17,
             ),
           ],
         ),
@@ -306,10 +283,10 @@ abstract final class StorySampleData {
                   'vinara saba vya dunia.',
               revealEn: 'Kibo stands 5,895 metres above sea level. It is one '
                   'of the seven summits of the world.',
-              left: 0.34,
-              top: 0.08,
-              width: 0.32,
-              height: 0.30,
+              left: 0.26,
+              top: 0.29,
+              width: 0.40,
+              height: 0.16,
             ),
           ],
         ),
@@ -332,10 +309,10 @@ abstract final class StorySampleData {
                   'huwa na theluji hata karibu na ikweta!',
               revealEn: 'The higher you climb, the colder the air. The peak '
                   'has snow even though it is near the equator!',
-              left: 0.50,
-              top: 0.12,
-              width: 0.36,
-              height: 0.36,
+              left: 0.16,
+              top: 0.16,
+              width: 0.44,
+              height: 0.15,
             ),
           ],
         ),
@@ -352,10 +329,10 @@ abstract final class StorySampleData {
               type: HotspotType.mini_game,
               labelSw: 'Msitu',
               labelEn: 'The Forest',
-              revealSw: 'Kuna misitu mitano tofauti kwenye Kilimanjaro — '
-                  'kila mmoja na wanyama wake!',
-              revealEn: 'There are five different forests on Kilimanjaro — '
-                  'each with its own animals!',
+              revealSw: 'Kilimanjaro ina maeneo tofauti ya hali ya hewa — '
+                  'kila moja lina mimea na wanyama wake!',
+              revealEn: 'Kilimanjaro has different climate zones — '
+                  'each with its own plants and animals!',
               left: 0.08,
               top: 0.18,
               width: 0.40,
@@ -385,14 +362,14 @@ abstract final class StorySampleData {
               type: HotspotType.sound_effect,
               labelSw: 'Kilele',
               labelEn: 'The Summit',
-              revealSw: 'Kutoka kileleni unaweza kuona Tanzania yote — '
+              revealSw: 'Kutoka kileleni unaweza kuona mandhari ya mbali — '
                   'milima, maziwa na nyanda!',
-              revealEn: 'From the summit you can see all of Tanzania — '
+              revealEn: 'From the summit you can see distant landscapes — '
                   'mountains, lakes and plains!',
-              left: 0.30,
-              top: 0.30,
-              width: 0.42,
-              height: 0.44,
+              left: 0.12,
+              top: 0.52,
+              width: 0.45,
+              height: 0.22,
             ),
           ],
         ),
@@ -484,15 +461,15 @@ abstract final class StorySampleData {
               labelSw: 'Msalaba wa Kusini',
               labelEn: 'The Southern Cross',
               revealSw: 'Wasafiri na mabaharia wa kale walitumia Msalaba wa '
-                  'Kusini kutafuta njia baharini. Hauonekani Ulaya — ni '
+                  'Kusini kutafuta njia baharini. Hauonekani sehemu nyingi za Ulaya — ni '
                   'nyota yetu ya kusini!',
               revealEn: 'Travellers and sailors long ago used the Southern '
-                  'Cross to find their way at sea. It cannot be seen in '
+                  'Cross to find their way at sea. It cannot be seen from most of '
                   'Europe — it is our star of the south!',
-              left: 0.30,
-              top: 0.10,
-              width: 0.38,
-              height: 0.34,
+              left: 0.53,
+              top: 0.05,
+              width: 0.21,
+              height: 0.28,
             ),
           ],
         ),
@@ -510,14 +487,14 @@ abstract final class StorySampleData {
               type: HotspotType.animation,
               labelSw: 'Mwezi',
               labelEn: 'The Moon',
-              revealSw: 'Mwezi mweusi haupotei — upo tu mahali ambapo jua '
-                  'haliwezi kuufikia.',
-              revealEn: 'The dark moon does not disappear — it is simply '
-                  'where the sun cannot reach it.',
-              left: 0.58,
-              top: 0.16,
-              width: 0.30,
-              height: 0.30,
+              revealSw: 'Mwezi mpya haupotei — upande wake unaotuelekea '
+                  'hauangaziwi na jua.',
+              revealEn: 'The new moon does not disappear — the side facing us '
+                  'is not lit by the sun.',
+              left: 0.36,
+              top: 0.06,
+              width: 0.16,
+              height: 0.20,
             ),
           ],
         ),
@@ -537,10 +514,10 @@ abstract final class StorySampleData {
                   'ukicheka."',
               revealEn: '"A question is a key. Never be afraid to ask, even '
                   'if someone laughs."',
-              left: 0.14,
-              top: 0.34,
+              left: 0.01,
+              top: 0.25,
               width: 0.32,
-              height: 0.40,
+              height: 0.55,
             ),
           ],
         ),
@@ -582,7 +559,7 @@ abstract final class StorySampleData {
           textEn: 'In the village hall there was a big drum. It had rested '
               'silent for many years. Everyone had their own work, and '
               'nobody remembered to strike it.',
-          illustration: _Art.songs,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_01.webp',
         ),
         StoryPage(
           textSw: 'Juma alipapasa vumbi kwa kitambaa. Akapiga mara moja: '
@@ -591,7 +568,7 @@ abstract final class StorySampleData {
           textEn: 'Juma wiped the dust away with a cloth. He struck it once: '
               '"Pa!" The sound left the hall, crossed the playground and '
               'reached the fields.',
-          illustration: _Art.songs,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_02.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.sound_effect,
@@ -602,10 +579,10 @@ abstract final class StorySampleData {
                   'na ndefu.',
               revealEn: 'This drum is made from mvule wood, goatskin and '
                   'leather cords. That is why its sound is deep and long.',
-              left: 0.26,
-              top: 0.18,
-              width: 0.46,
-              height: 0.50,
+              left: 0.10,
+              top: 0.34,
+              width: 0.42,
+              height: 0.30,
             ),
           ],
         ),
@@ -616,7 +593,7 @@ abstract final class StorySampleData {
           textEn: 'Mzee Hamisi arrived at a run. "This is my grandfather\'s '
               'drum!" he said. He taught Juma the rhythm: "Once, once, '
               'twice." Juma tried, made a mistake, and tried again.',
-          illustration: _Art.culture,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_03.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.mini_game,
@@ -626,10 +603,10 @@ abstract final class StorySampleData {
                   'Mdundo ni lugha — hauhitaji maneno!',
               revealEn: 'Try clapping: ONCE, ONCE, TWICE. Rhythm is a '
                   'language — it needs no words!',
-              left: 0.10,
+              left: 0.30,
               top: 0.44,
-              width: 0.30,
-              height: 0.34,
+              width: 0.42,
+              height: 0.22,
             ),
           ],
         ),
@@ -640,7 +617,7 @@ abstract final class StorySampleData {
           textEn: 'Many people came. Mothers made tea, children played, '
               'grandmothers sang the old songs. There was a joy in the yard '
               'that had been missing for a long time.',
-          illustration: _Art.hero,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_04.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.animation,
@@ -650,10 +627,10 @@ abstract final class StorySampleData {
                   'ndiyo maana ni sehemu ya utamaduni wetu.',
               revealEn: 'A drum brings people of every age together in one '
                   'place — that is why it is part of our culture.',
-              left: 0.34,
-              top: 0.30,
-              width: 0.42,
-              height: 0.44,
+              left: 0.62,
+              top: 0.36,
+              width: 0.30,
+              height: 0.27,
             ),
           ],
         ),
@@ -663,7 +640,7 @@ abstract final class StorySampleData {
               'pamoja.',
           textEn: 'Juma learned that one drum plays many hearts. From that '
               'day on, every Saturday, our village drums together.',
-          illustration: _Art.songs,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_05.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.character_speak,
@@ -671,10 +648,10 @@ abstract final class StorySampleData {
               labelEn: 'Juma',
               revealSw: '"Ngoma moja, mioyo mingi."',
               revealEn: '"One drum, many hearts."',
-              left: 0.18,
-              top: 0.36,
-              width: 0.32,
-              height: 0.34,
+              left: 0.43,
+              top: 0.41,
+              width: 0.12,
+              height: 0.42,
             ),
           ],
         ),
@@ -714,14 +691,14 @@ abstract final class StorySampleData {
               'pamoja, wakala pamoja, wakacheka pamoja.',
           textEn: 'Long, long ago, Hen and Hawk were neighbours. They sat '
               'together, ate together and laughed together.',
-          illustration: _Art.animals,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_01.webp',
         ),
         StoryPage(
           textSw: 'Siku moja Kuku alitaka kushona mfuko wa nafaka. Akamwomba '
               'Mwewe, "Niazime sindano yako." Mwewe alimpa kwa furaha.',
           textEn: 'One day Hen wanted to sew a grain bag. She asked Hawk, '
               '"Lend me your needle." Hawk gave it to her happily.',
-          illustration: _Art.animals,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_02.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.character_speak,
@@ -731,10 +708,10 @@ abstract final class StorySampleData {
                   'kuahidi.',
               revealEn: '"Send it back tomorrow," said Hawk. Hen forgot to '
                   'promise.',
-              left: 0.52,
-              top: 0.16,
-              width: 0.36,
-              height: 0.38,
+              left: 0.60,
+              top: 0.20,
+              width: 0.26,
+              height: 0.52,
             ),
           ],
         ),
@@ -745,7 +722,7 @@ abstract final class StorySampleData {
           textEn: 'Hen sewed and sewed and sewed. Suddenly the needle fell '
               'into the grass. She scratched and scratched — it was not '
               'there. That is why hens scratch the ground even today.',
-          illustration: _Art.animals,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_03.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.sound_effect,
@@ -755,10 +732,10 @@ abstract final class StorySampleData {
                   'kwa kuwa sindano ilipotea huko, huchimba kila siku.',
               revealEn: 'Hens look for food by scratching the ground — and '
                   'since the needle was lost there, they scratch every day.',
-              left: 0.08,
-              top: 0.42,
-              width: 0.36,
-              height: 0.44,
+              left: 0.46,
+              top: 0.22,
+              width: 0.34,
+              height: 0.64,
             ),
           ],
         ),
@@ -769,7 +746,7 @@ abstract final class StorySampleData {
           textEn: 'Hawk came for her needle. Hen had nothing to give. "I '
               'trusted you!" Hawk cried angrily. "From today I will chase '
               'you forever."',
-          illustration: _Art.animals,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_04.webp',
         ),
         StoryPage(
           textSw: 'Kuanzia siku ile, kila Mwewe aonapo kuku anawafukuza. '
@@ -777,7 +754,7 @@ abstract final class StorySampleData {
           textEn: 'From that day, whenever Hawk sees hens he chases them. '
               'When we see him in the sky, we remember: return what you '
               'borrow.',
-          illustration: _Art.hero,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_05.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.info_popup,
@@ -787,9 +764,9 @@ abstract final class StorySampleData {
                   'uaminifu ni mali.',
               revealEn: 'Almost every Swahili folktale carries one lesson: '
                   'trustworthiness is wealth.',
-              left: 0.56,
+              left: 0.58,
               top: 0.08,
-              width: 0.36,
+              width: 0.32,
               height: 0.30,
             ),
           ],
@@ -832,7 +809,7 @@ abstract final class StorySampleData {
           textEn: 'Every Friday evening my mother cooks chapati. Its smell '
               'spreads through the whole street in Arusha. One day I told '
               'her, "Mama, teach me."',
-          illustration: _Art.create,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_01.webp',
         ),
         StoryPage(
           textSw: 'Mama alipima unga kwa kikombe: vikombe vitatu vya unga, '
@@ -841,7 +818,7 @@ abstract final class StorySampleData {
           textEn: 'Mama measured the flour with a cup: three cups of flour, '
               'one cup of hot water, a little salt. I counted out loud. '
               'Kitchen counting is real counting.',
-          illustration: _Art.create,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_02.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.info_popup,
@@ -851,10 +828,10 @@ abstract final class StorySampleData {
                   'hupatapata na kuvimba unapoiweka kwenye kikaango.',
               revealEn: 'Hot water makes the dough soft. That is why chapati '
                   'puffs up when you put it on the pan.',
-              left: 0.10,
-              top: 0.30,
-              width: 0.34,
-              height: 0.36,
+              left: 0.60,
+              top: 0.63,
+              width: 0.22,
+              height: 0.24,
             ),
           ],
         ),
@@ -865,7 +842,7 @@ abstract final class StorySampleData {
           textEn: 'Mama covered the dough with a cloth. "Let us wait twenty '
               'minutes," she said. I waited and waited. "Dough needs to '
               'rest," she told me, "just like us."',
-          illustration: _Art.listen,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_03.webp',
         ),
         StoryPage(
           textSw: 'Nikaanza kusukuma kwa mti wa kusukuma. Chapati ya kwanza '
@@ -874,7 +851,7 @@ abstract final class StorySampleData {
           textEn: 'I began to roll with the rolling pin. My first chapati '
               'burned and turned black. I felt ashamed. Mama laughed: "Even '
               'I burned my first one."',
-          illustration: _Art.songs,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_04.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.character_speak,
@@ -884,10 +861,10 @@ abstract final class StorySampleData {
                   'macho."',
               revealEn: '"Making a mistake is not failing. A mistake is '
                   'learning with your eyes."',
-              left: 0.52,
-              top: 0.34,
-              width: 0.38,
-              height: 0.38,
+              left: 0.46,
+              top: 0.08,
+              width: 0.28,
+              height: 0.60,
             ),
           ],
         ),
@@ -898,7 +875,7 @@ abstract final class StorySampleData {
           textEn: 'The fifth chapati turned out well — round, soft and '
               'sweet-smelling. Mama took four, put them on a tray, and we '
               'carried them to the sick Bwana Salum.',
-          illustration: _Art.language,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_05.webp',
         ),
         StoryPage(
           textSw: 'Bwana Salum alifungua mlango, akaona sinia, akatabasamu '
@@ -907,7 +884,7 @@ abstract final class StorySampleData {
           textEn: 'Bwana Salum opened the door, saw the tray, and smiled '
               'until his eyes shone. I wrote in my notebook: the second '
               'chapati is for sharing.',
-          illustration: _Art.morals,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_06.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.story_choice,
@@ -917,9 +894,9 @@ abstract final class StorySampleData {
                   'Andika jibu lako kwenye daftari.',
               revealEn: 'If you had four chapatis, who would you give them '
                   'to? Write your answer in your notebook.',
-              left: 0.14,
-              top: 0.40,
-              width: 0.40,
+              left: 0.38,
+              top: 0.48,
+              width: 0.15,
               height: 0.40,
             ),
           ],

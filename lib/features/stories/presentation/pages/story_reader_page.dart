@@ -50,7 +50,9 @@ import '../cubit/reader_cubit.dart';
 import '../state/reader_state.dart';
 import '../widgets/interactive_hotspot.dart';
 import '../widgets/reader_settings_panel.dart';
+import '../widgets/reader_illustration.dart';
 import '../widgets/tts_controls.dart';
+import '../widgets/tree_story_game.dart';
 import '../../../../core/widgets/leo_mascot.dart';
 
 /// Ukurasa wa kusoma/kusikiliza hadithi.
@@ -96,6 +98,8 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   /// `Positioned`. Kibonge kilichowekwa ndani kilikuwa **kinatoka nje ya
   /// skrini** kwa nusu. Tazama `_hotspotBubble`.
   StoryHotspot? _activeHotspot;
+  Rect? _activeHotspotRect;
+  final GlobalKey _readerStackKey = GlobalKey();
 
   /// Sherehe ya kumaliza imeonyeshwa tayari (mara moja kwa kila kikao).
   bool _celebrationShown = false;
@@ -174,9 +178,16 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   }
 
   /// Eneo la kugusa limegusa: weka bendera, kisha itue baada ya muda mfupi.
-  void _onHotspotTapped(StoryHotspot hotspot) {
+  void _onHotspotTapped(StoryHotspot hotspot, Rect globalRect) {
     // Onyesha kibonge chake (kwenye ngazi ya skrini, kikidhibitiwa).
-    if (mounted) setState(() => _activeHotspot = hotspot);
+    final box = _readerStackKey.currentContext?.findRenderObject() as RenderBox?;
+    if (mounted && box != null && box.hasSize) {
+      final local = box.globalToLocal(globalRect.topLeft);
+      setState(() {
+        _activeHotspot = hotspot;
+        _activeHotspotRect = local & globalRect.size;
+      });
+    }
 
     _hotspotTapped = true;
     _hotspotRelease?.cancel();
@@ -195,14 +206,15 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   /// tunakiweka katikati ya eneo, kisha **tunakibana** ndani ya mipaka —
   /// hivyo hakiwezi kutoka nje hata kama data ya eneo ni mbaya.
   Widget _hotspotBubble(BuildContext context, StoryHotspot hotspot) {
-    final Size screen = MediaQuery.of(context).size;
+    final Size screen = (_readerStackKey.currentContext?.findRenderObject() as RenderBox?)?.size ?? MediaQuery.of(context).size;
+    final Rect anchor = _activeHotspotRect ?? Rect.zero;
     const double margin = AppSpacing.lg;
 
     // Upana: kamwe usizidi skrini ukiondoa kando kando ya skrini.
     final double width = (screen.width - margin * 2).clamp(0.0, 300.0);
 
     // Mlalo: katikati ya eneo, kisha kubanwa ndani ya skrini.
-    final double centreX = (hotspot.left + hotspot.width / 2) * screen.width;
+    final double centreX = anchor.center.dx;
     final double maxLeft = screen.width - width - margin;
     final double left = maxLeft <= margin
         ? margin
@@ -213,23 +225,26 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     // ni marefu). Chini tunatenga **150**: upau wa sauti (76) + chips (44)
     // huelea juu ya skrini, na kibonge kilichowekwa chini yao kingefichwa
     // kabisa — ndiyo sababu mtumiaji aliona jibu bila swali.
-    const double estimatedHeight = 220;
-    const double bottomReserve = 150;
-    final double hotspotTop = hotspot.top * screen.height;
-    final double hotspotBottom =
-        (hotspot.top + hotspot.height) * screen.height;
+    final double bottomReserve = screen.height >= 400 ? 150 : 0;
+    final double bubbleMaxHeight =
+        (screen.height - bottomReserve - margin * 2).clamp(0.0, screen.height);
+    final double estimatedHeight = bubbleMaxHeight.clamp(0.0, 220.0);
+    final double hotspotTop = anchor.top;
+    final double hotspotBottom = anchor.bottom;
     final double maxTop =
         screen.height - estimatedHeight - bottomReserve - margin;
 
     double top = hotspotTop - estimatedHeight - AppSpacing.sm;
     if (top < margin) top = hotspotBottom + AppSpacing.sm;
-    if (maxTop > margin) top = top.clamp(margin, maxTop);
+    top = top.clamp(margin, maxTop > margin ? maxTop : margin);
 
     return Positioned(
       left: left,
       top: top,
       width: width,
-      child: HotspotSpeechBubble(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: bubbleMaxHeight),
+        child: SingleChildScrollView(child: HotspotSpeechBubble(
         // Kitufe kwa eneo: kubofya eneo lingine huunda kibonge kipya
         // (saa ya kujificha huanza upya) badala ya kubadilisha maudhui
         // ya kile kile.
@@ -238,6 +253,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
         onDismissed: () {
           if (mounted) setState(() => _activeHotspot = null);
         },
+        )),
       ),
     );
   }
@@ -341,6 +357,14 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
               textAlign: TextAlign.center,
             ),
             actions: <Widget>[
+              if (state.story?.id == 'mti-wa-babu')
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    unawaited(TreeStoryGame.show(context));
+                  },
+                  child: Text(context.localised(swahili: 'Cheza na Leo', english: 'Play with Leo')),
+                ),
               TextButton(
                 onPressed: () async {
                   Navigator.of(dialogContext).pop();
@@ -441,6 +465,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
         _showControls || state.readingMode == ReadingMode.listenOnly;
 
     return Stack(
+      key: _readerStackKey,
       fit: StackFit.expand,
       children: <Widget>[
         // ---------------------------------------------------------------
@@ -590,12 +615,10 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
 // TABAKA 1 — UKURASA MMOJA (mchoro, maandishi, maeneo ya kugusa)
 // =============================================================================
 
-/// Ukurasa mmoja wa hadithi: mchoro kamili (full-bleed) + maandishi chini.
+/// Ukurasa mmoja wa hadithi: mchoro kamili na maandishi chini.
 ///
-/// Mchoro hutumia `Image.asset` **mbichi** (si `StoryArtwork`): widget huyo
-/// hupanga upya picha hadi 140 dp (`_cacheWidthFor(context, 140)`) kwa sababu
-/// ameundwa kwa kadi — hapa tunahitaji picha **kamili ya skrini**, na
-/// kupunguza azimio kungeipa mchoro ukungu.
+/// Picha huwekwa ndani ya nafasi iliyo juu ya maandishi bila kukatwa.
+/// Maeneo ya kugusa yanafuata ukubwa halisi wa picha.
 class _StoryPageView extends StatelessWidget {
   const _StoryPageView({
     required this.page,
@@ -607,9 +630,8 @@ class _StoryPageView extends StatelessWidget {
   final StoryPage page;
   final int index;
   final ReaderState state;
-  /// Hupeleka **eneo lenyewe** — mzazi anahitaji `left`/`top`/`width`/
-  /// `height` ili kuweka kibonge ndani ya skrini.
-  final ValueChanged<StoryHotspot> onHotspotTapped;
+  /// Hupeleka eneo na mipaka yake kwenye skrini ili kupanga kibonge.
+  final void Function(StoryHotspot hotspot, Rect globalRect) onHotspotTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -618,22 +640,26 @@ class _StoryPageView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        // Mchoro kamili.
         ColoredBox(
           color: state.isNightMode
               ? AppColors.readerNightBackground
               : AppColors.readerBackground,
-          child: Image.asset(
-            page.illustration,
-            fit: BoxFit.cover,
-            // Mchoro haupo? Tusiangushe ukurasa — tunaonyesha mahali pake.
-            errorBuilder: (_, __, ___) => const Center(
-              child: Icon(
-                Icons.image_outlined,
-                size: AppSpacing.iconXl,
-                color: AppColors.mutedText,
-              ),
-            ),
+        ),
+        // Keep the complete illustration above the reading controls and text.
+        // Hotspot rectangles are measured in illustration coordinates.
+        Positioned(
+          top: 64,
+          left: 0,
+          right: 0,
+          bottom: state.showsStoryText
+              ? MediaQuery.of(context).size.height * AppSpacing.textOverlayMaxHeightRatio
+              : 140,
+          child: ReaderIllustration(
+            asset: page.illustration,
+            hotspots: page.hotspots,
+            onHotspotTapped: onHotspotTapped,
+            enabled: isCurrent,
+            compact: MediaQuery.of(context).size.width < AppBreakpoints.smallPhone,
           ),
         ),
 
@@ -641,33 +667,12 @@ class _StoryPageView extends StatelessWidget {
         // **chini ya maandishi**, ili mandhari iwe nyeusi huku maneno
         // yakisomeka kwa rangi kamili.
         if (state.isNightMode)
-          const ColoredBox(color: AppColors.nightModeOverlay),
+          const IgnorePointer(child: ColoredBox(color: AppColors.nightModeOverlay)),
 
         // Maandishi (chini) — hufichwa katika `listenOnly`.
         if (state.showsStoryText)
           _TextOverlay(page: page, state: state, isCurrent: isCurrent),
 
-        // Maeneo ya kugusa — juu ya maandishi, ili vibonge vyao
-        // visifichwe na kifuniko cha maandishi.
-        for (final StoryHotspot hotspot in page.hotspots)
-          Positioned(
-            // Ratios (0.0–1.0) → pixelsi. Hii hulinda eneo la kugusa likiwa
-            // lile lile kwenye Tecno ya inchi 5 na kwenye tablet.
-            left: hotspot.left * MediaQuery.of(context).size.width,
-            top: hotspot.top * MediaQuery.of(context).size.height,
-            width: hotspot.width * MediaQuery.of(context).size.width,
-            height: hotspot.height * MediaQuery.of(context).size.height,
-            child: InteractiveHotspot(
-              hotspot: hotspot,
-              onTapped: onHotspotTapped,
-              enabled: isCurrent,
-              // Kwenye simu ndogo sana (Tecno/Itel za 5.0") vitufe vya eneo
-              // hupunguzwa ili visifunike mchoro — kizingiti kiko
-              // `AppBreakpoints`, si `AppSpacing`.
-              compact:
-                  MediaQuery.of(context).size.width < AppBreakpoints.smallPhone,
-            ),
-          ),
       ],
     );
   }
@@ -823,6 +828,15 @@ class _TextOverlay extends StatelessWidget {
                                 : Colors.white)
                             .withValues(alpha: 0.82),
                       ),
+                    ),
+                  ),
+                if (isCurrent && state.isLastPage && state.story?.id == 'mti-wa-babu')
+                  Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.md),
+                    child: FilledButton.icon(
+                      onPressed: state.isSpeaking ? null : () => TreeStoryGame.show(context),
+                      icon: const Icon(Icons.auto_awesome_rounded),
+                      label: Text(context.localised(swahili: 'Cheza na Leo', english: 'Play with Leo')),
                     ),
                   ),
               ],

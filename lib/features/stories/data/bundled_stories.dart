@@ -22,12 +22,9 @@
 /// huongeza megabytes kwenye sakinisho la mzazi — hatua ya kwanza kabisa ya
 /// mtumiaji. Chini ya mbili, mtoto hana cha kuchagua.
 ///
-/// ## ⚠️ Sauti bado haipo
-///
-/// Faili za sauti **hazijazalishwa**. Hivyo `assets/audio/` **HAIJAONGEZWA**
-/// kwenye `pubspec.yaml` — kuiorodhesha bila faili ni onyo la build.
-/// Audio ikifika: ongeza `- assets/audio/` kwenye pubspec, kisha tumia
-/// [pageAudioAsset] na [pageTimingAsset] hapa chini.
+/// Sauti huongezwa kwa kila ukurasa hatua kwa hatua. Orodha hii ni seti
+/// ya hadithi za kuanzia, si uthibitisho kwamba kila ukurasa una audio.
+/// `AssetManifest` ndiyo huthibitisha faili zilizopo kwenye build.
 library;
 
 /// Hulka ya hadithi zinazoambatana na app.

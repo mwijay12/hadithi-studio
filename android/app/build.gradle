@@ -1,6 +1,6 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
+    id "org.jetbrains.kotlin.android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -45,10 +45,8 @@ android {
         applicationId "com.example.hadithi_studio"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        // **21, sivyo 19:** `flutter_tts` na `just_audio` zinahitaji API 21+
-        // (Android 5.0). Template ya Flutter 3.16 huweka `flutter.minSdkVersion`
-        // = 19, na build hushindwa kwa plugin ikihitaji zaidi.
-        minSdkVersion 21
+        // Flutter 3.47 inahitaji Android 6.0 (API 23) au zaidi.
+        minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
