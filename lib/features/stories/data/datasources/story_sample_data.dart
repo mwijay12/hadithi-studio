@@ -283,10 +283,10 @@ abstract final class StorySampleData {
                   'vinara saba vya dunia.',
               revealEn: 'Kibo stands 5,895 metres above sea level. It is one '
                   'of the seven summits of the world.',
-              left: 0.34,
-              top: 0.08,
-              width: 0.32,
-              height: 0.30,
+              left: 0.26,
+              top: 0.29,
+              width: 0.40,
+              height: 0.16,
             ),
           ],
         ),
@@ -309,10 +309,10 @@ abstract final class StorySampleData {
                   'huwa na theluji hata karibu na ikweta!',
               revealEn: 'The higher you climb, the colder the air. The peak '
                   'has snow even though it is near the equator!',
-              left: 0.50,
-              top: 0.12,
-              width: 0.36,
-              height: 0.36,
+              left: 0.16,
+              top: 0.16,
+              width: 0.44,
+              height: 0.15,
             ),
           ],
         ),
@@ -329,10 +329,10 @@ abstract final class StorySampleData {
               type: HotspotType.mini_game,
               labelSw: 'Msitu',
               labelEn: 'The Forest',
-              revealSw: 'Kuna misitu mitano tofauti kwenye Kilimanjaro — '
-                  'kila mmoja na wanyama wake!',
-              revealEn: 'There are five different forests on Kilimanjaro — '
-                  'each with its own animals!',
+              revealSw: 'Kilimanjaro ina maeneo tofauti ya hali ya hewa — '
+                  'kila moja lina mimea na wanyama wake!',
+              revealEn: 'Kilimanjaro has different climate zones — '
+                  'each with its own plants and animals!',
               left: 0.08,
               top: 0.18,
               width: 0.40,
@@ -362,14 +362,14 @@ abstract final class StorySampleData {
               type: HotspotType.sound_effect,
               labelSw: 'Kilele',
               labelEn: 'The Summit',
-              revealSw: 'Kutoka kileleni unaweza kuona Tanzania yote — '
+              revealSw: 'Kutoka kileleni unaweza kuona mandhari ya mbali — '
                   'milima, maziwa na nyanda!',
-              revealEn: 'From the summit you can see all of Tanzania — '
+              revealEn: 'From the summit you can see distant landscapes — '
                   'mountains, lakes and plains!',
-              left: 0.30,
-              top: 0.30,
-              width: 0.42,
-              height: 0.44,
+              left: 0.12,
+              top: 0.52,
+              width: 0.45,
+              height: 0.22,
             ),
           ],
         ),
@@ -461,15 +461,15 @@ abstract final class StorySampleData {
               labelSw: 'Msalaba wa Kusini',
               labelEn: 'The Southern Cross',
               revealSw: 'Wasafiri na mabaharia wa kale walitumia Msalaba wa '
-                  'Kusini kutafuta njia baharini. Hauonekani Ulaya — ni '
+                  'Kusini kutafuta njia baharini. Hauonekani sehemu nyingi za Ulaya — ni '
                   'nyota yetu ya kusini!',
               revealEn: 'Travellers and sailors long ago used the Southern '
-                  'Cross to find their way at sea. It cannot be seen in '
+                  'Cross to find their way at sea. It cannot be seen from most of '
                   'Europe — it is our star of the south!',
-              left: 0.30,
-              top: 0.10,
-              width: 0.38,
-              height: 0.34,
+              left: 0.53,
+              top: 0.05,
+              width: 0.21,
+              height: 0.28,
             ),
           ],
         ),
@@ -487,14 +487,14 @@ abstract final class StorySampleData {
               type: HotspotType.animation,
               labelSw: 'Mwezi',
               labelEn: 'The Moon',
-              revealSw: 'Mwezi mweusi haupotei — upo tu mahali ambapo jua '
-                  'haliwezi kuufikia.',
-              revealEn: 'The dark moon does not disappear — it is simply '
-                  'where the sun cannot reach it.',
-              left: 0.58,
-              top: 0.16,
-              width: 0.30,
-              height: 0.30,
+              revealSw: 'Mwezi mpya haupotei — upande wake unaotuelekea '
+                  'hauangaziwi na jua.',
+              revealEn: 'The new moon does not disappear — the side facing us '
+                  'is not lit by the sun.',
+              left: 0.36,
+              top: 0.06,
+              width: 0.16,
+              height: 0.20,
             ),
           ],
         ),
@@ -514,10 +514,10 @@ abstract final class StorySampleData {
                   'ukicheka."',
               revealEn: '"A question is a key. Never be afraid to ask, even '
                   'if someone laughs."',
-              left: 0.14,
-              top: 0.34,
+              left: 0.01,
+              top: 0.25,
               width: 0.32,
-              height: 0.40,
+              height: 0.55,
             ),
           ],
         ),

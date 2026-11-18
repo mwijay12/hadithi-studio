@@ -10,8 +10,10 @@
 - Mti wa Babu: all three existing illustrations reviewed against the story.
 - Safari ya Matone: pages 1–2 retained; page 3 replaced to include the river and sea as well as Kilimanjaro. The landscape is illustrative, not a geographic map.
 - Safari ya Simba: reviewed all six pages; page 4 now includes the travellers listening to Hare by the flooded river. Hotspots were updated to image coordinates and need device review.
+- Mlima Kilimanjaro: all six existing scenes reviewed; adjusted hotspot locations and corrected two explanatory claims. Page 3 depicts the forest portion of a multi-stage journey.
+- Nyota za Usiku: reviewed all five pages, replaced pages 3–4 (four-star schematic and one crescent moon), adjusted hotspots and corrected the new-moon explanation. The constellation is schematic rather than an astronomical chart.
 - Reader: illustrations fit above the text without cover cropping; hotspots use image-relative coordinates. Existing hotspot placements and the response bubble still need device review across screen sizes.
-- The other stories must be reviewed page by page for fidelity and consistency before claiming their illustrations are complete.
+- All ten story texts have had an initial illustration review. Further visual quality checks, especially on real devices, remain necessary.
 
 ## Future stories submitted by users (not implemented yet)
 
