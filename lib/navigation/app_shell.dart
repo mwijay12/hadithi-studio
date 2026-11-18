@@ -322,6 +322,8 @@ class HomeTabPage extends StatelessWidget {
                 ),
               ],
             ),
+            const _LeoWelcomeCard(),
+            const SizedBox(height: AppSpacing.lg),
             // Kadi kuu — hadithi ya leo. Ni kubwa kuliko kadi nyingine kwa
             // sababu ndiyo hatua moja tunayotaka mtumiaji aichukue kwanza.
             if (daily != null)
@@ -435,6 +437,85 @@ class HomeTabPage extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A friendly, accessible invitation to explore the real story collection.
+class _LeoWelcomeCard extends StatelessWidget {
+  const _LeoWelcomeCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    final bool sw = context.isSwahili;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      child: Material(
+        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Stack vertically when space or enlarged text makes a row tight.
+              final bool compact = constraints.maxWidth < 300 ||
+                  MediaQuery.textScalerOf(context).scale(1) > 1.3;
+              final Widget message = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    sw ? 'Habari, rafiki!' : 'Hello, friend!',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: colors.onPrimaryContainer,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    sw ? 'Twende tukatafute hadithi pamoja na Leo.'
+                        : 'Let’s find a story together with Leo.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colors.onPrimaryContainer,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  FilledButton.icon(
+                    key: const ValueKey('home-leo-stories'),
+                    onPressed: () => openAllStories(context),
+                    icon: const Icon(Icons.auto_stories_rounded),
+                    label: Text(sw ? 'Chagua hadithi' : 'Choose a story'),
+                  ),
+                ],
+              );
+              const Widget leo = SizedBox(
+                width: 130,
+                child: ExcludeSemantics(
+                  child: LeoMascot(pose: LeoPose.wave, height: 130),
+                ),
+              );
+              if (compact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Center(child: leo),
+                    const SizedBox(height: AppSpacing.sm),
+                    message,
+                  ],
+                );
+              }
+              return Row(
+                children: <Widget>[
+                  Expanded(child: message),
+                  const SizedBox(width: AppSpacing.sm),
+                  leo,
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -937,7 +1018,7 @@ class BookshelfTabPage extends StatelessWidget {
                           // moja** kwenye reader, si kwenye maelezo: hatua
                           // inayotarajiwa ni kuendelea kusoma.
                           onTap: () =>
-                              openReader(context, story, autoPlay: true),
+                              openReader(context, story),
                         ),
                       ),
                   ],

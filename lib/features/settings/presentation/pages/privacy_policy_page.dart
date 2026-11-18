@@ -129,14 +129,15 @@ class PrivacyPolicyPage extends StatelessWidget {
           const _PolicySection(
             titleSw: 'Taarifa tunazoshughulikia',
             titleEn: 'Information we handle',
-            bodySw: 'Kila kitu kinabaki kwenye kifaa chako. App huhifadhi:',
-            bodyEn: 'Everything stays on your device. The app stores:',
+            bodySw: 'App huhifadhi taarifa hizi kwenye kifaa:',
+            bodyEn: 'The app stores the following on the device:',
             bulletsSw: <String>[
               'Maendeleo ya kusoma — ukurasa uliofikia kwenye kila hadithi.',
               'Alama za kurasa na hadithi ulizohifadhi kwenye rafu.',
               'Lugha na muonekano uliochagua.',
               'Mapendeleo ya arifa, hata kama arifa bado hazijawashwa.',
               'Rasimu za hadithi ulizoandika mwenyewe.',
+              'Jina na umri wa mtoto, ukiweka.',
             ],
             bulletsEn: <String>[
               'Reading progress — the page you reached in each story.',
@@ -144,6 +145,7 @@ class PrivacyPolicyPage extends StatelessWidget {
               'Your chosen language and appearance.',
               'Notification preferences, even before alerts are switched on.',
               'Drafts of stories you wrote yourself.',
+              'A child’s name and age, if entered.',
             ],
           ),
 
@@ -153,14 +155,14 @@ class PrivacyPolicyPage extends StatelessWidget {
             bodySw: 'Kwa uwazi, toleo hili halikusanyi:',
             bodyEn: 'To be clear, this version does not collect:',
             bulletsSw: <String>[
-              'Jina lako, barua pepe, namba ya simu au anwani.',
+              'Barua pepe, namba ya simu au anwani.',
               'Mahali ulipo (GPS).',
               'Mawasiliano, kamera au maikrofoni.',
               'Namba ya malipo, PIN, au taarifa ya benki.',
               'Data yoyote inayotumwa kwa server — hakuna server bado.',
             ],
             bulletsEn: <String>[
-              'Your name, email, phone number or address.',
+              'Email, phone number or address.',
               'Your location (GPS).',
               'Contacts, camera or microphone.',
               'Payment numbers, PINs, or bank details.',
@@ -172,12 +174,12 @@ class PrivacyPolicyPage extends StatelessWidget {
             titleSw: 'Watoto',
             titleEn: 'Children',
             bodySw: 'App hii imeundwa kwa watoto wa miaka 3–8. Hatukusanyi '
-                'taarifa binafsi za mtoto yeyote, hatuna matangazo ya '
+                'taarifa kwa ajili ya matangazo; hatuna matangazo ya '
                 'kibinafsi, na hatufuati tabia ya mtoto kwa ajili ya '
                 'matangazo. Jina la mtoto, akiwekwa, linabaki kwenye kifaa '
                 'na linaweza kufutwa na mzazi wakati wowote.',
             bodyEn: 'This app is designed for children aged 3–8. We do not '
-                'collect personal information about any child, we do not '
+                'collect information for advertising, and do not '
                 'show personalised advertising, and we do not track a '
                 'childs behaviour for advertising. A childs name, if added, '
                 'stays on the device and a parent can remove it at any time.',
@@ -207,8 +209,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 'the right to:',
             bulletsSw: <String>[
               'Kujua taarifa gani zinashughulikiwa.',
-              'Kuzifuta — kufuta app au kutumia "Safisha data" kwenye '
-                  'Mipangilio hufuta kila kitu.',
+              'Kufuta data ya maktaba na wasifu kupitia Mipangilio; mapendeleo ya lugha, muonekano na arifa hubaki.',
               'Kusahihisha taarifa isiyo sahihi.',
               'Kupinga ushughulikiaji.',
               'Kupeleka malalamiko kwa Tume ya Ulinzi wa Taarifa Binafsi '
@@ -216,8 +217,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             ],
             bulletsEn: <String>[
               'Know what information is handled.',
-              'Erase it — uninstalling the app or using "Clear data" in '
-                  'Settings removes everything.',
+              'Clear library and profile data in Settings; language, appearance and notification preferences remain.',
               'Correct inaccurate information.',
               'Object to processing.',
               'Complain to the Personal Data Protection Commission (PDPC).',
@@ -247,16 +247,14 @@ class PrivacyPolicyPage extends StatelessWidget {
           const _PolicySection(
             titleSw: 'Usalama',
             titleEn: 'Security',
-            bodySw: 'Data yote iko kwenye kifaa chako, ndani ya hifadhi ya '
-                'app. Hakuna anayeweza kuifikia kwa mtandao. Ukifuta app, '
-                'data inafutwa nayo. Kama mtu mwingine anatumia kifaa '
-                'kimoja, hakuwezi kuona taarifa za mtoto mwingine kwa '
-                'sababu hakuna wasifu wa mtandao.',
-            bodyEn: 'All data sits on your device, inside the apps own '
-                'storage. Nobody can reach it over a network. If you delete '
-                'the app, the data goes with it. If someone else uses the '
-                'same device, they cannot see another childs information '
-                'because there is no online profile.',
+            bodySw: 'Taarifa za maktaba na wasifu huhifadhiwa kwenye kifaa. '
+                'Mtu mwingine anayetumia app kwenye kifaa hicho anaweza '
+                'kuziona; hakuna kufuli la wasifu au udhibiti wa mzazi bado. '
+                'Nakala za kifaa zinaweza kuwa na data pia.',
+            bodyEn: 'Library and profile information is stored on the device. '
+                'Someone else using the app on that device may see it; there '
+                'is no profile lock or parental control yet. Device backups '
+                'may also contain data.',
           ),
 
           const _PolicySection(

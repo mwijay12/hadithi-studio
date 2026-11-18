@@ -290,9 +290,9 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     _resumePromptShown = true;
     final int? saved = await cubit.savedPage();
     if (!mounted || saved == null) return;
-    // Ukurasa wa kwanza hauhitaji swali, na ukurasa wa mwisho ungemaanisha
-    // mtoto amekwisha maliza — hivyo hatumuulizi.
-    if (saved <= 0 || saved >= state.totalPages - 1) return;
+    // The last page may have been opened but not finished. Offer it too;
+    // ignore only the first page or stale indexes outside this story.
+    if (saved <= 0 || saved >= state.totalPages) return;
 
     final bool? go = await showDialog<bool>(
       context: context,

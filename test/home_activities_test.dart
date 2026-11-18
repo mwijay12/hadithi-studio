@@ -72,4 +72,42 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('all stories route'), findsOneWidget);
   });
+  testWidgets('Leo invitation opens all stories', (tester) async {
+    final appRouter = router();
+    await openHome(tester, appRouter);
+    expect(find.text('Habari, rafiki!'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('home-leo-stories')));
+    await tester.pumpAndSettle();
+    expect(find.text('all stories route'), findsOneWidget);
+  });
+
+  testWidgets('Leo invitation fits a narrow screen with larger text', (tester) async {
+    tester.view.physicalSize = const Size(320, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final appRouter = router();
+    await tester.pumpWidget(MaterialApp.router(
+      routerConfig: appRouter,
+      locale: const Locale('sw'),
+      localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
+      supportedLocales: AppLocalizationsSetup.supportedLocales,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          disableAnimations: true,
+          textScaler: const TextScaler.linear(1.5),
+        ),
+        child: child!,
+      ),
+    ));
+    await tester.pump();
+    expect(find.text('Habari, rafiki!'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.ensureVisible(find.byKey(const ValueKey('home-leo-stories')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('home-leo-stories')));
+    await tester.pumpAndSettle();
+    expect(find.text('all stories route'), findsOneWidget);
+  });
+
 }

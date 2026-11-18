@@ -31,6 +31,8 @@ library;
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'library_store.dart';
+
 /// Huhifadhi na kusoma maendeleo ya kusoma kwa kila hadithi.
 class ReadingProgressStore {
   /// Huruhusu sindano ya toleo la jaribio (in-memory) kwenye tests.
@@ -72,7 +74,9 @@ class ReadingProgressStore {
     if (storyId.isEmpty || pageIndex < 0) return false;
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      return await prefs.setInt('$progressPrefix$storyId', pageIndex);
+      final bool saved = await prefs.setInt('$progressPrefix$storyId', pageIndex);
+      if (saved) LibraryStore.instance.updateReadingProgress(storyId, pageIndex);
+      return saved;
     } catch (error) {
       debugPrint('ReadingProgressStore: kuhifadhi maendeleo kimeshindwa — $error');
       return false;
@@ -123,7 +127,9 @@ class ReadingProgressStore {
     if (storyId.isEmpty) return false;
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      return await prefs.remove('$progressPrefix$storyId');
+      final bool removed = await prefs.remove('$progressPrefix$storyId');
+      if (removed) LibraryStore.instance.updateReadingProgress(storyId, null);
+      return removed;
     } catch (error) {
       debugPrint('ReadingProgressStore: kufuta maendeleo kimeshindwa — $error');
       return false;
