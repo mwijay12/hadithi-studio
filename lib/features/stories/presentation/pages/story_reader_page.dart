@@ -98,6 +98,8 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   /// `Positioned`. Kibonge kilichowekwa ndani kilikuwa **kinatoka nje ya
   /// skrini** kwa nusu. Tazama `_hotspotBubble`.
   StoryHotspot? _activeHotspot;
+  Rect? _activeHotspotRect;
+  final GlobalKey _readerStackKey = GlobalKey();
 
   /// Sherehe ya kumaliza imeonyeshwa tayari (mara moja kwa kila kikao).
   bool _celebrationShown = false;
@@ -176,9 +178,16 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   }
 
   /// Eneo la kugusa limegusa: weka bendera, kisha itue baada ya muda mfupi.
-  void _onHotspotTapped(StoryHotspot hotspot) {
+  void _onHotspotTapped(StoryHotspot hotspot, Rect globalRect) {
     // Onyesha kibonge chake (kwenye ngazi ya skrini, kikidhibitiwa).
-    if (mounted) setState(() => _activeHotspot = hotspot);
+    final box = _readerStackKey.currentContext?.findRenderObject() as RenderBox?;
+    if (mounted && box != null && box.hasSize) {
+      final local = box.globalToLocal(globalRect.topLeft);
+      setState(() {
+        _activeHotspot = hotspot;
+        _activeHotspotRect = local & globalRect.size;
+      });
+    }
 
     _hotspotTapped = true;
     _hotspotRelease?.cancel();
@@ -197,14 +206,15 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   /// tunakiweka katikati ya eneo, kisha **tunakibana** ndani ya mipaka —
   /// hivyo hakiwezi kutoka nje hata kama data ya eneo ni mbaya.
   Widget _hotspotBubble(BuildContext context, StoryHotspot hotspot) {
-    final Size screen = MediaQuery.of(context).size;
+    final Size screen = (_readerStackKey.currentContext?.findRenderObject() as RenderBox?)?.size ?? MediaQuery.of(context).size;
+    final Rect anchor = _activeHotspotRect ?? Rect.zero;
     const double margin = AppSpacing.lg;
 
     // Upana: kamwe usizidi skrini ukiondoa kando kando ya skrini.
     final double width = (screen.width - margin * 2).clamp(0.0, 300.0);
 
     // Mlalo: katikati ya eneo, kisha kubanwa ndani ya skrini.
-    final double centreX = (hotspot.left + hotspot.width / 2) * screen.width;
+    final double centreX = anchor.center.dx;
     final double maxLeft = screen.width - width - margin;
     final double left = maxLeft <= margin
         ? margin
@@ -215,23 +225,26 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     // ni marefu). Chini tunatenga **150**: upau wa sauti (76) + chips (44)
     // huelea juu ya skrini, na kibonge kilichowekwa chini yao kingefichwa
     // kabisa — ndiyo sababu mtumiaji aliona jibu bila swali.
-    const double estimatedHeight = 220;
-    const double bottomReserve = 150;
-    final double hotspotTop = hotspot.top * screen.height;
-    final double hotspotBottom =
-        (hotspot.top + hotspot.height) * screen.height;
+    final double bottomReserve = screen.height >= 400 ? 150 : 0;
+    final double bubbleMaxHeight =
+        (screen.height - bottomReserve - margin * 2).clamp(0.0, screen.height);
+    final double estimatedHeight = bubbleMaxHeight.clamp(0.0, 220.0);
+    final double hotspotTop = anchor.top;
+    final double hotspotBottom = anchor.bottom;
     final double maxTop =
         screen.height - estimatedHeight - bottomReserve - margin;
 
     double top = hotspotTop - estimatedHeight - AppSpacing.sm;
     if (top < margin) top = hotspotBottom + AppSpacing.sm;
-    if (maxTop > margin) top = top.clamp(margin, maxTop);
+    top = top.clamp(margin, maxTop > margin ? maxTop : margin);
 
     return Positioned(
       left: left,
       top: top,
       width: width,
-      child: HotspotSpeechBubble(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: bubbleMaxHeight),
+        child: SingleChildScrollView(child: HotspotSpeechBubble(
         // Kitufe kwa eneo: kubofya eneo lingine huunda kibonge kipya
         // (saa ya kujificha huanza upya) badala ya kubadilisha maudhui
         // ya kile kile.
@@ -240,6 +253,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
         onDismissed: () {
           if (mounted) setState(() => _activeHotspot = null);
         },
+        )),
       ),
     );
   }
@@ -451,6 +465,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
         _showControls || state.readingMode == ReadingMode.listenOnly;
 
     return Stack(
+      key: _readerStackKey,
       fit: StackFit.expand,
       children: <Widget>[
         // ---------------------------------------------------------------
@@ -615,9 +630,8 @@ class _StoryPageView extends StatelessWidget {
   final StoryPage page;
   final int index;
   final ReaderState state;
-  /// Hupeleka **eneo lenyewe** — mzazi anahitaji `left`/`top`/`width`/
-  /// `height` ili kuweka kibonge ndani ya skrini.
-  final ValueChanged<StoryHotspot> onHotspotTapped;
+  /// Hupeleka eneo na mipaka yake kwenye skrini ili kupanga kibonge.
+  final void Function(StoryHotspot hotspot, Rect globalRect) onHotspotTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -653,7 +667,7 @@ class _StoryPageView extends StatelessWidget {
         // **chini ya maandishi**, ili mandhari iwe nyeusi huku maneno
         // yakisomeka kwa rangi kamili.
         if (state.isNightMode)
-          const ColoredBox(color: AppColors.nightModeOverlay),
+          const IgnorePointer(child: ColoredBox(color: AppColors.nightModeOverlay)),
 
         // Maandishi (chini) — hufichwa katika `listenOnly`.
         if (state.showsStoryText)

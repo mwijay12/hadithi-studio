@@ -17,7 +17,7 @@ class ReaderIllustration extends StatefulWidget {
 
   final String asset;
   final List<StoryHotspot> hotspots;
-  final ValueChanged<StoryHotspot> onHotspotTapped;
+  final void Function(StoryHotspot hotspot, Rect globalRect) onHotspotTapped;
   final bool enabled;
   final bool compact;
 
@@ -78,19 +78,40 @@ class _ReaderIllustrationState extends State<ReaderIllustration> {
           child: Image.asset(widget.asset, fit: BoxFit.fill),
         ),
         for (final hotspot in widget.hotspots)
-          Positioned(
-            left: rect.left + hotspot.left * rect.width,
-            top: rect.top + hotspot.top * rect.height,
-            width: hotspot.width * rect.width,
-            height: hotspot.height * rect.height,
-            child: InteractiveHotspot(
-              hotspot: hotspot,
-              onTapped: widget.onHotspotTapped,
-              enabled: widget.enabled,
-              compact: widget.compact,
-            ),
+          Positioned.fromRect(
+            rect: hotspotTargetRect(rect, hotspot, constraints.biggest),
+            child: Builder(builder: (hotspotContext) {
+              return InteractiveHotspot(
+                hotspot: hotspot,
+                onTapped: (selected) {
+                  final box = hotspotContext.findRenderObject() as RenderBox?;
+                  if (box != null && box.hasSize) {
+                    widget.onHotspotTapped(selected, box.localToGlobal(Offset.zero) & box.size);
+                  }
+                },
+                enabled: widget.enabled,
+                compact: widget.compact,
+              );
+            }),
           ),
       ]);
     });
   }
+}
+
+/// At least a 48-pixel target when space permits, centered on the illustrated
+/// object and clamped to the visible illustration area.
+@visibleForTesting
+Rect hotspotTargetRect(Rect image, StoryHotspot hotspot, Size available) {
+  final center = Offset(
+    image.left + (hotspot.left + hotspot.width / 2) * image.width,
+    image.top + (hotspot.top + hotspot.height / 2) * image.height,
+  );
+  final width = (hotspot.width * image.width).clamp(48.0, available.width < 48 ? 48.0 : available.width);
+  final height = (hotspot.height * image.height).clamp(48.0, available.height < 48 ? 48.0 : available.height);
+  final actualWidth = width.clamp(0.0, available.width);
+  final actualHeight = height.clamp(0.0, available.height);
+  final left = (center.dx - actualWidth / 2).clamp(0.0, available.width - actualWidth);
+  final top = (center.dy - actualHeight / 2).clamp(0.0, available.height - actualHeight);
+  return Rect.fromLTWH(left, top, actualWidth, actualHeight);
 }
