@@ -832,7 +832,7 @@ abstract final class StorySampleData {
           textEn: 'Every Friday evening my mother cooks chapati. Its smell '
               'spreads through the whole street in Arusha. One day I told '
               'her, "Mama, teach me."',
-          illustration: _Art.create,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_01.webp',
         ),
         StoryPage(
           textSw: 'Mama alipima unga kwa kikombe: vikombe vitatu vya unga, '
@@ -841,7 +841,7 @@ abstract final class StorySampleData {
           textEn: 'Mama measured the flour with a cup: three cups of flour, '
               'one cup of hot water, a little salt. I counted out loud. '
               'Kitchen counting is real counting.',
-          illustration: _Art.create,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_02.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.info_popup,
@@ -851,10 +851,10 @@ abstract final class StorySampleData {
                   'hupatapata na kuvimba unapoiweka kwenye kikaango.',
               revealEn: 'Hot water makes the dough soft. That is why chapati '
                   'puffs up when you put it on the pan.',
-              left: 0.10,
-              top: 0.30,
-              width: 0.34,
-              height: 0.36,
+              left: 0.60,
+              top: 0.63,
+              width: 0.22,
+              height: 0.24,
             ),
           ],
         ),
@@ -865,7 +865,7 @@ abstract final class StorySampleData {
           textEn: 'Mama covered the dough with a cloth. "Let us wait twenty '
               'minutes," she said. I waited and waited. "Dough needs to '
               'rest," she told me, "just like us."',
-          illustration: _Art.listen,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_03.webp',
         ),
         StoryPage(
           textSw: 'Nikaanza kusukuma kwa mti wa kusukuma. Chapati ya kwanza '
@@ -874,7 +874,7 @@ abstract final class StorySampleData {
           textEn: 'I began to roll with the rolling pin. My first chapati '
               'burned and turned black. I felt ashamed. Mama laughed: "Even '
               'I burned my first one."',
-          illustration: _Art.songs,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_04.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.character_speak,
@@ -884,10 +884,10 @@ abstract final class StorySampleData {
                   'macho."',
               revealEn: '"Making a mistake is not failing. A mistake is '
                   'learning with your eyes."',
-              left: 0.52,
-              top: 0.34,
-              width: 0.38,
-              height: 0.38,
+              left: 0.46,
+              top: 0.08,
+              width: 0.28,
+              height: 0.60,
             ),
           ],
         ),
@@ -898,7 +898,7 @@ abstract final class StorySampleData {
           textEn: 'The fifth chapati turned out well — round, soft and '
               'sweet-smelling. Mama took four, put them on a tray, and we '
               'carried them to the sick Bwana Salum.',
-          illustration: _Art.language,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_05.webp',
         ),
         StoryPage(
           textSw: 'Bwana Salum alifungua mlango, akaona sinia, akatabasamu '
@@ -907,7 +907,7 @@ abstract final class StorySampleData {
           textEn: 'Bwana Salum opened the door, saw the tray, and smiled '
               'until his eyes shone. I wrote in my notebook: the second '
               'chapati is for sharing.',
-          illustration: _Art.morals,
+          illustration: 'assets/images/stories/pages/chapati-za-mama/page_06.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.story_choice,
@@ -917,9 +917,9 @@ abstract final class StorySampleData {
                   'Andika jibu lako kwenye daftari.',
               revealEn: 'If you had four chapatis, who would you give them '
                   'to? Write your answer in your notebook.',
-              left: 0.14,
-              top: 0.40,
-              width: 0.40,
+              left: 0.38,
+              top: 0.48,
+              width: 0.15,
               height: 0.40,
             ),
           ],

@@ -32,6 +32,7 @@ const List<String> _illustratedStories = <String>[
   'nyota-za-usiku',
   'ngoma-ya-furaha',
   'kuku-na-mwewe',
+  'chapati-za-mama',
 ];
 
 void main() {
