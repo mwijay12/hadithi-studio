@@ -419,35 +419,31 @@ class LibraryStore extends ChangeNotifier {
     }
   }
 
-  /// Hufuta kila kitu — kwa "Safisha data" kwenye Settings.
-  Future<void> clearAll() async {
-    _onboardingDone = false;
-    _followedAuthors = <String>{};
-    _savedStories = <String>{};
-    _downloadedStories = <String>{};
-    _drafts = <DraftStory>[];
-    _lastPage.clear();
-    _childName = '';
-    _childAge = '';
-    notifyListeners();
+  /// Deletes library and child-profile data, returning false on failure.
+  /// Language, theme and notification preferences are intentionally retained.
+  Future<bool> clearAll() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      for (final String key in <String>[
-        onboardingKey,
-        followedAuthorsKey,
-        savedStoriesKey,
-        downloadedStoriesKey,
-        draftsKey,
-        childNameKey,
-        childAgeKey,
-      ]) {
-        await prefs.remove(key);
-      }
+      bool success = true;
       for (final String key in prefs.getKeys().toList()) {
-        if (key.startsWith(progressPrefix)) await prefs.remove(key);
+        if (<String>{
+          onboardingKey, followedAuthorsKey, savedStoriesKey,
+          downloadedStoriesKey, draftsKey, childNameKey, childAgeKey,
+        }.contains(key) || key.startsWith(progressPrefix) ||
+            key.startsWith('hadithi_reader_bookmarks_')) {
+          if (!await prefs.remove(key)) success = false;
+        }
       }
+      _lastPage.clear();
+      _restored = false;
+      await restore();
+      return success;
     } catch (error) {
       debugPrint('LibraryStore: kufuta data kimeshindwa — $error');
+      _lastPage.clear();
+      _restored = false;
+      await restore();
+      return false;
     }
   }
 }

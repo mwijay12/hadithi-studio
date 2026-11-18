@@ -65,17 +65,16 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
   /// Jioni (`evening`) ni chaguo-msingi la muda: ni wakati wa hadithi za
   /// kulala, ambapo arifa nyingi hutumwa.
   static const Map<String, bool> _defaults = <String, bool>{
-    _keyStreak: true,
-    _keyNewStory: true,
-    _keyWeeklyReport: true,
-    _keyBadges: true,
-    _keyChallenges: true,
-    _keyCommunity: true,
+    _keyStreak: false,
+    _keyNewStory: false,
+    _keyWeeklyReport: false,
+    _keyBadges: false,
+    _keyChallenges: false,
+    _keyCommunity: false,
     _keyPromotions: false,
   };
 
-  /// Orodha ya swichi zinazochaguliwa na mtumiaji (bila risiti za malipo,
-  /// ambazo hulazimishwa kuwaka).
+  /// Orodha ya mapendeleo yanayohifadhiwa kwenye kifaa.
   static const List<_ToggleSpec> _specs = <_ToggleSpec>[
     _ToggleSpec(
       key: _keyStreak,
@@ -264,12 +263,11 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 const _NoticeBox(
                   swahili: 'Arifa hazitumwa bado. Miundombinu ya arifa (push) '
                       'haijasanidiwa, kwa hivyo hutapokea arifa yoyote kwa '
-                      'sasa. Mapendeleo yako yanahifadhiwa na yataanza '
-                      'kutumika mara tu miundombinu itakapowekwa.',
+                      'sasa. Chaguo zako zinahifadhiwa kwenye kifaa tu.',
                   english: 'Notifications cannot be delivered yet. Push '
                       'infrastructure is not configured, so you will not '
                       'receive any notifications for now. Your preferences '
-                      'are saved and will take effect once it is set up.',
+                      'are saved on this device only.',
                 ),
 
                 const _SectionHeading(
@@ -293,27 +291,6 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                       ),
                     ),
                   ),
-
-                // Risiti za malipo haziwezi kuzimwa: uthibitisho wa malipo ni
-                // rekodi ya kifedha, si mapendeleo. Kuzimwa kungemfanya mzazi
-                // asiwe na uthibitisho wa malipo aliyofanya.
-                SwitchListTile(
-                  value: true,
-                  onChanged: null,
-                  title: Text(
-                    context.isSwahili ? 'Risiti za malipo' : 'Payment receipts',
-                    style: TextStyle(color: scheme.onSurface),
-                  ),
-                  subtitle: Text(
-                    context.isSwahili
-                        ? 'Hazizimiki — uthibitisho wa malipo huhifadhiwa'
-                        : 'Cannot be disabled — payment receipts are kept',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: scheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
 
                 const _SectionHeading(
                   swahili: 'Muda unaopendelea',

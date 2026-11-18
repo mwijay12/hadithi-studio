@@ -220,6 +220,19 @@ class SettingsPage extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right_rounded),
               ),
 
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.shield_outlined),
+                    title: Text(context.isSwahili ? 'Ruhusa za kifaa' : 'Device permissions'),
+                    subtitle: Text(context.isSwahili
+                        ? 'Usomaji na sauti zilizomo kwenye app hazihitaji kamera au maikrofoni. Arifa hazitumwi bado. Angalia ruhusa zote kwenye mipangilio ya simu.'
+                        : 'Reading and bundled audio do not need a camera or microphone. Notifications are not sent yet. Check all permissions in device settings.'),
+                  ),
+                ),
+              ),
+
               // -------------------------------------------------------------
               // Bado haipatikani — kwa uaminifu
               // -------------------------------------------------------------
@@ -265,12 +278,8 @@ class SettingsPage extends StatelessWidget {
               // Kuhusu
               // -------------------------------------------------------------
               // -------------------------------------------------------------
-              // Data yako — inafuta kila kitu kwenye kifaa
+              // Data ya maktaba na wasifu; mipangilio mingine hubaki.
               // -------------------------------------------------------------
-              // **Kwa nini sehemu hii ni lazima:** sera ya faragha inasema
-              // mtumiaji anaweza kufuta data yake kwa "Safisha data" kwenye
-              // Mipangilio. Kama kitufe hicho hakipo, sera inasema uongo.
-              // Hivyo tunaweka kitendo halisi hapa.
               _SectionTitle(
                 title: context.isSwahili ? 'Data yako' : 'Your data',
               ),
@@ -282,15 +291,15 @@ class SettingsPage extends StatelessWidget {
                 ),
                 title: Text(
                   context.isSwahili
-                      ? 'Safisha data yote'
-                      : 'Clear all data',
+                      ? 'Futa data ya maktaba'
+                      : 'Clear library data',
                 ),
                 subtitle: Text(
                   context.isSwahili
                       ? 'Maendeleo, alama, rasimu, jina la mtoto na '
-                          'mapendeleo yatafutwa kabisa'
+                          'umri wa mtoto vitaondolewa; lugha na muonekano vitabaki'
                       : 'Progress, bookmarks, drafts, child name and '
-                          'preferences will be erased',
+                          'child age will be removed; language and appearance remain',
                 ),
               ),
 
@@ -333,13 +342,13 @@ Future<void> _confirmClearData(BuildContext context) async {
   final bool? confirmed = await showDialog<bool>(
     context: context,
     builder: (BuildContext dialogContext) => AlertDialog(
-      title: Text(sw ? 'Safisha data yote?' : 'Clear all data?'),
+      title: Text(sw ? 'Futa data ya maktaba?' : 'Clear library data?'),
       content: Text(
         sw
             ? 'Maendeleo ya kusoma, alama, rasimu, jina la mtoto na '
-                'mapendeleo yatafutwa. Hili haliwezi kutenduliwa.'
+                'umri wa mtoto vitaondolewa. Mapendeleo ya lugha, muonekano na arifa yatabaki. Hili haliwezi kutenduliwa.'
             : 'Reading progress, bookmarks, drafts, child name and '
-                'preferences will be erased. This cannot be undone.',
+                'child age will be removed. Language, appearance and notification preferences remain. This cannot be undone.',
       ),
       actions: <Widget>[
         TextButton(
@@ -355,13 +364,16 @@ Future<void> _confirmClearData(BuildContext context) async {
   );
 
   if (confirmed != true) return;
-  await LibraryStore.instance.clearAll();
+  final bool success = await LibraryStore.instance.clearAll();
   if (!context.mounted) return;
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
-        content: Text(sw ? 'Data yote imefutwa.' : 'All data has been erased.'),
+        content: Text(success
+            ? (sw ? 'Data ya maktaba imefutwa.' : 'Library data cleared.')
+            : (sw ? 'Haikuwezekana kufuta data yote ya maktaba. Jaribu tena.'
+                : 'Some library data could not be deleted. Please try again.'),),
       ),
     );
 }

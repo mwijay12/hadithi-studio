@@ -264,7 +264,12 @@ void main() {
       await store.saveLastPage('safari-ya-simba', 2);
       await store.saveChild(name: 'Amina', age: 'age5to7');
 
-      await store.clearAll();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('hadithi_reader_bookmarks_safari-ya-simba', <String>['1']);
+      await prefs.setString('hadithi_app_language', 'english');
+      expect(await store.clearAll(), isTrue);
+      expect(prefs.getStringList('hadithi_reader_bookmarks_safari-ya-simba'), isNull);
+      expect(prefs.getString('hadithi_app_language'), 'english');
 
       final LibraryStore reopened = LibraryStore();
       await reopened.restore();
