@@ -663,7 +663,7 @@ abstract final class StorySampleData {
               'pamoja.',
           textEn: 'Juma learned that one drum plays many hearts. From that '
               'day on, every Saturday, our village drums together.',
-          illustration: _Art.songs,
+          illustration: 'assets/images/stories/pages/ngoma-ya-furaha/page_05.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.character_speak,
@@ -671,10 +671,10 @@ abstract final class StorySampleData {
               labelEn: 'Juma',
               revealSw: '"Ngoma moja, mioyo mingi."',
               revealEn: '"One drum, many hearts."',
-              left: 0.18,
-              top: 0.36,
-              width: 0.32,
-              height: 0.34,
+              left: 0.43,
+              top: 0.41,
+              width: 0.12,
+              height: 0.42,
             ),
           ],
         ),

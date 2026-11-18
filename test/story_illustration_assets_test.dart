@@ -30,6 +30,7 @@ const List<String> _illustratedStories = <String>[
   'safari-ya-simba',
   'mlima-kilimanjaro',
   'nyota-za-usiku',
+  'ngoma-ya-furaha',
 ];
 
 void main() {

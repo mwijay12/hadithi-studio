@@ -3,7 +3,7 @@
 ## Current pass
 
 - Leo: five complete poses used by the shared mascot widget; launcher icon uses a larger portrait. Visual review on Android devices remains necessary, including round masks and small screens.
-- Ngoma ya Furaha: pages 1–4 have new scene-specific images. Page 5 still uses a generic illustration and needs an original image; check hotspot placement on the phone.
+- Ngoma ya Furaha: all five pages have new scene-specific images; check hotspot placement and visual consistency on the phone.
 - The other stories must be reviewed page by page for fidelity and consistency before claiming their illustrations are complete.
 
 ## Future stories submitted by users (not implemented yet)
