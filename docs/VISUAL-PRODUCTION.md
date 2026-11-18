@@ -6,6 +6,7 @@
 - Ngoma ya Furaha: all five pages have new scene-specific images; check hotspot placement and visual consistency on the phone.
 - Kuku na Mwewe: all five pages now have scene-specific images; review the details and hotspot placement on device.
 - Chapati za Mama: all six pages have new scene-specific illustrations; review details and hotspots on device.
+- Kifaru Mdogo and Twiga Mrefu: existing pages 1–2 reviewed; page 3 for each replaced to depict the warning and flight / animals climbing the rock. Reader uses cover cropping: verify scene visibility on phones and tablets.
 - The other stories must be reviewed page by page for fidelity and consistency before claiming their illustrations are complete.
 
 ## Future stories submitted by users (not implemented yet)
