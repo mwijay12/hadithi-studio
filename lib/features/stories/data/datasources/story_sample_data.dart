@@ -22,11 +22,8 @@
 ///
 /// ## Kurasa na picha
 ///
-/// Kwa sasa kuna picha 12 tu zilizopangwa kwenye `assets/images/`. Kwa hivyo
-/// kila ukurasa unatumia picha **inayolingana na mandhari** ya ukurasa
-/// (safari, wanyama, sayansi…) badala ya picha ya kubahatisha. Kurasa
-/// zinapopewa michoro halisi, mabadiliko ni ya `illustration:` pekee —
-/// hakuna skrini, widget wala BLoC inayohitaji kubadilishwa.
+/// Kila ukurasa umeunganishwa na faili yake ya mchoro. Maudhui na maeneo
+/// ya kugusa yanahitaji pia kukaguliwa kwenye kifaa baada ya mabadiliko.
 library;
 
 
@@ -39,26 +36,6 @@ import 'story_kifaru_mdogo.dart';
 import 'story_mti_wa_babu.dart';
 import 'story_safari_ya_matone.dart';
 import 'story_twiga_mrefu.dart';
-
-/// Picha zinazopatikana kwa sasa — majina mafupi kwa urahisi wa kusoma.
-///
-/// Ni `abstract final class` yenye `static const`, kwa hivyo hazitumii
-/// kumbukumbu wakati wa runtime: zote zinakunjwa kwenye compile.
-abstract final class _Art {
-  static const String hero = 'assets/images/hero_home.png';
-  static const String animals =
-      'assets/images/categories/cat_animal_stories.png';
-  static const String morals =
-      'assets/images/categories/cat_morals_wisdom.png';
-  static const String culture = 'assets/images/categories/cat_culture.png';
-  static const String songs = 'assets/images/categories/cat_poems_songs.png';
-  static const String listen =
-      'assets/images/onboarding/onboarding_listen.png';
-  static const String create =
-      'assets/images/onboarding/onboarding_create.png';
-  static const String language =
-      'assets/images/onboarding/onboarding_language.png';
-}
 
 /// Hadithi zote za kuanzia.
 abstract final class StorySampleData {
@@ -130,10 +107,10 @@ abstract final class StorySampleData {
               revealSw: 'Jua la Serengeti huamsha kila kitu asubuhi!',
               revealEn: 'The Serengeti sun wakes everything up in the '
                   'morning!',
-              left: 0.06,
-              top: 0.05,
-              width: 0.26,
-              height: 0.20,
+              left: 0.09,
+              top: 0.10,
+              width: 0.20,
+              height: 0.12,
             ),
           ],
         ),
@@ -154,10 +131,10 @@ abstract final class StorySampleData {
                   'kwenye miti.',
               revealEn: 'A giraffe has a long neck so she can reach the '
                   'highest leaves on the trees.',
-              left: 0.52,
-              top: 0.10,
-              width: 0.34,
-              height: 0.48,
+              left: 0.50,
+              top: 0.03,
+              width: 0.45,
+              height: 0.60,
             ),
           ],
         ),
@@ -178,10 +155,10 @@ abstract final class StorySampleData {
                   'Ndiyo mnyama mkubwa zaidi ardhini!',
               revealEn: 'An elephant drinks many litres of water a day. He '
                   'is the biggest animal on land!',
-              left: 0.20,
-              top: 0.22,
-              width: 0.50,
-              height: 0.50,
+              left: 0.05,
+              top: 0.17,
+              width: 0.44,
+              height: 0.36,
             ),
           ],
         ),
@@ -202,10 +179,10 @@ abstract final class StorySampleData {
                   'wadogo — wanaweza kuona kile tusichokiona.',
               revealEn: 'Hare is small, but he is clever. Listen to the '
                   'small ones — they may see what we cannot.',
-              left: 0.30,
-              top: 0.40,
-              width: 0.36,
-              height: 0.40,
+              left: 0.36,
+              top: 0.51,
+              width: 0.15,
+              height: 0.35,
             ),
           ],
         ),
@@ -226,10 +203,10 @@ abstract final class StorySampleData {
                   'mahali pakavu!',
               revealEn: 'A cave is a good shelter. When the sky opens up, '
                   'find somewhere dry!',
-              left: 0.58,
-              top: 0.28,
-              width: 0.32,
-              height: 0.42,
+              left: 0.08,
+              top: 0.02,
+              width: 0.40,
+              height: 0.16,
             ),
           ],
         ),
@@ -250,10 +227,10 @@ abstract final class StorySampleData {
                   'furaha ni kuwa na marafiki.',
               revealEn: 'Simba is strong, but he always remembers: joy is '
                   'having friends.',
-              left: 0.34,
-              top: 0.42,
+              left: 0.23,
+              top: 0.45,
               width: 0.32,
-              height: 0.38,
+              height: 0.17,
             ),
           ],
         ),
