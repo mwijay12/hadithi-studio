@@ -37,6 +37,7 @@ import '../features/stories/presentation/story_navigation.dart';
 import '../features/stories/presentation/widgets/shelf_tile.dart';
 import '../features/stories/presentation/widgets/story_artwork.dart';
 import '../features/stories/presentation/widgets/story_card.dart';
+import '../features/stories/presentation/widgets/tree_story_game.dart';
 import '../l10n/l10n.dart';
 
 /// Hadithi yenye `id` iliyotolewa, au `null` kama haipo.
@@ -373,7 +374,120 @@ class HomeTabPage extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: AppSpacing.xl),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Text(
+                context.isSwahili ? 'Tuchague cha kufanya' : 'Choose an activity',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Column(
+                children: <Widget>[
+                  if (daily != null)
+                    _HomeActivityTile(
+                      key: const ValueKey('home-listen'),
+                      icon: Icons.headphones_rounded,
+                      accent: AppColors.kilimanjaroBlue,
+                      title: context.isSwahili ? 'Sikiliza hadithi' : 'Listen to a story',
+                      subtitle: context.isSwahili
+                          ? 'Anza Safari ya Simba • sauti ipo kwenye kifaa'
+                          : 'Start Simba’s Safari • audio is on this device',
+                      onTap: () => openReader(context, daily, autoPlay: true),
+                    ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _HomeActivityTile(
+                    key: const ValueKey('home-game'),
+                    icon: Icons.extension_rounded,
+                    accent: AppColors.safariGreen,
+                    title: context.isSwahili ? 'Cheza na Leo' : 'Play with Leo',
+                    subtitle: context.isSwahili
+                        ? 'Jaribio dogo la Mti wa Babu'
+                        : 'A short Grandfather’s Tree quiz',
+                    onTap: () => TreeStoryGame.show(context),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  if (daily != null)
+                    _HomeActivityTile(
+                      key: const ValueKey('home-music'),
+                      icon: Icons.music_note_rounded,
+                      accent: AppColors.earthBrown,
+                      title: context.isSwahili ? 'Muziki wa kusoma' : 'Reading music',
+                      subtitle: context.isSwahili
+                          ? 'Fungua hadithi, kisha washa muziki kwenye mipangilio'
+                          : 'Open the story, then turn music on in settings',
+                      onTap: () => openReader(context, daily),
+                    ),
+                  const SizedBox(height: AppSpacing.md),
+                  OutlinedButton.icon(
+                    key: const ValueKey('home-all-stories'),
+                    onPressed: () => openAllStories(context),
+                    icon: const Icon(Icons.menu_book_rounded),
+                    label: Text(context.isSwahili ? 'Hadithi zote' : 'All stories'),
+                  ),
+                ],
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A real action, not a placeholder for an unimplemented feature.
+class _HomeActivityTile extends StatelessWidget {
+  const _HomeActivityTile({super.key, required this.icon, required this.accent,
+      required this.title, required this.subtitle, required this.onTap});
+
+  final IconData icon;
+  final Color accent;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Material(
+      color: colors.surfaceContainerHighest.withValues(alpha: 0.55),
+      borderRadius: AppSpacing.borderRadiusMd,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppSpacing.borderRadiusMd,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Row(children: <Widget>[
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, color: colors.brightness == Brightness.dark
+                  ? colors.onSurface : accent),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(title, style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: colors.onSurface, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(subtitle, style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colors.onSurfaceVariant)),
+              ],
+            )),
+            const SizedBox(width: AppSpacing.sm),
+            Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
+          ]),
         ),
       ),
     );
