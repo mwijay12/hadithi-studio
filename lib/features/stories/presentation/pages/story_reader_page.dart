@@ -50,6 +50,7 @@ import '../cubit/reader_cubit.dart';
 import '../state/reader_state.dart';
 import '../widgets/interactive_hotspot.dart';
 import '../widgets/reader_settings_panel.dart';
+import '../widgets/reader_illustration.dart';
 import '../widgets/tts_controls.dart';
 import '../widgets/tree_story_game.dart';
 import '../../../../core/widgets/leo_mascot.dart';
@@ -599,12 +600,10 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
 // TABAKA 1 — UKURASA MMOJA (mchoro, maandishi, maeneo ya kugusa)
 // =============================================================================
 
-/// Ukurasa mmoja wa hadithi: mchoro kamili (full-bleed) + maandishi chini.
+/// Ukurasa mmoja wa hadithi: mchoro kamili na maandishi chini.
 ///
-/// Mchoro hutumia `Image.asset` **mbichi** (si `StoryArtwork`): widget huyo
-/// hupanga upya picha hadi 140 dp (`_cacheWidthFor(context, 140)`) kwa sababu
-/// ameundwa kwa kadi — hapa tunahitaji picha **kamili ya skrini**, na
-/// kupunguza azimio kungeipa mchoro ukungu.
+/// Picha huwekwa ndani ya nafasi iliyo juu ya maandishi bila kukatwa.
+/// Maeneo ya kugusa yanafuata ukubwa halisi wa picha.
 class _StoryPageView extends StatelessWidget {
   const _StoryPageView({
     required this.page,
@@ -627,22 +626,26 @@ class _StoryPageView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        // Mchoro kamili.
         ColoredBox(
           color: state.isNightMode
               ? AppColors.readerNightBackground
               : AppColors.readerBackground,
-          child: Image.asset(
-            page.illustration,
-            fit: BoxFit.cover,
-            // Mchoro haupo? Tusiangushe ukurasa — tunaonyesha mahali pake.
-            errorBuilder: (_, __, ___) => const Center(
-              child: Icon(
-                Icons.image_outlined,
-                size: AppSpacing.iconXl,
-                color: AppColors.mutedText,
-              ),
-            ),
+        ),
+        // Keep the complete illustration above the reading controls and text.
+        // Hotspot rectangles are measured in illustration coordinates.
+        Positioned(
+          top: 64,
+          left: 0,
+          right: 0,
+          bottom: state.showsStoryText
+              ? MediaQuery.of(context).size.height * AppSpacing.textOverlayMaxHeightRatio
+              : 140,
+          child: ReaderIllustration(
+            asset: page.illustration,
+            hotspots: page.hotspots,
+            onHotspotTapped: onHotspotTapped,
+            enabled: isCurrent,
+            compact: MediaQuery.of(context).size.width < AppBreakpoints.smallPhone,
           ),
         ),
 
@@ -656,27 +659,6 @@ class _StoryPageView extends StatelessWidget {
         if (state.showsStoryText)
           _TextOverlay(page: page, state: state, isCurrent: isCurrent),
 
-        // Maeneo ya kugusa — juu ya maandishi, ili vibonge vyao
-        // visifichwe na kifuniko cha maandishi.
-        for (final StoryHotspot hotspot in page.hotspots)
-          Positioned(
-            // Ratios (0.0–1.0) → pixelsi. Hii hulinda eneo la kugusa likiwa
-            // lile lile kwenye Tecno ya inchi 5 na kwenye tablet.
-            left: hotspot.left * MediaQuery.of(context).size.width,
-            top: hotspot.top * MediaQuery.of(context).size.height,
-            width: hotspot.width * MediaQuery.of(context).size.width,
-            height: hotspot.height * MediaQuery.of(context).size.height,
-            child: InteractiveHotspot(
-              hotspot: hotspot,
-              onTapped: onHotspotTapped,
-              enabled: isCurrent,
-              // Kwenye simu ndogo sana (Tecno/Itel za 5.0") vitufe vya eneo
-              // hupunguzwa ili visifunike mchoro — kizingiti kiko
-              // `AppBreakpoints`, si `AppSpacing`.
-              compact:
-                  MediaQuery.of(context).size.width < AppBreakpoints.smallPhone,
-            ),
-          ),
       ],
     );
   }
