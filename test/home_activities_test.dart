@@ -36,6 +36,7 @@ void main() {
     final appRouter = router();
     await openHome(tester, appRouter);
     await tester.ensureVisible(find.byKey(const ValueKey('home-game')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-game')));
     await tester.pumpAndSettle();
     expect(find.text('Babu alimfundisha Neema nini?'), findsOneWidget);
@@ -45,6 +46,7 @@ void main() {
     final appRouter = router();
     await openHome(tester, appRouter);
     await tester.ensureVisible(find.byKey(const ValueKey('home-listen')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-listen')));
     await tester.pumpAndSettle();
     expect(find.text('reader:safari-ya-simba:1'), findsOneWidget);
@@ -54,6 +56,7 @@ void main() {
     final appRouter = router();
     await openHome(tester, appRouter);
     await tester.ensureVisible(find.byKey(const ValueKey('home-music')));
+    await tester.pumpAndSettle();
     expect(find.text('Fungua hadithi, kisha washa muziki kwenye mipangilio'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('home-music')));
     await tester.pumpAndSettle();
@@ -64,6 +67,7 @@ void main() {
     final appRouter = router();
     await openHome(tester, appRouter);
     await tester.ensureVisible(find.byKey(const ValueKey('home-all-stories')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-all-stories')));
     await tester.pumpAndSettle();
     expect(find.text('all stories route'), findsOneWidget);
