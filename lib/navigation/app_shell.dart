@@ -1018,7 +1018,7 @@ class BookshelfTabPage extends StatelessWidget {
                           // moja** kwenye reader, si kwenye maelezo: hatua
                           // inayotarajiwa ni kuendelea kusoma.
                           onTap: () =>
-                              openReader(context, story, autoPlay: true),
+                              openReader(context, story),
                         ),
                       ),
                   ],

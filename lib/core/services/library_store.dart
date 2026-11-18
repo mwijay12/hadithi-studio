@@ -210,10 +210,8 @@ class LibraryStore extends ChangeNotifier {
 
   /// Hadithi zenye maendeleo ya kusoma (zilizoanza, hazijamalizika).
   ///
-  /// Hupangwa kwa **muda wa mwisho wa kuandika**: `Map` ya Dart huhifadhi
-  /// mpangilio wa kuingizwa, na `saveLastPage` huweka ufunguo mpya mwisho.
-  /// Hivyo hadithi ya karibuni zaidi inarudi mwisho — tunaigeuza ili ionekane
-  /// kwanza kwenye "Endelea Kusoma".
+  /// Mpangilio wa karibuni ni wa kipindi hiki tu; mpangilio baada ya
+  /// kufungua app upya unategemea mpangilio wa hifadhi.
   List<String> get inProgressStoryIds =>
       _lastPage.keys.toList(growable: false).reversed.toList(growable: false);
 
@@ -349,18 +347,22 @@ class LibraryStore extends ChangeNotifier {
     }
   }
 
-  /// Huhifadhi ukurasa unaosomwa sasa wa [storyId].
-  ///
-  /// Huitwa kila ukurasa unapogeuza. Haithiri UI kwa `notifyListeners`
-  /// kwa sababu Rafu Yangu pekee inahitaji thamani hii — na haiko hai
-  /// wakati reader imefunguliwa. Kuarifu kila ukurasa kungejenga upya
-  /// widget zote za nyuma bure.
+  /// Updates the in-memory shelf after a successful progress write.
+  void updateReadingProgress(String storyId, int? pageIndex) {
+    if (storyId.isEmpty || (pageIndex != null && pageIndex < 0)) return;
+    _lastPage.remove(storyId);
+    if (pageIndex != null) _lastPage[storyId] = pageIndex;
+    notifyListeners();
+  }
+
+  /// Saves a page and refreshes the shelf when persistence succeeds.
   Future<void> saveLastPage(String storyId, int pageIndex) async {
     if (storyId.isEmpty || pageIndex < 0) return;
-    _lastPage[storyId] = pageIndex;
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('$progressPrefix$storyId', pageIndex);
+      if (await prefs.setInt('$progressPrefix$storyId', pageIndex)) {
+        updateReadingProgress(storyId, pageIndex);
+      }
     } catch (error) {
       debugPrint('LibraryStore: kuhifadhi maendeleo kimeshindwa — $error');
     }
