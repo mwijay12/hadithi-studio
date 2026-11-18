@@ -714,14 +714,14 @@ abstract final class StorySampleData {
               'pamoja, wakala pamoja, wakacheka pamoja.',
           textEn: 'Long, long ago, Hen and Hawk were neighbours. They sat '
               'together, ate together and laughed together.',
-          illustration: _Art.animals,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_01.webp',
         ),
         StoryPage(
           textSw: 'Siku moja Kuku alitaka kushona mfuko wa nafaka. Akamwomba '
               'Mwewe, "Niazime sindano yako." Mwewe alimpa kwa furaha.',
           textEn: 'One day Hen wanted to sew a grain bag. She asked Hawk, '
               '"Lend me your needle." Hawk gave it to her happily.',
-          illustration: _Art.animals,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_02.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.character_speak,
@@ -731,10 +731,10 @@ abstract final class StorySampleData {
                   'kuahidi.',
               revealEn: '"Send it back tomorrow," said Hawk. Hen forgot to '
                   'promise.',
-              left: 0.52,
-              top: 0.16,
-              width: 0.36,
-              height: 0.38,
+              left: 0.60,
+              top: 0.20,
+              width: 0.26,
+              height: 0.52,
             ),
           ],
         ),
@@ -745,7 +745,7 @@ abstract final class StorySampleData {
           textEn: 'Hen sewed and sewed and sewed. Suddenly the needle fell '
               'into the grass. She scratched and scratched — it was not '
               'there. That is why hens scratch the ground even today.',
-          illustration: _Art.animals,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_03.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.sound_effect,
@@ -755,10 +755,10 @@ abstract final class StorySampleData {
                   'kwa kuwa sindano ilipotea huko, huchimba kila siku.',
               revealEn: 'Hens look for food by scratching the ground — and '
                   'since the needle was lost there, they scratch every day.',
-              left: 0.08,
-              top: 0.42,
-              width: 0.36,
-              height: 0.44,
+              left: 0.46,
+              top: 0.22,
+              width: 0.34,
+              height: 0.64,
             ),
           ],
         ),
@@ -769,7 +769,7 @@ abstract final class StorySampleData {
           textEn: 'Hawk came for her needle. Hen had nothing to give. "I '
               'trusted you!" Hawk cried angrily. "From today I will chase '
               'you forever."',
-          illustration: _Art.animals,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_04.webp',
         ),
         StoryPage(
           textSw: 'Kuanzia siku ile, kila Mwewe aonapo kuku anawafukuza. '
@@ -777,7 +777,7 @@ abstract final class StorySampleData {
           textEn: 'From that day, whenever Hawk sees hens he chases them. '
               'When we see him in the sky, we remember: return what you '
               'borrow.',
-          illustration: _Art.hero,
+          illustration: 'assets/images/stories/pages/kuku-na-mwewe/page_05.webp',
           hotspots: <StoryHotspot>[
             StoryHotspot(
               type: HotspotType.info_popup,
@@ -787,9 +787,9 @@ abstract final class StorySampleData {
                   'uaminifu ni mali.',
               revealEn: 'Almost every Swahili folktale carries one lesson: '
                   'trustworthiness is wealth.',
-              left: 0.56,
+              left: 0.58,
               top: 0.08,
-              width: 0.36,
+              width: 0.32,
               height: 0.30,
             ),
           ],

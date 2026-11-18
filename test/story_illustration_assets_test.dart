@@ -31,11 +31,12 @@ const List<String> _illustratedStories = <String>[
   'mlima-kilimanjaro',
   'nyota-za-usiku',
   'ngoma-ya-furaha',
+  'kuku-na-mwewe',
 ];
 
 void main() {
   group('Michoro ya kurasa', () {
-    test('hadithi tatu za kuanzia zina ukurasa wa kila mchoro', () {
+    test('hadithi zilizochorwa zina mchoro kwa kila ukurasa', () {
       for (final String id in _illustratedStories) {
         final Story story = StorySampleData.all.firstWhere(
           (Story s) => s.id == id,
