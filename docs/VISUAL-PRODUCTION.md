@@ -7,6 +7,8 @@
 - Kuku na Mwewe: all five pages now have scene-specific images; review the details and hotspot placement on device.
 - Chapati za Mama: all six pages have new scene-specific illustrations; review details and hotspots on device.
 - Kifaru Mdogo and Twiga Mrefu: existing pages 1–2 reviewed; page 3 for each replaced to depict the warning and flight / animals climbing the rock. Reader now fits the entire illustration; verify visibility on phones and tablets.
+- Mti wa Babu: all three existing illustrations reviewed against the story.
+- Safari ya Matone: pages 1–2 retained; page 3 replaced to include the river and sea as well as Kilimanjaro. The landscape is illustrative, not a geographic map.
 - Reader: illustrations fit above the text without cover cropping; hotspots use image-relative coordinates. Existing hotspot placements and the response bubble still need device review across screen sizes.
 - The other stories must be reviewed page by page for fidelity and consistency before claiming their illustrations are complete.
 
