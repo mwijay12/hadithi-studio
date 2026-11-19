@@ -62,6 +62,7 @@ class StoryReaderPage extends StatefulWidget {
     super.key,
     required this.storyId,
     this.autoPlay = false,
+    this.resume = false,
   });
 
   /// `id` ya hadithi — hutumika kwa "jaribu tena".
@@ -73,12 +74,15 @@ class StoryReaderPage extends StatefulWidget {
   /// wazi kuwa anataka kuanza kusikiliza **sasa**.
   final bool autoPlay;
 
+  /// Start at the saved page without prompting (no automatic audio by default).
+  final bool resume;
+
   @override
   State<StoryReaderPage> createState() => _StoryReaderPageState();
 }
 
 class _StoryReaderPageState extends State<StoryReaderPage> {
-  final PageController _pageController = PageController();
+  PageController? _pageController;
 
   /// Vidhibiti (upau wa juu na wa sauti) vinaonekana.
   bool _showControls = true;
@@ -128,7 +132,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   @override
   void dispose() {
     _hotspotRelease?.cancel();
-    _pageController.dispose();
+    _pageController?.dispose();
     // Rudisha mfumo kwenye hali ya kawaida — tumeiba `SystemUiMode` wakati
     // wa skrini nzima, na kushindwa kuirudisha kungeacha app bila status bar.
     unawaited(
@@ -267,10 +271,11 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   /// wa build.
   void _syncPage(int index) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_pageController.hasClients) return;
-      final int current = _pageController.page?.round() ?? 0;
+      final controller = _pageController;
+      if (!mounted || controller == null || !controller.hasClients) return;
+      final int current = controller.page?.round() ?? 0;
       if (current == index) return;
-      _pageController.animateToPage(
+      controller.animateToPage(
         index,
         // 400 ms + `easeInOutCubic` — mwendo laini wa kugeuza ukurasa.
         duration: AppSpacing.readerPageTurn,
@@ -285,7 +290,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
 
   /// Huuliza "Endelea kutoka ukurasa…?" mara moja tu kwa kila kikao.
   Future<void> _maybeAskToResume(ReaderCubit cubit, ReaderState state) async {
-    if (_resumePromptShown || widget.autoPlay) return;
+    if (_resumePromptShown || widget.autoPlay || widget.resume) return;
     if (!state.isReady || state.totalPages <= 1) return;
 
     _resumePromptShown = true;
@@ -459,6 +464,10 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
       return const Center(child: AppLoading());
     }
 
+    // Initialize at the restored page before the PageView is attached. This
+    // avoids animating through and accidentally saving intermediate pages.
+    _pageController ??= PageController(initialPage: state.pageIndex);
+
     // Upau wa sauti huonekana pamoja na vidhibiti — lakini katika
     // `listenOnly` unabaki wazi ili mtoto aweze kusimamisha sauti hata
     // akiwa ameficha vidhibiti vingine.
@@ -478,7 +487,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
           onDoubleTap: _handleDoubleTap,
           onVerticalDragEnd: _handleVerticalDrag,
           child: PageView.builder(
-            controller: _pageController,
+            controller: _pageController!,
             itemCount: state.totalPages,
             // Cubit hupokea kila ukurasa unaotulia — ikiwa ni mkono wa mtumiaji
             // au `animateToPage` yetu.

@@ -154,6 +154,7 @@ class LibraryStore extends ChangeNotifier {
 
   /// Kiambishi cha ukurasa wa mwisho kwa kila hadithi.
   static const String progressPrefix = 'hadithi_reader_page_';
+  static const String progressTimePrefix = 'hadithi_reader_time_';
 
   /// Jina la mtoto (hiari). Huhifadhiwa kifaa pekee — hakuna akaunti.
   static const String childNameKey = 'hadithi_child_name';
@@ -167,6 +168,7 @@ class LibraryStore extends ChangeNotifier {
   Set<String> _downloadedStories = <String>{};
   List<DraftStory> _drafts = <DraftStory>[];
   final Map<String, int> _lastPage = <String, int>{};
+  final Map<String, int> _lastReadAt = <String, int>{};
   bool _restored = false;
   String _childName = '';
   String _childAge = '';
@@ -208,12 +210,17 @@ class LibraryStore extends ChangeNotifier {
   /// Je, [storyId] imepakuliwa?
   bool isDownloaded(String storyId) => _downloadedStories.contains(storyId);
 
-  /// Hadithi zenye maendeleo ya kusoma (zilizoanza, hazijamalizika).
-  ///
-  /// Mpangilio wa karibuni ni wa kipindi hiki tu; mpangilio baada ya
-  /// kufungua app upya unategemea mpangilio wa hifadhi.
-  List<String> get inProgressStoryIds =>
-      _lastPage.keys.toList(growable: false).reversed.toList(growable: false);
+  /// Saved pages, ordered by last update when available. Old installations
+  /// have no timestamps; their existing pages remain available.
+  List<String> get inProgressStoryIds {
+    final ids = _lastPage.keys.toList().reversed.toList();
+    final order = <String, int>{for (var i = 0; i < ids.length; i++) ids[i]: i};
+    ids.sort((a, b) {
+      final byTime = (_lastReadAt[b] ?? 0).compareTo(_lastReadAt[a] ?? 0);
+      return byTime != 0 ? byTime : order[a]!.compareTo(order[b]!);
+    });
+    return ids;
+  }
 
   // ---------------------------------------------------------------------
   // Kusoma
@@ -262,7 +269,10 @@ class LibraryStore extends ChangeNotifier {
         if (!key.startsWith(progressPrefix)) continue;
         final int? page = prefs.getInt(key);
         if (page == null || page < 0) continue;
-        _lastPage[key.substring(progressPrefix.length)] = page;
+        final id = key.substring(progressPrefix.length);
+        _lastPage[id] = page;
+        final time = prefs.getInt('$progressTimePrefix$id');
+        if (time != null && time > 0) _lastReadAt[id] = time;
       }
     } catch (error) {
       // Hifadhi haipatikani: tunaendelea na hali ya akiba. Hakuna
@@ -348,10 +358,15 @@ class LibraryStore extends ChangeNotifier {
   }
 
   /// Updates the in-memory shelf after a successful progress write.
-  void updateReadingProgress(String storyId, int? pageIndex) {
+  void updateReadingProgress(String storyId, int? pageIndex, {int? updatedAt}) {
     if (storyId.isEmpty || (pageIndex != null && pageIndex < 0)) return;
     _lastPage.remove(storyId);
-    if (pageIndex != null) _lastPage[storyId] = pageIndex;
+    if (pageIndex != null) {
+      _lastPage[storyId] = pageIndex;
+      if (updatedAt != null) _lastReadAt[storyId] = updatedAt;
+    } else {
+      _lastReadAt.remove(storyId);
+    }
     notifyListeners();
   }
 
@@ -361,7 +376,12 @@ class LibraryStore extends ChangeNotifier {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       if (await prefs.setInt('$progressPrefix$storyId', pageIndex)) {
-        updateReadingProgress(storyId, pageIndex);
+        final time = DateTime.now().microsecondsSinceEpoch;
+        if (await prefs.setInt('$progressTimePrefix$storyId', time)) {
+          updateReadingProgress(storyId, pageIndex, updatedAt: time);
+        } else {
+          updateReadingProgress(storyId, pageIndex);
+        }
       }
     } catch (error) {
       debugPrint('LibraryStore: kuhifadhi maendeleo kimeshindwa — $error');
@@ -432,18 +452,21 @@ class LibraryStore extends ChangeNotifier {
           onboardingKey, followedAuthorsKey, savedStoriesKey,
           downloadedStoriesKey, draftsKey, childNameKey, childAgeKey,
         }.contains(key) || key.startsWith(progressPrefix) ||
+            key.startsWith(progressTimePrefix) ||
             key.startsWith('hadithi_reader_bookmarks_') ||
             key.startsWith('hadithi_local_review_')) {
           if (!await prefs.remove(key)) success = false;
         }
       }
       _lastPage.clear();
+      _lastReadAt.clear();
       _restored = false;
       await restore();
       return success;
     } catch (error) {
       debugPrint('LibraryStore: kufuta data kimeshindwa — $error');
       _lastPage.clear();
+      _lastReadAt.clear();
       _restored = false;
       await restore();
       return false;

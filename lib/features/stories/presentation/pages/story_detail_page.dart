@@ -1063,27 +1063,45 @@ class _ActionButtonsState extends State<_ActionButtons> {
       ),
       child: Column(
         children: <Widget>[
-          // Msingi — Safari Green, urefu 56, kona 16 (Task 6a).
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: FilledButton.icon(
-              onPressed: () => _openReader(context, listen: false),
-              icon: const Icon(Icons.play_arrow_rounded, size: AppSpacing.iconMd),
-              label: Text(l10n.readNow),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.safariGreen,
-                foregroundColor: Colors.white,
-                elevation: 2,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: AppSpacing.borderRadiusMd,
+          // A saved page means visited, not necessarily completed.
+          ListenableBuilder(
+            listenable: LibraryStore.instance,
+            builder: (context, _) {
+              final page = LibraryStore.instance.lastPage(widget.story.id);
+              final valid = page != null && page >= 0 && page < widget.story.pageCount;
+              final sw = context.isSwahili;
+              return Column(children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    key: const ValueKey('detail-read'),
+                    onPressed: () {
+                      if (valid) {
+                        openReader(context, widget.story, resume: true);
+                      } else {
+                        _openReader(context, listen: false);
+                      }
+                    },
+                    icon: const Icon(Icons.play_arrow_rounded, size: AppSpacing.iconMd),
+                    label: Text(valid
+                        ? (sw ? 'Endelea — Ukurasa ${page + 1}/${widget.story.pageCount}'
+                            : 'Continue — Page ${page + 1}/${widget.story.pageCount}')
+                        : l10n.readNow),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 56),
+                      backgroundColor: AppColors.safariGreen,
+                      foregroundColor: Colors.white,
+                      shape: const RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusMd),
+                      textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                    ),
+                  ),
                 ),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+                if (valid) ...<Widget>[
+                  const SizedBox(height: AppSpacing.xs),
+                  LinearProgressIndicator(value: (page + 1) / widget.story.pageCount),
+                ],
+              ]);
+            },
           ),
           const SizedBox(height: AppSpacing.md),
           SizedBox(

@@ -49,13 +49,14 @@ void openStoryById(BuildContext context, String storyId) {
 ///
 /// [autoPlay] ni `true` tunapoingia kwa "Sikiliza" badala ya "Soma Sasa":
 /// reader huanza kusoma ukurasa wa kwanza mara moja.
-void openReader(BuildContext context, Story story, {bool autoPlay = false}) {
+void openReader(BuildContext context, Story story, {bool autoPlay = false, bool resume = false}) {
   context.pushNamed(
     AppRoutes.readerName,
     pathParameters: <String, String>{'id': story.id},
-    queryParameters: autoPlay
-        ? const <String, String>{'auto': '1'}
-        : const <String, String>{},
+    queryParameters: <String, String>{
+      if (autoPlay) 'auto': '1',
+      if (resume) 'resume': '1',
+    },
     extra: story,
   );
 }

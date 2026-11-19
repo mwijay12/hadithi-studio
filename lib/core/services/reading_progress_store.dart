@@ -75,7 +75,16 @@ class ReadingProgressStore {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final bool saved = await prefs.setInt('$progressPrefix$storyId', pageIndex);
-      if (saved) LibraryStore.instance.updateReadingProgress(storyId, pageIndex);
+      if (saved) {
+        final time = DateTime.now().microsecondsSinceEpoch;
+        try {
+          final timeSaved = await prefs.setInt('${LibraryStore.progressTimePrefix}$storyId', time);
+          LibraryStore.instance.updateReadingProgress(storyId, pageIndex,
+              updatedAt: timeSaved ? time : null);
+        } catch (_) {
+          LibraryStore.instance.updateReadingProgress(storyId, pageIndex);
+        }
+      }
       return saved;
     } catch (error) {
       debugPrint('ReadingProgressStore: kuhifadhi maendeleo kimeshindwa — $error');
@@ -128,7 +137,10 @@ class ReadingProgressStore {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final bool removed = await prefs.remove('$progressPrefix$storyId');
-      if (removed) LibraryStore.instance.updateReadingProgress(storyId, null);
+      if (removed) {
+        await prefs.remove('${LibraryStore.progressTimePrefix}$storyId');
+        LibraryStore.instance.updateReadingProgress(storyId, null);
+      }
       return removed;
     } catch (error) {
       debugPrint('ReadingProgressStore: kufuta maendeleo kimeshindwa — $error');

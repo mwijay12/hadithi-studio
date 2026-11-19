@@ -323,6 +323,7 @@ class HomeTabPage extends StatelessWidget {
                 ),
               ],
             ),
+            const _ContinueReadingCard(),
             const _LeoWelcomeCard(),
             const SizedBox(height: AppSpacing.lg),
             // Kadi kuu — hadithi ya leo. Ni kubwa kuliko kadi nyingine kwa
@@ -440,6 +441,72 @@ class HomeTabPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Last visited story, not a claim of completion.
+class _ContinueReadingCard extends StatelessWidget {
+  const _ContinueReadingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: LibraryStore.instance,
+      builder: (context, _) {
+        Story? story;
+        int? page;
+        for (final id in LibraryStore.instance.inProgressStoryIds) {
+          final candidate = storyById(id);
+          final saved = LibraryStore.instance.lastPage(id);
+          if (candidate != null && saved != null && saved >= 0 && saved < candidate.pageCount) {
+            story = candidate;
+            page = saved;
+            break;
+          }
+        }
+        if (story == null || page == null) return const SizedBox.shrink();
+        final selected = story;
+        final pageNumber = page + 1;
+        final total = selected.pageCount;
+        final sw = context.isSwahili;
+        final colors = Theme.of(context).colorScheme;
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Text(sw ? 'Endelea Kusoma' : 'Continue reading',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                const SizedBox(height: AppSpacing.sm),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(selected.coverAsset, width: 72, height: 86, fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const SizedBox(width: 72, height: 86, child: Icon(Icons.menu_book_rounded))),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Text(selected.title(swahili: sw), style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(sw ? 'Ukurasa $pageNumber kati ya $total' : 'Page $pageNumber of $total'),
+                    const SizedBox(height: AppSpacing.xs),
+                    LinearProgressIndicator(value: pageNumber / total, color: colors.primary),
+                  ])),
+                ]),
+                const SizedBox(height: AppSpacing.sm),
+                FilledButton.icon(
+                  key: const ValueKey('home-resume'),
+                  onPressed: () => openReader(context, selected, resume: true),
+                  icon: const Icon(Icons.menu_book_rounded),
+                  label: Text(sw ? 'Endelea' : 'Continue'),
+                ),
+              ]),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -1019,7 +1086,7 @@ class BookshelfTabPage extends StatelessWidget {
                           // moja** kwenye reader, si kwenye maelezo: hatua
                           // inayotarajiwa ni kuendelea kusoma.
                           onTap: () =>
-                              openReader(context, story),
+                              openReader(context, story, resume: true),
                         ),
                       ),
                   ],
