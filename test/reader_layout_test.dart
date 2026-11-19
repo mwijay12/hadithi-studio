@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hadithi_studio/core/services/speech_service.dart';
 import 'package:hadithi_studio/features/stories/data/datasources/story_sample_data.dart';
 import 'package:hadithi_studio/features/stories/data/services/story_audio_player.dart';
+import 'package:hadithi_studio/features/stories/data/services/background_music_player.dart';
 import 'package:hadithi_studio/features/stories/presentation/cubit/reader_cubit.dart';
 import 'package:hadithi_studio/features/stories/presentation/pages/story_reader_page.dart';
 import 'package:hadithi_studio/features/stories/presentation/widgets/reader_illustration.dart';
@@ -18,6 +19,11 @@ class _Audio extends StoryAudioPlayer {
   Stream<ProcessingState> get processingStateStream => const Stream.empty();
   @override
   Future<void> stop() async {}
+  @override
+  Future<void> dispose() async {}
+}
+
+class _Music extends BackgroundMusicPlayer {
   @override
   Future<void> dispose() async {}
 }
@@ -38,7 +44,8 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    final reader = ReaderCubit(audioPlayer: _Audio(), speech: _Speech());
+    final reader = ReaderCubit(audioPlayer: _Audio(), speech: _Speech(), musicPlayer: _Music());
+    addTearDown(reader.close);
     await reader.loadStory(StorySampleData.all.first);
     await tester.pumpWidget(BlocProvider.value(
       value: reader,
@@ -60,6 +67,5 @@ void main() {
     expect(find.byIcon(Icons.close_rounded), findsWidgets);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
-    await tester.runAsync(() => reader.close());
   });
 }
