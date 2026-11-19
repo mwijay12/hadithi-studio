@@ -169,7 +169,9 @@ class TtsControls extends StatelessWidget {
               ),
 
               // **Safu ya chips.**
-              SingleChildScrollView(
+              Row(
+                children: <Widget>[
+                  Expanded(child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md,
@@ -236,6 +238,18 @@ class TtsControls extends StatelessWidget {
                     ),
                   ],
                 ),
+                  )),
+                  Tooltip(
+                    message: context.localised(
+                      swahili: 'Telezesha kuona vidhibiti zaidi',
+                      english: 'Scroll to see more controls',
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: AppSpacing.sm),
+                      child: Icon(Icons.chevron_right_rounded, color: ink, size: 20),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

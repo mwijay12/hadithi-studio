@@ -29,6 +29,7 @@
 library;
 
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -640,10 +641,27 @@ class _StoryPageView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        ColoredBox(
-          color: state.isNightMode
-              ? AppColors.readerNightBackground
-              : AppColors.readerBackground,
+        // Fill letterboxed space with a softened copy of the same scene.
+        // The sharp foreground and its hotspots stay completely visible.
+        Positioned.fill(
+          child: IgnorePointer(
+            child: ExcludeSemantics(
+              child: ClipRect(
+                child: RepaintBoundary(
+                  child: ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Image.asset(
+                      page.illustration,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const ColoredBox(
+                        color: AppColors.readerNightBackground,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
         // Keep the complete illustration above the reading controls and text.
         // Hotspot rectangles are measured in illustration coordinates.
@@ -731,11 +749,11 @@ class _TextOverlay extends StatelessWidget {
       // Sasa kuna kituo cha kati: 0.55 kwa 42%, na 0.92 chini.
       colors: <Color>[
         night
-            ? AppColors.readerNightBackground.withValues(alpha: 0.0)
-            : Colors.transparent,
+            ? AppColors.readerNightBackground.withValues(alpha: 0.78)
+            : Colors.black.withValues(alpha: 0.75),
         night
             ? AppColors.readerNightBackground.withValues(alpha: 0.78)
-            : Colors.black.withValues(alpha: 0.55),
+            : Colors.black.withValues(alpha: 0.82),
         night
             ? AppColors.readerNightBackground.withValues(alpha: 0.96)
             : Colors.black.withValues(alpha: 0.92),
@@ -773,7 +791,7 @@ class _TextOverlay extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // Kidokezo cha kugusa — "Gusa kupata majibu!".
-                if (page.hasHotspots) _TapHint(isNight: night),
+                if (page.hasHotspots) const _TapHint(),
                 AppKaraokeText(
                   text: page.text(swahili: swahili),
                   // Karaoke ni ya ukurasa wa sasa pekee; kurasa zilizo pembeni
@@ -850,9 +868,7 @@ class _TextOverlay extends StatelessWidget {
 
 /// Kidokezo kidogo "Gusa kupata majibu!" ndani ya kifuniko cha maandishi.
 class _TapHint extends StatelessWidget {
-  const _TapHint({required this.isNight});
-
-  final bool isNight;
+  const _TapHint();
 
   @override
   Widget build(BuildContext context) {
@@ -864,8 +880,9 @@ class _TapHint extends StatelessWidget {
           vertical: AppSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: AppColors.playfulYellow.withValues(alpha: isNight ? 0.22 : 0.30),
+          color: const Color(0xFFFFE082),
           borderRadius: AppSpacing.borderRadiusPill,
+          border: Border.all(color: const Color(0xFF8B6500)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -873,7 +890,7 @@ class _TapHint extends StatelessWidget {
             const Icon(
               Icons.touch_app_rounded,
               size: AppSpacing.iconSm,
-              color: AppColors.playfulYellow,
+              color: Color(0xFF4A3200),
             ),
             const SizedBox(width: AppSpacing.xs),
             Flexible(
@@ -882,7 +899,7 @@ class _TapHint extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: isNight ? AppColors.readerNightText : Colors.white,
+                  color: const Color(0xFF4A3200),
                 ),
               ),
             ),
@@ -930,7 +947,7 @@ class _TopControls extends StatelessWidget {
         child: IgnorePointer(
           ignoring: !visible,
           child: Container(
-            height: AppSpacing.readerTopBarHeight,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
               // Gradient cheusi 54% → uwazi: maandishi yanasomeka juu ya
               // mchoro wowote, bila kufunga picha nzima.
@@ -938,14 +955,17 @@ class _TopControls extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: <Color>[
-                  Colors.black.withValues(alpha: 0.54),
-                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.88),
+                  Colors.black.withValues(alpha: 0.72),
+                  Colors.black.withValues(alpha: 0.48),
                 ],
               ),
             ),
             child: SafeArea(
               bottom: false,
-              child: Row(
+              child: SizedBox(
+                height: AppSpacing.readerTopBarHeight,
+                child: Row(
                 children: <Widget>[
                   IconButton(
                     onPressed: onClose,
@@ -1010,6 +1030,7 @@ class _TopControls extends StatelessWidget {
                     ],
                   ),
                 ],
+                ),
               ),
             ),
           ),

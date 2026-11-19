@@ -311,6 +311,7 @@ class HomeTabPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: ListView(
+          key: const ValueKey('home-scroll'),
           padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
           children: <Widget>[
             Stack(

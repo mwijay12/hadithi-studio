@@ -272,8 +272,8 @@ class _HeroCover extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         // Kichwa hujikunja kwenye upau wakati wa kusogea.
         titlePadding: const EdgeInsetsDirectional.only(
-          start: AppSpacing.xxl,
-          end: AppSpacing.xxl,
+          start: 72,
+          end: 112,
           bottom: AppSpacing.md,
         ),
         title: Text(
@@ -671,7 +671,7 @@ class _AuthorCardState extends State<_AuthorCard> {
         0,
       ),
       child: Material(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         elevation: 1,
         borderRadius: AppSpacing.borderRadiusMd,
         child: Padding(
@@ -694,7 +694,8 @@ class _AuthorCardState extends State<_AuthorCard> {
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(
-                  l10n.writtenBy(widget.authorName),
+                  l10n.writtenBy(widget.authorName.trim().isEmpty
+                      ? 'Hadithi Zetu' : widget.authorName),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
