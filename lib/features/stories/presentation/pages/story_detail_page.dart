@@ -16,12 +16,7 @@
 ///    ujumbe sahihi wa lugha mbili. Kuandika widget ya pili kungeunda mahali
 ///    pa pili pa kutafsiri makosa — hivyo tunairudia ile iliyopo.
 ///
-/// 3. **`_SimilarStoriesSection` na `_ReviewsSection` HAZIONYESHI data ya
-///    kubuni.** Prompt 2 inaomba "3 fake review cards" na kadi za kubuni.
-///    Hilo lingemdanganya mzazi anayeona maoni ya wasomaji ambayo hayapo.
-///    Badala yake tunaonyesha muundo halisi wenye hali tupu inayoeleweka
-///    ("Maoni yatawasili hivi punde") + kiungo cha kweli. Kadi za hadithi
-///    zinazofanana zinahitaji injini ya mapendekezo (Prompt 6).
+/// 3. Mapendekezo hutumia hadithi za repository; maoni bado hayajatekelezwa.
 ///
 /// 4. **`isPremium` / `priceTZS` / `reviewCount` HAZIPO kwenye `Story`.**
 ///    Entity ina: `isFree`, `rating`, `readCount`, `publishedYear`. Hakuna
@@ -62,6 +57,7 @@ import '../../domain/entities/story_shelf.dart';
 import '../cubit/story_detail_cubit.dart';
 import '../state/story_detail_state.dart';
 import '../story_navigation.dart';
+import '../widgets/similar_stories_section.dart';
 
 /// Ukurasa wa maelezo ya hadithi.
 class StoryDetailPage extends StatefulWidget {
@@ -209,8 +205,8 @@ class _DetailBody extends StatelessWidget {
           // 7 — Makundi na vibonge.
           SliverToBoxAdapter(child: _TagChips(story: story)),
 
-          // 8 — Hadithi zinazofanana (hali tupu kwa sasa).
-          const SliverToBoxAdapter(child: _SimilarStoriesSection()),
+          // 8 — Mapendekezo kutoka maktaba ya hadithi.
+          SliverToBoxAdapter(child: SimilarStoriesSection(story: story)),
 
           // 9 — Maoni ya wasomaji (hali tupu kwa sasa).
           const SliverToBoxAdapter(child: _ReviewsSection()),
@@ -1453,85 +1449,6 @@ String _shelfLabel(BuildContext context, StoryShelf shelf) {
 // ---------------------------------------------------------------------------
 // 8 — Hadithi zinazofanana
 // ---------------------------------------------------------------------------
-
-/// Mapendekezo ya hadithi zinazofanana.
-///
-/// Hali tupu kwa makusudi: kadi za hadithi **halisi** zinahitaji injini ya
-/// mapendekezo (`getSimilarStories`) ambayo haipo. Kadi za kubuni zingeonyesha
-/// hadithi ambazo mtumiaji hawezi kuzifungua — uzoefu mbaya kuliko kitufe
-/// kinachoeleza ukweli.
-class _SimilarStoriesSection extends StatelessWidget {
-  const _SimilarStoriesSection();
-
-  @override
-  Widget build(BuildContext context) {
-    final AppLocalizations l10n = context.l10n;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.xxl,
-        AppSpacing.xl,
-        0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(l10n.similarStories, style: _sectionHeadingStyle),
-              ),
-              TextButton(
-                onPressed: () =>
-                    context.pushNamed(AppRoutes.allStoriesName),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.safariGreen,
-                  textStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                child: Text(l10n.viewAll),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            decoration: BoxDecoration(
-              color: AppColors.cardBackground,
-              borderRadius: AppSpacing.borderRadiusMd,
-              border: Border.all(color: AppColors.divider),
-            ),
-            child: Column(
-              children: <Widget>[
-                const Icon(
-                  Icons.auto_awesome_rounded,
-                  size: AppSpacing.iconLg,
-                  color: AppColors.skyBlue,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  context.localised(
-                    swahili: 'Mapendekezo yanakuja na Prompt 6',
-                    english: 'Recommendations arrive with Prompt 6',
-                  ),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ---------------------------------------------------------------------------
 // 9 — Maoni ya wasomaji
