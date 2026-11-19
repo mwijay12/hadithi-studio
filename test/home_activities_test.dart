@@ -35,7 +35,13 @@ void main() {
   testWidgets('home game opens the actual short quiz', (tester) async {
     final appRouter = router();
     await openHome(tester, appRouter);
-    await tester.ensureVisible(find.byKey(const ValueKey('home-game')));
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('home-game')), 300,
+      scrollable: find.descendant(
+        of: find.byKey(const ValueKey('home-scroll')),
+        matching: find.byType(Scrollable),
+      ).first,
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-game')));
     await tester.pumpAndSettle();
@@ -45,7 +51,13 @@ void main() {
   testWidgets('listen opens bundled story with autoplay', (tester) async {
     final appRouter = router();
     await openHome(tester, appRouter);
-    await tester.ensureVisible(find.byKey(const ValueKey('home-listen')));
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('home-listen')), 300,
+      scrollable: find.descendant(
+        of: find.byKey(const ValueKey('home-scroll')),
+        matching: find.byType(Scrollable),
+      ).first,
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-listen')));
     await tester.pumpAndSettle();
@@ -55,7 +67,13 @@ void main() {
   testWidgets('music opens reader without claiming to start music', (tester) async {
     final appRouter = router();
     await openHome(tester, appRouter);
-    await tester.ensureVisible(find.byKey(const ValueKey('home-music')));
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('home-music')), 300,
+      scrollable: find.descendant(
+        of: find.byKey(const ValueKey('home-scroll')),
+        matching: find.byType(Scrollable),
+      ).first,
+    );
     await tester.pumpAndSettle();
     expect(find.text('Fungua hadithi, kisha washa muziki kwenye mipangilio'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('home-music')));
@@ -66,7 +84,13 @@ void main() {
   testWidgets('all stories opens library listing', (tester) async {
     final appRouter = router();
     await openHome(tester, appRouter);
-    await tester.ensureVisible(find.byKey(const ValueKey('home-all-stories')));
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('home-all-stories')), 300,
+      scrollable: find.descendant(
+        of: find.byKey(const ValueKey('home-scroll')),
+        matching: find.byType(Scrollable),
+      ).first,
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-all-stories')));
     await tester.pumpAndSettle();
