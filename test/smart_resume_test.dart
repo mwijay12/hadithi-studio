@@ -133,11 +133,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     cubit.nextPage();
     await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-    await tester.pump();
+    for (var i = 0; i < 10; i++) { await tester.pump(const Duration(milliseconds: 100)); }
     cubit.nextPage();
     await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
+    for (var i = 0; i < 10; i++) { await tester.pump(const Duration(milliseconds: 100)); }
     await tester.pump();
     await tester.pump();
     await tester.pump();
