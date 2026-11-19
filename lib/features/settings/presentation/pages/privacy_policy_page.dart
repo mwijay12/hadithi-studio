@@ -132,7 +132,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             bodySw: 'App huhifadhi taarifa hizi kwenye kifaa:',
             bodyEn: 'The app stores the following on the device:',
             bulletsSw: <String>[
-              'Maendeleo na mfululizo wa kusoma — kurasa ulizofungua kwenye kifaa.',
+              'Maendeleo, nyota na mfululizo — kurasa na maeneo uliyofungua kwenye kifaa.',
               'Alama za kurasa na hadithi ulizohifadhi kwenye rafu.',
               'Lugha na muonekano uliochagua.',
               'Mapendeleo ya arifa, hata kama arifa bado hazijawashwa.',
@@ -140,7 +140,7 @@ class PrivacyPolicyPage extends StatelessWidget {
               'Jina na umri wa mtoto, ukiweka.',
             ],
             bulletsEn: <String>[
-              'Reading progress and streaks — pages opened on this device.',
+              'Reading progress, stars and streaks — pages and interactive spots opened on this device.',
               'Page bookmarks and stories you saved to your shelf.',
               'Your chosen language and appearance.',
               'Notification preferences, even before alerts are switched on.',

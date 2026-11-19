@@ -41,6 +41,7 @@ import '../../../../config/theme/spacing.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/services/reading_activity_store.dart';
+import '../../../../core/services/reading_rewards_store.dart';
 import '../../../../core/utils/text_utils.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -56,6 +57,7 @@ import '../widgets/reader_illustration.dart';
 import '../widgets/tts_controls.dart';
 import '../widgets/tree_story_game.dart';
 import '../../../../core/widgets/leo_mascot.dart';
+import '../../../../core/widgets/reading_rewards_strip.dart';
 
 /// Ukurasa wa kusoma/kusikiliza hadithi.
 class StoryReaderPage extends StatefulWidget {
@@ -65,6 +67,7 @@ class StoryReaderPage extends StatefulWidget {
     this.autoPlay = false,
     this.resume = false,
     this.activityStore,
+    this.rewardsStore,
   });
 
   /// `id` ya hadithi — hutumika kwa "jaribu tena".
@@ -81,6 +84,7 @@ class StoryReaderPage extends StatefulWidget {
 
   /// Optional test override; production uses the shared local activity store.
   final ReadingActivityStore? activityStore;
+  final ReadingRewardsStore? rewardsStore;
 
   @override
   State<StoryReaderPage> createState() => _StoryReaderPageState();
@@ -129,6 +133,8 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     _lastActivityPage = key;
     unawaited((widget.activityStore ?? ReadingActivityStore.instance)
         .recordPage(story.id, index));
+    unawaited(_award((widget.rewardsStore ?? ReadingRewardsStore.instance)
+        .pageOpened(story.id, index)));
   }
 
   ReaderState? _lastState;
@@ -198,8 +204,27 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     });
   }
 
+  Future<void> _award(Future<RewardResult> pending) async {
+    final result = await pending;
+    if (!mounted || result.unlocked.isEmpty) return;
+    final sw = context.isSwahili;
+    final name = rewardBadgeName(result.unlocked.first, sw: sw);
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
+      content: Text(sw ? 'Tuzo mpya: $name!' : 'New achievement: $name!'),
+    ));
+  }
+
   /// Eneo la kugusa limegusa: weka bendera, kisha itue baada ya muda mfupi.
   void _onHotspotTapped(StoryHotspot hotspot, Rect globalRect) {
+    final state = context.read<ReaderCubit>().state;
+    final story = state.story;
+    if (story != null && state.pageIndex >= 0 && state.pageIndex < story.pages.length) {
+      final index = story.pages[state.pageIndex].hotspots.indexWhere((item) => identical(item, hotspot));
+      if (index >= 0) {
+        unawaited(_award((widget.rewardsStore ?? ReadingRewardsStore.instance)
+            .hotspotDiscovered(story.id, state.pageIndex, index)));
+      }
+    }
     // Onyesha kibonge chake (kwenye ngazi ya skrini, kikidhibitiwa).
     final box = _readerStackKey.currentContext?.findRenderObject() as RenderBox?;
     if (mounted && box != null && box.hasSize) {

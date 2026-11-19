@@ -27,6 +27,7 @@ import '../core/extensions/context_extensions.dart';
 import '../core/services/library_store.dart';
 import '../core/services/reading_activity_store.dart';
 import '../core/widgets/leo_mascot.dart';
+import '../core/widgets/reading_rewards_strip.dart';
 import '../core/widgets/story_clouds.dart';
 import '../l10n/app_locale_controller.dart';
 import '../../config/theme/colors.dart';
@@ -525,6 +526,7 @@ class _WeeklyActivityCardState extends State<_WeeklyActivityCard> with WidgetsBi
                 Text(sw ? 'Nyota huwaka ukifungua kurasa 3 tofauti kwa siku.'
                     : 'A star lights up when you open 3 different pages in a day.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSecondaryContainer)),
+                const ReadingRewardsStrip(),
               ]),
             ),
           ),

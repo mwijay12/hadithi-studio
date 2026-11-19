@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hadithi_studio/config/routes/app_routes.dart';
+import 'package:hadithi_studio/core/services/reading_activity_store.dart';
+import 'package:hadithi_studio/core/services/reading_rewards_store.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hadithi_studio/l10n/l10n.dart';
 import 'package:hadithi_studio/navigation/app_shell.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    ReadingActivityStore.resetForTesting();
+    ReadingRewardsStore.resetForTesting();
+  });
+
   GoRouter router() => GoRouter(initialLocation: '/home', routes: [
         GoRoute(path: '/home', builder: (_, __) => const HomeTabPage()),
         GoRoute(

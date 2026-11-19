@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'reading_rewards_store.dart';
+
 /// A local calendar date expressed in UTC solely to do calendar arithmetic.
 /// Values originate in the device's local timezone, never from UTC clock time.
 DateTime activityDay(DateTime local) => DateTime.utc(local.year, local.month, local.day);
@@ -151,6 +153,10 @@ class ReadingActivityStore extends ChangeNotifier {
         if (!await prefs.setString(storageKey, jsonEncode(next.toJson()))) return;
         _snapshot = next;
         notifyListeners();
+        // Queue before a clear operation so a reset cannot recreate rewards.
+        if (next.streak >= 7) {
+          unawaited(ReadingRewardsStore.instance.streakReached(next.streak));
+        }
         success = true;
       });
     } catch (error) {

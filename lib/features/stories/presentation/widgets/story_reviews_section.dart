@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../config/theme/spacing.dart';
 import '../../../../core/extensions/context_extensions.dart';
+import '../../../../core/services/reading_rewards_store.dart';
+import '../../../../core/widgets/reading_rewards_strip.dart';
 import '../../data/services/local_review_store.dart';
 
 const _tags = <String, (String, String)>{
@@ -60,6 +64,13 @@ class _StoryReviewsSectionState extends State<StoryReviewsSection> {
       builder: (_) => _ReviewEditor(storyId: widget.storyId, initial: _review, store: widget.store),
     );
     if (!mounted || saved == null) return;
+    unawaited(ReadingRewardsStore.instance.reviewWritten(saved.storyId).then((result) {
+      if (!mounted || !result.unlocked.contains('reviewer')) return;
+      final name = rewardBadgeName('reviewer', sw: sw);
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
+        content: Text(sw ? 'Tuzo mpya: $name!' : 'New achievement: $name!'),
+      ));
+    }));
     setState(() => _review = saved);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
       sw ? 'Maoni yamehifadhiwa kwenye kifaa hiki.' : 'Review saved on this device.',
