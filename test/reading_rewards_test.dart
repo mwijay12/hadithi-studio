@@ -82,7 +82,10 @@ void main() {
   });
 
   testWidgets('local rewards open badge sheet', (tester) async {
-    await ReadingRewardsStore.instance.pageOpened('story', 0);
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      ReadingRewardsStore.storageKey: jsonEncode(
+        const RewardsSnapshot(pages: <String>{'page-0'}).toJson()),
+    });
     await tester.pumpWidget(MaterialApp(
       locale: const Locale('sw'),
       localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
