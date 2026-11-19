@@ -16,7 +16,7 @@
 ///    ujumbe sahihi wa lugha mbili. Kuandika widget ya pili kungeunda mahali
 ///    pa pili pa kutafsiri makosa — hivyo tunairudia ile iliyopo.
 ///
-/// 3. Mapendekezo hutumia hadithi za repository; maoni bado hayajatekelezwa.
+/// 3. Mapendekezo hutumia repository; maoni ya mtumiaji huhifadhiwa ndani.
 ///
 /// 4. **`isPremium` / `priceTZS` / `reviewCount` HAZIPO kwenye `Story`.**
 ///    Entity ina: `isFree`, `rating`, `readCount`, `publishedYear`. Hakuna
@@ -58,6 +58,7 @@ import '../cubit/story_detail_cubit.dart';
 import '../state/story_detail_state.dart';
 import '../story_navigation.dart';
 import '../widgets/similar_stories_section.dart';
+import '../widgets/story_reviews_section.dart';
 
 /// Ukurasa wa maelezo ya hadithi.
 class StoryDetailPage extends StatefulWidget {
@@ -208,8 +209,8 @@ class _DetailBody extends StatelessWidget {
           // 8 — Mapendekezo kutoka maktaba ya hadithi.
           SliverToBoxAdapter(child: SimilarStoriesSection(story: story)),
 
-          // 9 — Maoni ya wasomaji (hali tupu kwa sasa).
-          const SliverToBoxAdapter(child: _ReviewsSection()),
+          // 9 — Maoni ya kifaa hiki na mfano uliowekwa alama.
+          SliverToBoxAdapter(child: StoryReviewsSection(storyId: story.id)),
 
           // 10 — Nafasi ya chini kwa `SafeArea` ya vifaa vyenye notch.
           SliverToBoxAdapter(
@@ -1453,78 +1454,6 @@ String _shelfLabel(BuildContext context, StoryShelf shelf) {
 // ---------------------------------------------------------------------------
 // 9 — Maoni ya wasomaji
 // ---------------------------------------------------------------------------
-
-/// Sehemu ya maoni.
-///
-/// `reviewCount` HAIPO kwenye `Story`, na maoni ya kweli yanahitaji backend
-/// (Prompt 6). Hatuandiki maoni ya kubuni yenye majina ya watu wasiopo.
-class _ReviewsSection extends StatelessWidget {
-  const _ReviewsSection();
-
-  @override
-  Widget build(BuildContext context) {
-    final AppLocalizations l10n = context.l10n;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.xxl,
-        AppSpacing.xl,
-        0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(l10n.userReviews, style: _sectionHeadingStyle),
-          const SizedBox(height: AppSpacing.md),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            decoration: BoxDecoration(
-              color: AppColors.cardBackground,
-              borderRadius: AppSpacing.borderRadiusMd,
-              border: Border.all(color: AppColors.divider),
-            ),
-            child: Column(
-              children: <Widget>[
-                Icon(
-                  Icons.rate_review_outlined,
-                  size: AppSpacing.iconLg,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  context.localised(
-                    swahili: 'Maoni yatawasili hivi punde',
-                    english: 'Reviews arrive shortly',
-                  ),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                // Kitufe kimezimwa kwa makusudi: haliwezi kuandika maoni
-                // bado, na kitufe kinachobofya bila matokeo ni udanganyifu.
-                OutlinedButton.icon(
-                  onPressed: null,
-                  icon: const Icon(Icons.edit_rounded, size: AppSpacing.iconSm),
-                  label: Text(l10n.writeReview),
-                  style: OutlinedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: AppSpacing.borderRadiusPill,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Task 2 — Skelitoni ya kupakia

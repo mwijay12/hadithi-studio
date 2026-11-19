@@ -136,7 +136,7 @@ class PrivacyPolicyPage extends StatelessWidget {
               'Alama za kurasa na hadithi ulizohifadhi kwenye rafu.',
               'Lugha na muonekano uliochagua.',
               'Mapendeleo ya arifa, hata kama arifa bado hazijawashwa.',
-              'Rasimu za hadithi ulizoandika mwenyewe.',
+              'Rasimu za hadithi na maoni uliyoandika kwenye kifaa.',
               'Jina na umri wa mtoto, ukiweka.',
             ],
             bulletsEn: <String>[
@@ -144,7 +144,7 @@ class PrivacyPolicyPage extends StatelessWidget {
               'Page bookmarks and stories you saved to your shelf.',
               'Your chosen language and appearance.',
               'Notification preferences, even before alerts are switched on.',
-              'Drafts of stories you wrote yourself.',
+              'Story drafts and reviews you wrote on this device.',
               'A child’s name and age, if entered.',
             ],
           ),

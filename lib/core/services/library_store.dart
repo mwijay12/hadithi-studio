@@ -432,7 +432,8 @@ class LibraryStore extends ChangeNotifier {
           onboardingKey, followedAuthorsKey, savedStoriesKey,
           downloadedStoriesKey, draftsKey, childNameKey, childAgeKey,
         }.contains(key) || key.startsWith(progressPrefix) ||
-            key.startsWith('hadithi_reader_bookmarks_')) {
+            key.startsWith('hadithi_reader_bookmarks_') ||
+            key.startsWith('hadithi_local_review_')) {
           if (!await prefs.remove(key)) success = false;
         }
       }
