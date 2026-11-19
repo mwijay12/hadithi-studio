@@ -137,7 +137,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     await tester.pump();
-    await tester.runAsync(() => ReadingActivityStore.instance.restore());
+    await tester.pump();
+    await tester.pump();
     expect(ReadingActivityStore.instance.snapshot.pagesToday(DateTime.now()), 3);
     expect(ReadingActivityStore.instance.snapshot.streak, 1);
     await tester.pumpWidget(const SizedBox.shrink());
