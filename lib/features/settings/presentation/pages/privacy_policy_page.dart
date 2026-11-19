@@ -134,7 +134,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             bulletsSw: <String>[
               'Maendeleo, hadithi ulizoweka kuwa zimekamilika, nyota na mfululizo — kurasa na maeneo uliyofungua kwenye kifaa.',
               'Alama za kurasa na hadithi ulizohifadhi kwenye rafu.',
-              'Lugha na muonekano uliochagua.',
+              'Lugha, muonekano na mapendeleo ya mzazi uliyochagua.',
               'Mapendeleo ya arifa, hata kama arifa bado hazijawashwa.',
               'Rasimu za hadithi na maoni uliyoandika kwenye kifaa.',
               'Jina na umri wa mtoto, ukiweka.',
@@ -142,7 +142,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             bulletsEn: <String>[
               'Reading progress, stories you mark complete, stars and streaks — pages and interactive spots opened on this device.',
               'Page bookmarks and stories you saved to your shelf.',
-              'Your chosen language and appearance.',
+              'Your chosen language, appearance and parent preferences.',
               'Notification preferences, even before alerts are switched on.',
               'Story drafts and reviews you wrote on this device.',
               'A child’s name and age, if entered.',

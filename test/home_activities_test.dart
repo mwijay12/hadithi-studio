@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hadithi_studio/config/routes/app_routes.dart';
 import 'package:hadithi_studio/core/services/reading_activity_store.dart';
 import 'package:hadithi_studio/core/services/reading_rewards_store.dart';
+import 'package:hadithi_studio/core/services/parent_preferences.dart';
 import 'package:hadithi_studio/core/services/reading_discovery.dart';
 import 'package:hadithi_studio/features/stories/data/datasources/story_sample_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +16,7 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     ReadingActivityStore.resetForTesting();
     ReadingRewardsStore.resetForTesting();
+    ParentPreferences.resetForTesting();
   });
 
   GoRouter router() => GoRouter(initialLocation: '/home', routes: [

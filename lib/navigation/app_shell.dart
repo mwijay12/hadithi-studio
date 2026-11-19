@@ -27,6 +27,7 @@ import '../config/routes/app_routes.dart';
 import '../core/enums/app_enums.dart';
 import '../core/extensions/context_extensions.dart';
 import '../core/services/library_store.dart';
+import '../core/services/parent_preferences.dart';
 import '../core/services/reading_activity_store.dart';
 import '../core/services/reading_discovery.dart';
 import '../core/widgets/leo_mascot.dart';
@@ -309,6 +310,9 @@ class _HomeTabPageState extends State<HomeTabPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    unawaited(ParentPreferences.instance.restore().catchError((Object error) {
+      debugPrint('Parent settings could not be loaded: $error');
+    }));
     _scheduleDayChange();
   }
 
@@ -368,7 +372,12 @@ class _HomeTabPageState extends State<HomeTabPage> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            _WeeklyActivityCard(now: DateTime.now()),
+            ListenableBuilder(
+              listenable: ParentPreferences.instance,
+              builder: (context, _) => ParentPreferences.instance.showGoals
+                  ? _WeeklyActivityCard(now: DateTime.now())
+                  : const SizedBox.shrink(),
+            ),
             const _ContinueReadingCard(),
             const _LeoWelcomeCard(),
             const SizedBox(height: AppSpacing.lg),

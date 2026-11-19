@@ -9,6 +9,7 @@ import 'package:hadithi_studio/core/services/library_store.dart';
 import 'package:hadithi_studio/core/services/reading_progress_store.dart';
 import 'package:hadithi_studio/core/services/reading_activity_store.dart';
 import 'package:hadithi_studio/core/services/reading_rewards_store.dart';
+import 'package:hadithi_studio/core/services/parent_preferences.dart';
 import 'package:hadithi_studio/core/services/speech_service.dart';
 import 'package:hadithi_studio/features/stories/data/datasources/story_sample_data.dart';
 import 'package:hadithi_studio/features/stories/data/services/background_music_player.dart';
@@ -55,6 +56,7 @@ void main() {
   setUp(() async {
     ReadingActivityStore.resetForTesting();
     ReadingRewardsStore.resetForTesting();
+    ParentPreferences.resetForTesting();
     SharedPreferences.setMockInitialValues(<String, Object>{});
     await LibraryStore.instance.clearAll();
   });
