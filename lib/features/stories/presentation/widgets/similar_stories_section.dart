@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart' show Either;
 import 'package:flutter/material.dart';
 
 import '../../../../config/theme/spacing.dart';
