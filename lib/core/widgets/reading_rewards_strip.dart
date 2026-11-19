@@ -28,7 +28,11 @@ class _ReadingRewardsStripState extends State<ReadingRewardsStrip> {
   @override
   void initState() {
     super.initState();
-    _load();
+    if (ReadingRewardsStore.instance.isLoaded) {
+      _loading = false;
+    } else {
+      _load();
+    }
   }
 
   Future<void> _load() async {
