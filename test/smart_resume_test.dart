@@ -115,6 +115,7 @@ void main() {
     expect(cubit.state.pageIndex, 2);
     expect(find.byType(AlertDialog), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
   });
   testWidgets('visible pages count once toward today’s goal', (tester) async {
     final cubit = reader();
@@ -142,6 +143,7 @@ void main() {
     expect(ReadingActivityStore.instance.snapshot.pagesToday(DateTime.now()), 3);
     expect(ReadingActivityStore.instance.snapshot.streak, 1);
     await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
   });
 
 }
