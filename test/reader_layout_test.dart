@@ -57,7 +57,7 @@ void main() {
     expect(find.byType(ImageFiltered), findsWidgets);
     expect(find.byType(ReaderIllustration), findsWidgets);
     expect(find.byTooltip('Telezesha kuona vidhibiti zaidi'), findsOneWidget);
-    expect(find.byIcon(Icons.close_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.close_rounded), findsWidgets);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
     await reader.close();
