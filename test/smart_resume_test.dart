@@ -43,6 +43,7 @@ void main() {
   const progress = ReadingProgressStore();
   final story = StorySampleData.all.first;
   setUp(() async {
+    ReadingActivityStore.resetForTesting();
     SharedPreferences.setMockInitialValues(<String, Object>{});
     await LibraryStore.instance.clearAll();
   });

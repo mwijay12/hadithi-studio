@@ -109,7 +109,11 @@ class ActivitySnapshot {
 /// one another. This is a single-device prototype, not server synchronization.
 class ReadingActivityStore extends ChangeNotifier {
   ReadingActivityStore();
-  static final ReadingActivityStore instance = ReadingActivityStore();
+  static ReadingActivityStore instance = ReadingActivityStore();
+
+  /// Isolates the singleton between widget tests using different fake clocks.
+  @visibleForTesting
+  static void resetForTesting() => instance = ReadingActivityStore();
   static const String storageKey = 'hadithi_reading_activity_v1';
   ActivitySnapshot _snapshot = const ActivitySnapshot();
   ActivitySnapshot get snapshot => _snapshot;
