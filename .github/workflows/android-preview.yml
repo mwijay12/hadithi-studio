@@ -35,7 +35,11 @@ jobs:
             echo "::error::$message"
             exit 1
           fi
-          flutter test
+          if ! flutter test --reporter expanded 2>&1 | tee /tmp/flutter-suite.log; then
+            message=$(tail -100 /tmp/flutter-suite.log | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error::$message"
+            exit 1
+          fi
       - name: Configure memory for CI
         run: |
           sed -i 's/-Xmx1024m/-Xmx3g/' android/gradle.properties
