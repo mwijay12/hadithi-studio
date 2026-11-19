@@ -25,6 +25,7 @@ import '../config/routes/app_routes.dart';
 import '../core/enums/app_enums.dart';
 import '../core/extensions/context_extensions.dart';
 import '../core/services/library_store.dart';
+import '../core/services/reading_activity_store.dart';
 import '../core/widgets/leo_mascot.dart';
 import '../core/widgets/story_clouds.dart';
 import '../l10n/app_locale_controller.dart';
@@ -323,6 +324,7 @@ class HomeTabPage extends StatelessWidget {
                 ),
               ],
             ),
+            const _WeeklyActivityCard(),
             const _ContinueReadingCard(),
             const _LeoWelcomeCard(),
             const SizedBox(height: AppSpacing.lg),
@@ -441,6 +443,93 @@ class HomeTabPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// A gentle local calendar: pages opened, not minutes read or stories completed.
+class _WeeklyActivityCard extends StatefulWidget {
+  const _WeeklyActivityCard();
+
+  @override
+  State<_WeeklyActivityCard> createState() => _WeeklyActivityCardState();
+}
+
+class _WeeklyActivityCardState extends State<_WeeklyActivityCard> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    ReadingActivityStore.instance.restore().catchError((Object error) {
+      debugPrint('Reading activity could not be loaded: $error');
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final sw = context.isSwahili;
+    final colors = Theme.of(context).colorScheme;
+    final now = DateTime.now();
+    final today = activityDay(now);
+    final monday = today.subtract(Duration(days: today.weekday - 1));
+    final labels = sw
+        ? const <String>['Jtt', 'Jnn', 'Jtn', 'Alh', 'Ijm', 'Jms', 'Jpl']
+        : const <String>['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return ListenableBuilder(
+      listenable: ReadingActivityStore.instance,
+      builder: (context, _) {
+        final activity = ReadingActivityStore.instance.snapshot;
+        final count = activity.pagesToday(now).clamp(0, 3);
+        final streak = activity.visibleStreak(now);
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.md),
+          child: Card(
+            color: colors.secondaryContainer,
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Text(sw ? 'Safari ya kusoma' : 'Reading journey',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: colors.onSecondaryContainer, fontWeight: FontWeight.bold)),
+                const SizedBox(height: AppSpacing.xs),
+                Text(sw ? 'Leo: kurasa $count/3 zimefunguliwa'
+                    : 'Today: $count/3 pages opened',
+                  style: TextStyle(color: colors.onSecondaryContainer)),
+                const SizedBox(height: AppSpacing.sm),
+                Row(children: <Widget>[
+                  for (int i = 0; i < 7; i++)
+                    Expanded(child: Column(children: <Widget>[
+                      Text(labels[i], style: Theme.of(context).textTheme.labelSmall?.copyWith(color: colors.onSecondaryContainer)),
+                      const SizedBox(height: 4),
+                      Icon(activity.activeDates.contains(activityDateKey(monday.add(Duration(days: i))))
+                          ? Icons.star_rounded : Icons.star_border_rounded,
+                        color: colors.onSecondaryContainer, size: 22),
+                    ])),
+                ]),
+                const SizedBox(height: AppSpacing.sm),
+                Text(streak > 0
+                    ? (sw ? 'Siku $streak mfululizo • Kinga ${activity.freezes}' : '$streak-day streak • ${activity.freezes} freezes')
+                    : (sw ? 'Kila ukurasa ni mwanzo mzuri!' : 'Every page is a lovely start!'),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSecondaryContainer)),
+                Text(sw ? 'Nyota huwaka ukifungua kurasa 3 tofauti kwa siku.'
+                    : 'A star lights up when you open 3 different pages in a day.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSecondaryContainer)),
+              ]),
+            ),
+          ),
+        );
+      },
     );
   }
 }

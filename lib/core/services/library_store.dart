@@ -43,6 +43,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'reading_activity_store.dart';
+
 /// Hadithi iliyotengenezwa na mtumiaji ndani ya app.
 ///
 /// ## Kwa nini model yake, sivyo [Story]
@@ -446,7 +448,7 @@ class LibraryStore extends ChangeNotifier {
   Future<bool> clearAll() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool success = true;
+      bool success = await ReadingActivityStore.instance.clear();
       for (final String key in prefs.getKeys().toList()) {
         if (<String>{
           onboardingKey, followedAuthorsKey, savedStoriesKey,

@@ -40,6 +40,7 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/spacing.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../core/extensions/context_extensions.dart';
+import '../../../../core/services/reading_activity_store.dart';
 import '../../../../core/utils/text_utils.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -115,6 +116,16 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   /// Hali ya mwisho tuliyoiona — `BlocConsumer.listener` haitoi ya awali,
   /// lakini sherehe ya kumaliza inahitaji kulinganisha "ilikuwa inasoma" na
   /// "imekoma". Kwa hivyo tunaikumbuka sisi wenyewe.
+  String? _lastActivityPage;
+
+  void _recordOpenedPage(Story story, int index) {
+    final today = activityDateKey(activityDay(DateTime.now()));
+    final key = '$today|${story.id}|$index';
+    if (_lastActivityPage == key) return;
+    _lastActivityPage = key;
+    unawaited(ReadingActivityStore.instance.recordPage(story.id, index));
+  }
+
   ReaderState? _lastState;
 
   /// Kipima-muda cha kutua kwa `_hotspotTapped`.
@@ -467,6 +478,13 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     // Initialize at the restored page before the PageView is attached. This
     // avoids animating through and accidentally saving intermediate pages.
     _pageController ??= PageController(initialPage: state.pageIndex);
+    // Count only the page actually displayed, once per page/day, after layout.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _pageController?.hasClients != true ||
+          _pageController!.position.isScrollingNotifier.value) return;
+      final visible = _pageController!.page?.round();
+      if (visible == state.pageIndex) _recordOpenedPage(story, visible!);
+    });
 
     // Upau wa sauti huonekana pamoja na vidhibiti — lakini katika
     // `listenOnly` unabaki wazi ili mtoto aweze kusimamisha sauti hata
@@ -486,7 +504,17 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
           onTap: _handleTap,
           onDoubleTap: _handleDoubleTap,
           onVerticalDragEnd: _handleVerticalDrag,
-          child: PageView.builder(
+          child: NotificationListener<ScrollEndNotification>(
+            onNotification: (notification) {
+              if (notification.depth == 0 && notification.metrics is PageMetrics) {
+                final page = (notification.metrics as PageMetrics).page?.round();
+                if (page != null && page >= 0 && page < story.pages.length) {
+                  _recordOpenedPage(story, page);
+                }
+              }
+              return false;
+            },
+            child: PageView.builder(
             controller: _pageController!,
             itemCount: state.totalPages,
             // Cubit hupokea kila ukurasa unaotulia — ikiwa ni mkono wa mtumiaji
@@ -503,6 +531,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
               index: index,
               state: state,
               onHotspotTapped: _onHotspotTapped,
+            ),
             ),
           ),
         ),

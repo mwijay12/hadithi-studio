@@ -296,9 +296,9 @@ class SettingsPage extends StatelessWidget {
                 ),
                 subtitle: Text(
                   context.isSwahili
-                      ? 'Maendeleo, alama, rasimu, maoni, jina la mtoto na '
+                      ? 'Maendeleo, mfululizo, alama, rasimu, maoni, jina la mtoto na '
                           'umri wa mtoto vitaondolewa; lugha na muonekano vitabaki'
-                      : 'Progress, bookmarks, drafts, reviews, child name and '
+                      : 'Progress, streaks, bookmarks, drafts, reviews, child name and '
                           'child age will be removed; language and appearance remain',
                 ),
               ),
@@ -345,9 +345,9 @@ Future<void> _confirmClearData(BuildContext context) async {
       title: Text(sw ? 'Futa data ya maktaba?' : 'Clear library data?'),
       content: Text(
         sw
-            ? 'Maendeleo ya kusoma, alama, rasimu, maoni, jina la mtoto na '
+            ? 'Maendeleo, mfululizo, alama, rasimu, maoni, jina la mtoto na '
                 'umri wa mtoto vitaondolewa. Mapendeleo ya lugha, muonekano na arifa yatabaki. Hili haliwezi kutenduliwa.'
-            : 'Reading progress, bookmarks, drafts, reviews, child name and '
+            : 'Reading progress, streaks, bookmarks, drafts, reviews, child name and '
                 'child age will be removed. Language, appearance and notification preferences remain. This cannot be undone.',
       ),
       actions: <Widget>[

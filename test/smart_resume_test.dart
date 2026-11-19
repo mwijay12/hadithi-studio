@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hadithi_studio/config/routes/app_routes.dart';
 import 'package:hadithi_studio/core/services/library_store.dart';
 import 'package:hadithi_studio/core/services/reading_progress_store.dart';
+import 'package:hadithi_studio/core/services/reading_activity_store.dart';
 import 'package:hadithi_studio/core/services/speech_service.dart';
 import 'package:hadithi_studio/features/stories/data/datasources/story_sample_data.dart';
 import 'package:hadithi_studio/features/stories/data/services/background_music_player.dart';
@@ -115,4 +116,31 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+  testWidgets('visible pages count once toward today’s goal', (tester) async {
+    final cubit = reader();
+    await cubit.loadStory(story);
+    addTearDown(cubit.close);
+    await tester.pumpWidget(BlocProvider.value(value: cubit, child: MaterialApp(
+      locale: const Locale('sw'),
+      localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
+      supportedLocales: AppLocalizationsSetup.supportedLocales,
+      builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
+      home: StoryReaderPage(storyId: story.id, resume: true),
+    )));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    cubit.nextPage();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    cubit.nextPage();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.runAsync(() => ReadingActivityStore.instance.restore());
+    expect(ReadingActivityStore.instance.snapshot.pagesToday(DateTime.now()), 3);
+    expect(ReadingActivityStore.instance.snapshot.streak, 1);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
 }
