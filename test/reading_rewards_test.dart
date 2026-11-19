@@ -86,6 +86,7 @@ void main() {
       ReadingRewardsStore.storageKey: jsonEncode(
         const RewardsSnapshot(pages: <String>{'page-0'}).toJson()),
     });
+    await tester.runAsync(() => ReadingRewardsStore.instance.restore());
     await tester.pumpWidget(MaterialApp(
       locale: const Locale('sw'),
       localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,

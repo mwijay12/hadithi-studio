@@ -77,7 +77,7 @@ class ReadingRewardsStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> restore() => _enqueue(_load);
+  Future<void> restore() => _loaded ? Future<void>.value() : _enqueue(_load);
 
   Future<RewardResult> pageOpened(String storyId, int page) =>
       _add('page', storyId, page: page);
