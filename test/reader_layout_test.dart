@@ -60,6 +60,6 @@ void main() {
     expect(find.byIcon(Icons.close_rounded), findsWidgets);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
-    await reader.close();
+    await tester.runAsync(() => reader.close());
   });
 }
