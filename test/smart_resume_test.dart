@@ -38,6 +38,15 @@ class _Speech extends SpeechService {
   Future<void> dispose() async {}
 }
 
+class _MemoryActivity extends ReadingActivityStore {
+  ActivitySnapshot current = const ActivitySnapshot();
+  @override
+  Future<bool> recordPage(String storyId, int index, {DateTime? now}) async {
+    current = current.visit(now ?? DateTime.now(), storyId, index);
+    return true;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   const progress = ReadingProgressStore();
@@ -119,6 +128,7 @@ void main() {
     await tester.pumpAndSettle();
   });
   testWidgets('visible pages count once toward today’s goal', (tester) async {
+    final activity = _MemoryActivity();
     final cubit = reader();
     await cubit.loadStory(story);
     addTearDown(cubit.close);
@@ -127,7 +137,7 @@ void main() {
       localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
       supportedLocales: AppLocalizationsSetup.supportedLocales,
       builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
-      home: StoryReaderPage(storyId: story.id, resume: true),
+      home: StoryReaderPage(storyId: story.id, resume: true, activityStore: activity),
     )));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
@@ -140,8 +150,8 @@ void main() {
     await tester.pump();
     await tester.pump();
     await tester.pump();
-    expect(ReadingActivityStore.instance.snapshot.pagesToday(DateTime.now()), 3);
-    expect(ReadingActivityStore.instance.snapshot.streak, 1);
+    expect(activity.current.pagesToday(DateTime.now()), 3);
+    expect(activity.current.streak, 1);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpAndSettle();
   });

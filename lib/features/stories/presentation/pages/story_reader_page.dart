@@ -64,6 +64,7 @@ class StoryReaderPage extends StatefulWidget {
     required this.storyId,
     this.autoPlay = false,
     this.resume = false,
+    this.activityStore,
   });
 
   /// `id` ya hadithi — hutumika kwa "jaribu tena".
@@ -77,6 +78,9 @@ class StoryReaderPage extends StatefulWidget {
 
   /// Start at the saved page without prompting (no automatic audio by default).
   final bool resume;
+
+  /// Optional test override; production uses the shared local activity store.
+  final ReadingActivityStore? activityStore;
 
   @override
   State<StoryReaderPage> createState() => _StoryReaderPageState();
@@ -123,7 +127,8 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     final key = '$today|${story.id}|$index';
     if (_lastActivityPage == key) return;
     _lastActivityPage = key;
-    unawaited(ReadingActivityStore.instance.recordPage(story.id, index));
+    unawaited((widget.activityStore ?? ReadingActivityStore.instance)
+        .recordPage(story.id, index));
   }
 
   ReaderState? _lastState;
