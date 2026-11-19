@@ -324,9 +324,9 @@ Future<void> _confirmClearData(BuildContext context) async {
       content: Text(
         sw
             ? 'Maendeleo, hadithi zilizokamilika, nyota, mfululizo, alama, rasimu, maoni, jina la mtoto na '
-                'umri wa mtoto vitaondolewa. Mapendeleo ya lugha, muonekano na arifa yatabaki. Hili haliwezi kutenduliwa.'
+                'umri wa mtoto vitaondolewa. Mapendeleo ya lugha, muonekano, arifa na mzazi yatabaki. Hili haliwezi kutenduliwa.'
             : 'Reading progress, completed stories, stars, streaks, bookmarks, drafts, reviews, child name and '
-                'child age will be removed. Language, appearance and notification preferences remain. This cannot be undone.',
+                'child age will be removed. Language, appearance, notification and parent preferences remain. This cannot be undone.',
       ),
       actions: <Widget>[
         TextButton(
