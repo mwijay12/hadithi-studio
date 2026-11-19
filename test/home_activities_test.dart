@@ -144,10 +144,16 @@ void main() {
       ),
     ));
     await tester.pump();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('home-leo-stories')), 200,
+      scrollable: find.descendant(
+        of: find.byKey(const ValueKey('home-scroll')),
+        matching: find.byType(Scrollable),
+      ).first,
+    );
+    await tester.pumpAndSettle();
     expect(find.text('Habari, rafiki!'), findsOneWidget);
     expect(tester.takeException(), isNull);
-    await tester.ensureVisible(find.byKey(const ValueKey('home-leo-stories')));
-    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-leo-stories')));
     await tester.pumpAndSettle();
     expect(find.text('all stories route'), findsOneWidget);
