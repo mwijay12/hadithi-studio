@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hadithi_studio/config/routes/app_routes.dart';
 import 'package:hadithi_studio/core/services/reading_activity_store.dart';
 import 'package:hadithi_studio/core/services/reading_rewards_store.dart';
+import 'package:hadithi_studio/core/services/reading_discovery.dart';
+import 'package:hadithi_studio/features/stories/data/datasources/story_sample_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hadithi_studio/l10n/l10n.dart';
 import 'package:hadithi_studio/navigation/app_shell.dart';
@@ -70,7 +72,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-listen')));
     await tester.pumpAndSettle();
-    expect(find.text('reader:safari-ya-simba:1'), findsOneWidget);
+    expect(find.text('reader:${dailyStoryFor(DateTime.now(), StorySampleData.all)!.id}:1'), findsOneWidget);
   });
 
   testWidgets('music opens reader without claiming to start music', (tester) async {
@@ -87,7 +89,7 @@ void main() {
     expect(find.text('Fungua hadithi, kisha washa muziki kwenye mipangilio'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('home-music')));
     await tester.pumpAndSettle();
-    expect(find.text('reader:safari-ya-simba:off'), findsOneWidget);
+    expect(find.text('reader:${dailyStoryFor(DateTime.now(), StorySampleData.all)!.id}:off'), findsOneWidget);
   });
 
   testWidgets('all stories opens library listing', (tester) async {

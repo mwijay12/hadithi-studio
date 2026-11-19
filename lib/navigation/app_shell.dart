@@ -18,6 +18,8 @@
 /// halisi (rangi, typography, nafasi) ili muundo uweze kuhakikiwa mapema.
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,6 +28,7 @@ import '../core/enums/app_enums.dart';
 import '../core/extensions/context_extensions.dart';
 import '../core/services/library_store.dart';
 import '../core/services/reading_activity_store.dart';
+import '../core/services/reading_discovery.dart';
 import '../core/widgets/leo_mascot.dart';
 import '../core/widgets/reading_rewards_strip.dart';
 import '../core/widgets/story_clouds.dart';
@@ -292,8 +295,48 @@ class _TabHeader extends StatelessWidget {
 
 
 /// Tabu 1 — Nyumbani.
-class HomeTabPage extends StatelessWidget {
+class HomeTabPage extends StatefulWidget {
   const HomeTabPage({super.key});
+
+  @override
+  State<HomeTabPage> createState() => _HomeTabPageState();
+}
+
+class _HomeTabPageState extends State<HomeTabPage> with WidgetsBindingObserver {
+  Timer? _dayTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _scheduleDayChange();
+  }
+
+  void _scheduleDayChange() {
+    _dayTimer?.cancel();
+    final now = DateTime.now();
+    final next = DateTime(now.year, now.month, now.day + 1);
+    _dayTimer = Timer(next.difference(now), () {
+      if (!mounted) return;
+      setState(() {});
+      _scheduleDayChange();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      setState(() {});
+      _scheduleDayChange();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _dayTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -302,7 +345,7 @@ class HomeTabPage extends StatelessWidget {
     // **C9:** kila kadi hutafuta hadithi yake kwa `id` HALISI. `id`
     // isiyojulikana hurudisha `null` na kadi hiyo **haijengwi** — badala ya
     // kuonyesha hadithi nyingine kwa jina la uongo.
-    final Story? daily = storyById('safari-ya-simba');
+    final Story? daily = dailyStoryFor(DateTime.now(), StorySampleData.all);
     final List<Story> featured = storiesByIds(const <String>[
       'mlima-kilimanjaro',
       'nyota-za-usiku',
@@ -325,7 +368,7 @@ class HomeTabPage extends StatelessWidget {
                 ),
               ],
             ),
-            const _WeeklyActivityCard(),
+            _WeeklyActivityCard(now: DateTime.now()),
             const _ContinueReadingCard(),
             const _LeoWelcomeCard(),
             const SizedBox(height: AppSpacing.lg),
@@ -336,6 +379,7 @@ class HomeTabPage extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: StoryCard(
+                  key: const ValueKey('daily-story'),
                   story: daily,
                   badge: l10n.dailyStory,
                   height: 200,
@@ -404,8 +448,8 @@ class HomeTabPage extends StatelessWidget {
                       accent: AppColors.kilimanjaroBlue,
                       title: context.isSwahili ? 'Sikiliza hadithi' : 'Listen to a story',
                       subtitle: context.isSwahili
-                          ? 'Anza Safari ya Simba • sauti ipo kwenye kifaa'
-                          : 'Start Simba’s Safari • audio is on this device',
+                          ? 'Anza ${daily.title(swahili: true)} • sauti ipo kwenye kifaa'
+                          : 'Start ${daily.title(swahili: false)} • audio is on this device',
                       onTap: () => openReader(context, daily, autoPlay: true),
                     ),
                   const SizedBox(height: AppSpacing.sm),
@@ -450,7 +494,8 @@ class HomeTabPage extends StatelessWidget {
 
 /// A gentle local calendar: pages opened, not minutes read or stories completed.
 class _WeeklyActivityCard extends StatefulWidget {
-  const _WeeklyActivityCard();
+  const _WeeklyActivityCard({required this.now});
+  final DateTime now;
 
   @override
   State<_WeeklyActivityCard> createState() => _WeeklyActivityCardState();
@@ -481,7 +526,7 @@ class _WeeklyActivityCardState extends State<_WeeklyActivityCard> with WidgetsBi
   Widget build(BuildContext context) {
     final sw = context.isSwahili;
     final colors = Theme.of(context).colorScheme;
-    final now = DateTime.now();
+    final now = widget.now;
     final today = activityDay(now);
     final monday = today.subtract(Duration(days: today.weekday - 1));
     final labels = sw
@@ -526,6 +571,8 @@ class _WeeklyActivityCardState extends State<_WeeklyActivityCard> with WidgetsBi
                 Text(sw ? 'Nyota huwaka ukifungua kurasa 3 tofauti kwa siku.'
                     : 'A star lights up when you open 3 different pages in a day.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSecondaryContainer)),
+                const SizedBox(height: AppSpacing.md),
+                _WeeklyMiniGoal(activity: activity, now: now),
                 const ReadingRewardsStrip(),
               ]),
             ),
@@ -533,6 +580,35 @@ class _WeeklyActivityCardState extends State<_WeeklyActivityCard> with WidgetsBi
         );
       },
     );
+  }
+}
+
+/// A gentle three-day goal; no penalties or new data collection.
+class _WeeklyMiniGoal extends StatelessWidget {
+  const _WeeklyMiniGoal({required this.activity, required this.now});
+  final ActivitySnapshot activity;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context) {
+    final sw = context.isSwahili;
+    final days = weeklyActiveDays(activity, now);
+    final progress = days.clamp(0, 3);
+    final color = Theme.of(context).colorScheme.onSecondaryContainer;
+    return Column(key: const ValueKey('weekly-mini-goal'),
+      crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Text(sw ? 'Lengo la wiki: siku $progress/3' : 'Weekly goal: $progress/3 days',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: color, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 6),
+        Semantics(label: sw ? 'Lengo la wiki: siku $progress kati ya 3' : 'Weekly goal: $progress of 3 days',
+          child: LinearProgressIndicator(value: progress / 3)),
+        const SizedBox(height: 6),
+        Text(progress >= 3
+            ? (sw ? 'Hongera! Umetimiza lengo la wiki.' : 'Hooray! You reached your weekly goal.')
+            : (sw ? 'Siku moja ni kurasa 3 tofauti zilizofunguliwa. Polepole ni sawa!' :
+                'One day means 3 different pages opened. Go at your own pace!'),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: color)),
+      ]);
   }
 }
 

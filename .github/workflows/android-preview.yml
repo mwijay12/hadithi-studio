@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          if ! timeout 90s flutter test --concurrency=1 --reporter expanded test/home_activities_test.dart test/reader_layout_test.dart test/similar_stories_test.dart test/local_review_test.dart test/smart_resume_test.dart test/reading_activity_test.dart test/reading_rewards_test.dart test/story_completion_test.dart 2>&1 | tee /tmp/flutter-test.log; then
+          if ! timeout 90s flutter test --concurrency=1 --reporter expanded test/home_activities_test.dart test/reader_layout_test.dart test/similar_stories_test.dart test/local_review_test.dart test/smart_resume_test.dart test/reading_activity_test.dart test/reading_rewards_test.dart test/story_completion_test.dart test/reading_discovery_test.dart 2>&1 | tee /tmp/flutter-test.log; then
             message=$(tail -25 /tmp/flutter-test.log | sed ':a;N;$!ba;s/\n/%0A/g')
             echo "::error::$message"
             exit 1
