@@ -42,6 +42,7 @@ import '../../../../config/theme/typography.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/services/reading_activity_store.dart';
 import '../../../../core/services/reading_rewards_store.dart';
+import '../../../../core/services/story_completion_store.dart';
 import '../../../../core/utils/text_utils.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -50,13 +51,14 @@ import '../../../../l10n/l10n.dart';
 import '../../domain/entities/story.dart';
 import '../../domain/entities/story_page.dart';
 import '../cubit/reader_cubit.dart';
+import '../story_navigation.dart';
 import '../state/reader_state.dart';
 import '../widgets/interactive_hotspot.dart';
 import '../widgets/reader_settings_panel.dart';
 import '../widgets/reader_illustration.dart';
 import '../widgets/tts_controls.dart';
 import '../widgets/tree_story_game.dart';
-import '../../../../core/widgets/leo_mascot.dart';
+import '../widgets/story_completion_dialog.dart';
 import '../../../../core/widgets/reading_rewards_strip.dart';
 
 /// Ukurasa wa kusoma/kusikiliza hadithi.
@@ -115,9 +117,6 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   Rect? _activeHotspotRect;
   final GlobalKey _readerStackKey = GlobalKey();
 
-  /// Sherehe ya kumaliza imeonyeshwa tayari (mara moja kwa kila kikao).
-  bool _celebrationShown = false;
-
   /// Swali la "Endelea kutoka ukurasa…?" limeulizwa tayari.
   bool _resumePromptShown = false;
 
@@ -136,8 +135,6 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     unawaited(_award((widget.rewardsStore ?? ReadingRewardsStore.instance)
         .pageOpened(story.id, index)));
   }
-
-  ReaderState? _lastState;
 
   /// Kipima-muda cha kutua kwa `_hotspotTapped`.
   Timer? _hotspotRelease;
@@ -366,70 +363,18 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     if (go ?? false) cubit.goToPage(saved);
   }
 
-  /// Huonyesha sherehe TTS inapomaliza ukurasa wa mwisho.
-  void _maybeCelebrate(ReaderState previous, ReaderState current) {
-    if (_celebrationShown) return;
-    // Ishara ya kumaliza: sauti ilikuwa inasoma, ikakoma, na tuko ukurasa
-    // wa mwisho. Hii ni ukweli unaoonekana — si kubahatisha kwa `pageIndex`.
-    final bool justFinished =
-        previous.isSpeaking && !current.isSpeaking && current.isLastPage;
-    if (!justFinished) return;
-    // `listener` huitwa kabla frame kuisha; kuonyesha dialog papo hapo
-    // kungeita `setState` ya `Navigator` ndani ya build. Tunasubiri frame.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _showCelebration(current);
-    });
-  }
-
-  /// Kilele cha hadithi: hongera + chaguo la kuanza tena au kusoma nyingine.
-  void _showCelebration(ReaderState state) {
-    _celebrationShown = true;
-    final String title = state.story?.title(swahili: context.isSwahili) ?? '';
-    final ReaderCubit cubit = context.read<ReaderCubit>();
-
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          final AppLocalizations l10n = dialogContext.l10n;
-          return AlertDialog(
-            // **LEO** anasherehekea badala ya ikoni. Kumaliza hadithi ni
-            // wakati muhimu kwa mtoto — kumpa rafiki anayeshangilia naye
-            // kunaimarisha hisia kuliko ikoni isiyo na uso.
-            icon: const LeoMascot(pose: LeoPose.celebrate, height: 110),
-            title: Text(l10n.congratulations),
-            content: Text(
-              '${l10n.storyComplete}\n\n$title',
-              textAlign: TextAlign.center,
-            ),
-            actions: <Widget>[
-              if (state.story?.id == 'mti-wa-babu')
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                    unawaited(TreeStoryGame.show(context));
-                  },
-                  child: Text(context.localised(swahili: 'Cheza na Leo', english: 'Play with Leo')),
-                ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(dialogContext).pop();
-                  _celebrationShown = false;
-                  await cubit.startOver();
-                },
-                child: Text(l10n.startOver),
-              ),
-              FilledButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  // Kurudi nyuma = ukurasa wa maelezo au nyumbani.
-                  Navigator.of(context).maybePop();
-                },
-                child: Text(l10n.readAnother),
-              ),
-            ],
-          );
+  Future<void> _finishStory(Story story, ReaderCubit cubit) async {
+    // Stopping narration is not itself evidence of completion.
+    await cubit.stopReadAloud();
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (_) => StoryCompletionDialog(
+        story: story,
+        store: StoryCompletionStore.instance,
+        onOpenStory: (next) { if (mounted) openStory(context, next); },
+        onStartOver: () async {
+          await cubit.startOver();
         },
       ),
     );
@@ -443,12 +388,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
           a.status != b.status ||
           a.isSpeaking != b.isSpeaking,
       listener: (BuildContext context, ReaderState state) {
-        final ReaderState previous = _lastState ?? state;
-        _lastState = state;
         _syncPage(state.pageIndex);
-        // Sherehe hupimwa kwa kulinganisha hali mbili — hivyo hapa, si kwa
-        // kubashiri kwa `pageIndex`.
-        _maybeCelebrate(previous, state);
       },
       buildWhen: (ReaderState a, ReaderState b) =>
           a != b || a.status != b.status,
@@ -573,6 +513,18 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
         // Huwekwa hapa, sivyo ndani ya eneo, ili **kisitoke nje ya skrini**.
         // Pia huweka kibonge **kimoja** tu kwa wakati mmoja.
         if (_activeHotspot != null) _hotspotBubble(context, _activeHotspot!),
+
+        if (state.isLastPage && _showControls && !_showSettings)
+          Positioned(
+            top: MediaQuery.paddingOf(context).top + 70,
+            right: 16,
+            child: FilledButton.tonalIcon(
+              key: const ValueKey('finish-story'),
+              onPressed: () => _finishStory(story, cubit),
+              icon: const Icon(Icons.check_circle_outline_rounded),
+              label: Text(context.isSwahili ? 'Nimemaliza' : 'I finished'),
+            ),
+          ),
 
         // ---------------------------------------------------------------
         // TABAKA 3 — upau wa juu.

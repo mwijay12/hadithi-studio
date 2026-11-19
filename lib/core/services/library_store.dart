@@ -45,6 +45,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'reading_activity_store.dart';
 import 'reading_rewards_store.dart';
+import 'story_completion_store.dart';
 
 /// Hadithi iliyotengenezwa na mtumiaji ndani ya app.
 ///
@@ -451,6 +452,7 @@ class LibraryStore extends ChangeNotifier {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       bool success = await ReadingActivityStore.instance.clear();
       if (!await ReadingRewardsStore.instance.clear()) success = false;
+      if (!await StoryCompletionStore.instance.clear()) success = false;
       for (final String key in prefs.getKeys().toList()) {
         if (<String>{
           onboardingKey, followedAuthorsKey, savedStoriesKey,
