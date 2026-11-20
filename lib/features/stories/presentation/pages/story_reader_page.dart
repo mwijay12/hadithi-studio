@@ -525,6 +525,16 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
             ),
           ),
 
+        if (_showControls && !_showSettings)
+          Positioned(
+            top: 0, left: 0, right: 0,
+            height: MediaQuery.paddingOf(context).top + 130,
+            child: IgnorePointer(child: DecoratedBox(decoration: BoxDecoration(
+              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                colors: <Color>[Colors.black.withValues(alpha: .72), Colors.transparent]),
+            ))),
+          ),
+
         // ---------------------------------------------------------------
         // TABAKA 3 — upau wa juu.
         // ---------------------------------------------------------------
@@ -660,31 +670,19 @@ class _StoryPageView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        // A calm background avoids a giant blurred duplicate of the artwork.
-        // Portrait and landscape originals remain uncropped in the same viewport.
-        const Positioned.fill(
-          child: DecoratedBox(decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, end: Alignment.bottomCenter,
-              colors: <Color>[Color(0xFFF4E6CA), Color(0xFFE4CDA7), Color(0xFF5A5147)],
-            ),
-          )),
-        ),
-        // Keep the complete illustration above the reading controls and text.
-        // Hotspot rectangles are measured in illustration coordinates.
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: state.showsStoryText
-              ? MediaQuery.of(context).size.height * AppSpacing.textOverlayMaxHeightRatio
-              : 140,
+        Positioned.fill(
           child: ReaderIllustration(
             asset: page.illustration,
             hotspots: page.hotspots,
             onHotspotTapped: onHotspotTapped,
             enabled: isCurrent,
             compact: MediaQuery.of(context).size.width < AppBreakpoints.smallPhone,
+            canvasMode: true,
+            safeTop: MediaQuery.paddingOf(context).top + AppSpacing.readerTopBarHeight,
+            // Text scroll area and controls occupy at most this reserved region.
+            safeBottom: state.showsStoryText
+                ? MediaQuery.sizeOf(context).height * AppSpacing.textOverlayMaxHeightRatio
+                : 140 + MediaQuery.paddingOf(context).bottom,
           ),
         ),
 
