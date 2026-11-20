@@ -29,9 +29,10 @@
 library;
 
 import 'dart:async';
-import 'dart:ui' show ImageFilter;
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
@@ -40,6 +41,9 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/spacing.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../core/extensions/context_extensions.dart';
+import '../../../../core/services/reading_activity_store.dart';
+import '../../../../core/services/reading_rewards_store.dart';
+import '../../../../core/services/story_completion_store.dart';
 import '../../../../core/utils/text_utils.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -48,13 +52,15 @@ import '../../../../l10n/l10n.dart';
 import '../../domain/entities/story.dart';
 import '../../domain/entities/story_page.dart';
 import '../cubit/reader_cubit.dart';
+import '../story_navigation.dart';
 import '../state/reader_state.dart';
 import '../widgets/interactive_hotspot.dart';
 import '../widgets/reader_settings_panel.dart';
 import '../widgets/reader_illustration.dart';
 import '../widgets/tts_controls.dart';
 import '../widgets/tree_story_game.dart';
-import '../../../../core/widgets/leo_mascot.dart';
+import '../widgets/story_completion_dialog.dart';
+import '../../../../core/widgets/reading_rewards_strip.dart';
 
 /// Ukurasa wa kusoma/kusikiliza hadithi.
 class StoryReaderPage extends StatefulWidget {
@@ -62,6 +68,9 @@ class StoryReaderPage extends StatefulWidget {
     super.key,
     required this.storyId,
     this.autoPlay = false,
+    this.resume = false,
+    this.activityStore,
+    this.rewardsStore,
   });
 
   /// `id` ya hadithi — hutumika kwa "jaribu tena".
@@ -73,12 +82,32 @@ class StoryReaderPage extends StatefulWidget {
   /// wazi kuwa anataka kuanza kusikiliza **sasa**.
   final bool autoPlay;
 
+  /// Start at the saved page without prompting (no automatic audio by default).
+  final bool resume;
+
+  /// Optional test override; production uses the shared local activity store.
+  final ReadingActivityStore? activityStore;
+  final ReadingRewardsStore? rewardsStore;
+
   @override
   State<StoryReaderPage> createState() => _StoryReaderPageState();
 }
 
 class _StoryReaderPageState extends State<StoryReaderPage> {
-  final PageController _pageController = PageController();
+  PageController? _pageController;
+  final Map<int, double> _textPanelHeights = <int, double>{};
+  double? _ttsPanelHeight;
+
+  void _recordPanelSize(Size size, {required bool text, int? page}) {
+    if (!mounted) return;
+    final previous = text ? _textPanelHeights[page] : _ttsPanelHeight;
+    if (previous != null && (previous - size.height).abs() < .5) return;
+    if (text && page != null && page != context.read<ReaderCubit>().state.pageIndex) {
+      _textPanelHeights[page] = size.height;
+      return;
+    }
+    setState(() { if (text && page != null) { _textPanelHeights[page] = size.height; } else { _ttsPanelHeight = size.height; } });
+  }
 
   /// Vidhibiti (upau wa juu na wa sauti) vinaonekana.
   bool _showControls = true;
@@ -102,16 +131,24 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   Rect? _activeHotspotRect;
   final GlobalKey _readerStackKey = GlobalKey();
 
-  /// Sherehe ya kumaliza imeonyeshwa tayari (mara moja kwa kila kikao).
-  bool _celebrationShown = false;
-
   /// Swali la "Endelea kutoka ukurasa…?" limeulizwa tayari.
   bool _resumePromptShown = false;
 
   /// Hali ya mwisho tuliyoiona — `BlocConsumer.listener` haitoi ya awali,
   /// lakini sherehe ya kumaliza inahitaji kulinganisha "ilikuwa inasoma" na
   /// "imekoma". Kwa hivyo tunaikumbuka sisi wenyewe.
-  ReaderState? _lastState;
+  String? _lastActivityPage;
+
+  void _recordOpenedPage(Story story, int index) {
+    final today = activityDateKey(activityDay(DateTime.now()));
+    final key = '$today|${story.id}|$index';
+    if (_lastActivityPage == key) return;
+    _lastActivityPage = key;
+    unawaited((widget.activityStore ?? ReadingActivityStore.instance)
+        .recordPage(story.id, index));
+    unawaited(_award((widget.rewardsStore ?? ReadingRewardsStore.instance)
+        .pageOpened(story.id, index)));
+  }
 
   /// Kipima-muda cha kutua kwa `_hotspotTapped`.
   Timer? _hotspotRelease;
@@ -128,7 +165,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   @override
   void dispose() {
     _hotspotRelease?.cancel();
-    _pageController.dispose();
+    _pageController?.dispose();
     // Rudisha mfumo kwenye hali ya kawaida — tumeiba `SystemUiMode` wakati
     // wa skrini nzima, na kushindwa kuirudisha kungeacha app bila status bar.
     unawaited(
@@ -178,8 +215,27 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     });
   }
 
+  Future<void> _award(Future<RewardResult> pending) async {
+    final result = await pending;
+    if (!mounted || result.unlocked.isEmpty) return;
+    final sw = context.isSwahili;
+    final name = rewardBadgeName(result.unlocked.first, sw: sw);
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
+      content: Text(sw ? 'Tuzo mpya: $name!' : 'New achievement: $name!'),
+    ));
+  }
+
   /// Eneo la kugusa limegusa: weka bendera, kisha itue baada ya muda mfupi.
   void _onHotspotTapped(StoryHotspot hotspot, Rect globalRect) {
+    final state = context.read<ReaderCubit>().state;
+    final story = state.story;
+    if (story != null && state.pageIndex >= 0 && state.pageIndex < story.pages.length) {
+      final index = story.pages[state.pageIndex].hotspots.indexWhere((item) => identical(item, hotspot));
+      if (index >= 0) {
+        unawaited(_award((widget.rewardsStore ?? ReadingRewardsStore.instance)
+            .hotspotDiscovered(story.id, state.pageIndex, index)));
+      }
+    }
     // Onyesha kibonge chake (kwenye ngazi ya skrini, kikidhibitiwa).
     final box = _readerStackKey.currentContext?.findRenderObject() as RenderBox?;
     if (mounted && box != null && box.hasSize) {
@@ -267,10 +323,11 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
   /// wa build.
   void _syncPage(int index) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_pageController.hasClients) return;
-      final int current = _pageController.page?.round() ?? 0;
+      final controller = _pageController;
+      if (!mounted || controller == null || !controller.hasClients) return;
+      final int current = controller.page?.round() ?? 0;
       if (current == index) return;
-      _pageController.animateToPage(
+      controller.animateToPage(
         index,
         // 400 ms + `easeInOutCubic` — mwendo laini wa kugeuza ukurasa.
         duration: AppSpacing.readerPageTurn,
@@ -285,7 +342,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
 
   /// Huuliza "Endelea kutoka ukurasa…?" mara moja tu kwa kila kikao.
   Future<void> _maybeAskToResume(ReaderCubit cubit, ReaderState state) async {
-    if (_resumePromptShown || widget.autoPlay) return;
+    if (_resumePromptShown || widget.autoPlay || widget.resume) return;
     if (!state.isReady || state.totalPages <= 1) return;
 
     _resumePromptShown = true;
@@ -320,70 +377,18 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
     if (go ?? false) cubit.goToPage(saved);
   }
 
-  /// Huonyesha sherehe TTS inapomaliza ukurasa wa mwisho.
-  void _maybeCelebrate(ReaderState previous, ReaderState current) {
-    if (_celebrationShown) return;
-    // Ishara ya kumaliza: sauti ilikuwa inasoma, ikakoma, na tuko ukurasa
-    // wa mwisho. Hii ni ukweli unaoonekana — si kubahatisha kwa `pageIndex`.
-    final bool justFinished =
-        previous.isSpeaking && !current.isSpeaking && current.isLastPage;
-    if (!justFinished) return;
-    // `listener` huitwa kabla frame kuisha; kuonyesha dialog papo hapo
-    // kungeita `setState` ya `Navigator` ndani ya build. Tunasubiri frame.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _showCelebration(current);
-    });
-  }
-
-  /// Kilele cha hadithi: hongera + chaguo la kuanza tena au kusoma nyingine.
-  void _showCelebration(ReaderState state) {
-    _celebrationShown = true;
-    final String title = state.story?.title(swahili: context.isSwahili) ?? '';
-    final ReaderCubit cubit = context.read<ReaderCubit>();
-
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          final AppLocalizations l10n = dialogContext.l10n;
-          return AlertDialog(
-            // **LEO** anasherehekea badala ya ikoni. Kumaliza hadithi ni
-            // wakati muhimu kwa mtoto — kumpa rafiki anayeshangilia naye
-            // kunaimarisha hisia kuliko ikoni isiyo na uso.
-            icon: const LeoMascot(pose: LeoPose.celebrate, height: 110),
-            title: Text(l10n.congratulations),
-            content: Text(
-              '${l10n.storyComplete}\n\n$title',
-              textAlign: TextAlign.center,
-            ),
-            actions: <Widget>[
-              if (state.story?.id == 'mti-wa-babu')
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                    unawaited(TreeStoryGame.show(context));
-                  },
-                  child: Text(context.localised(swahili: 'Cheza na Leo', english: 'Play with Leo')),
-                ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(dialogContext).pop();
-                  _celebrationShown = false;
-                  await cubit.startOver();
-                },
-                child: Text(l10n.startOver),
-              ),
-              FilledButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  // Kurudi nyuma = ukurasa wa maelezo au nyumbani.
-                  Navigator.of(context).maybePop();
-                },
-                child: Text(l10n.readAnother),
-              ),
-            ],
-          );
+  Future<void> _finishStory(Story story, ReaderCubit cubit) async {
+    // Stopping narration is not itself evidence of completion.
+    await cubit.stopReadAloud();
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (_) => StoryCompletionDialog(
+        story: story,
+        store: StoryCompletionStore.instance,
+        onOpenStory: (next) { if (mounted) openStory(context, next); },
+        onStartOver: () async {
+          await cubit.startOver();
         },
       ),
     );
@@ -397,12 +402,7 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
           a.status != b.status ||
           a.isSpeaking != b.isSpeaking,
       listener: (BuildContext context, ReaderState state) {
-        final ReaderState previous = _lastState ?? state;
-        _lastState = state;
         _syncPage(state.pageIndex);
-        // Sherehe hupimwa kwa kulinganisha hali mbili — hivyo hapa, si kwa
-        // kubashiri kwa `pageIndex`.
-        _maybeCelebrate(previous, state);
       },
       buildWhen: (ReaderState a, ReaderState b) =>
           a != b || a.status != b.status,
@@ -459,6 +459,17 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
       return const Center(child: AppLoading());
     }
 
+    // Initialize at the restored page before the PageView is attached. This
+    // avoids animating through and accidentally saving intermediate pages.
+    _pageController ??= PageController(initialPage: state.pageIndex);
+    // Count only the page actually displayed, once per page/day, after layout.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _pageController?.hasClients != true ||
+          _pageController!.position.isScrollingNotifier.value) return;
+      final visible = _pageController!.page?.round();
+      if (visible == state.pageIndex) _recordOpenedPage(story, visible!);
+    });
+
     // Upau wa sauti huonekana pamoja na vidhibiti — lakini katika
     // `listenOnly` unabaki wazi ili mtoto aweze kusimamisha sauti hata
     // akiwa ameficha vidhibiti vingine.
@@ -477,8 +488,18 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
           onTap: _handleTap,
           onDoubleTap: _handleDoubleTap,
           onVerticalDragEnd: _handleVerticalDrag,
-          child: PageView.builder(
-            controller: _pageController,
+          child: NotificationListener<ScrollEndNotification>(
+            onNotification: (notification) {
+              if (notification.depth == 0 && notification.metrics is PageMetrics) {
+                final page = (notification.metrics as PageMetrics).page?.round();
+                if (page != null && page >= 0 && page < story.pages.length) {
+                  _recordOpenedPage(story, page);
+                }
+              }
+              return false;
+            },
+            child: PageView.builder(
+            controller: _pageController!,
             itemCount: state.totalPages,
             // Cubit hupokea kila ukurasa unaotulia — ikiwa ni mkono wa mtumiaji
             // au `animateToPage` yetu.
@@ -494,6 +515,15 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
               index: index,
               state: state,
               onHotspotTapped: _onHotspotTapped,
+              onTextSize: (size) => _recordPanelSize(size, text: true, page: index),
+              safeTop: _showControls ? MediaQuery.paddingOf(context).top + AppSpacing.readerTopBarHeight : MediaQuery.paddingOf(context).top,
+              safeBottom: math.max(
+                state.showsStoryText
+                    ? (_textPanelHeights[index] ?? MediaQuery.sizeOf(context).height * AppSpacing.textOverlayMaxHeightRatio)
+                    : MediaQuery.paddingOf(context).bottom,
+                showTtsBar ? (_ttsPanelHeight ?? 140 + MediaQuery.paddingOf(context).bottom) : 0,
+              ),
+            ),
             ),
           ),
         ),
@@ -505,6 +535,28 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
         // Huwekwa hapa, sivyo ndani ya eneo, ili **kisitoke nje ya skrini**.
         // Pia huweka kibonge **kimoja** tu kwa wakati mmoja.
         if (_activeHotspot != null) _hotspotBubble(context, _activeHotspot!),
+
+        if (state.isLastPage && _showControls && !_showSettings)
+          Positioned(
+            top: MediaQuery.paddingOf(context).top + 70,
+            right: 16,
+            child: FilledButton.tonalIcon(
+              key: const ValueKey('finish-story'),
+              onPressed: () => _finishStory(story, cubit),
+              icon: const Icon(Icons.check_circle_outline_rounded),
+              label: Text(context.isSwahili ? 'Nimemaliza' : 'I finished'),
+            ),
+          ),
+
+        if (_showControls && !_showSettings)
+          Positioned(
+            top: 0, left: 0, right: 0,
+            height: MediaQuery.paddingOf(context).top + 130,
+            child: IgnorePointer(child: DecoratedBox(decoration: BoxDecoration(
+              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                colors: <Color>[Colors.black.withValues(alpha: .72), Colors.transparent]),
+            ))),
+          ),
 
         // ---------------------------------------------------------------
         // TABAKA 3 — upau wa juu.
@@ -534,10 +586,13 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
               opacity: showTtsBar ? 1 : 0,
               child: IgnorePointer(
                 ignoring: !showTtsBar,
-                child: TtsControls(
-                  state: state,
-                  cubit: cubit,
-                  onBookmark: () => _onBookmark(context, cubit, state),
+                child: _MeasureSize(
+                  onChange: (size) => _recordPanelSize(size, text: false),
+                  child: TtsControls(
+                    state: state,
+                    cubit: cubit,
+                    onBookmark: () => _onBookmark(context, cubit, state),
+                  ),
                 ),
               ),
             ),
@@ -626,6 +681,9 @@ class _StoryPageView extends StatelessWidget {
     required this.index,
     required this.state,
     required this.onHotspotTapped,
+    required this.onTextSize,
+    required this.safeTop,
+    required this.safeBottom,
   });
 
   final StoryPage page;
@@ -633,6 +691,9 @@ class _StoryPageView extends StatelessWidget {
   final ReaderState state;
   /// Hupeleka eneo na mipaka yake kwenye skrini ili kupanga kibonge.
   final void Function(StoryHotspot hotspot, Rect globalRect) onHotspotTapped;
+  final ValueChanged<Size> onTextSize;
+  final double safeTop;
+  final double safeBottom;
 
   @override
   Widget build(BuildContext context) {
@@ -641,43 +702,16 @@ class _StoryPageView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        // Fill letterboxed space with a softened copy of the same scene.
-        // The sharp foreground and its hotspots stay completely visible.
         Positioned.fill(
-          child: IgnorePointer(
-            child: ExcludeSemantics(
-              child: ClipRect(
-                child: RepaintBoundary(
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                    child: Image.asset(
-                      page.illustration,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const ColoredBox(
-                        color: AppColors.readerNightBackground,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        // Keep the complete illustration above the reading controls and text.
-        // Hotspot rectangles are measured in illustration coordinates.
-        Positioned(
-          top: 64,
-          left: 0,
-          right: 0,
-          bottom: state.showsStoryText
-              ? MediaQuery.of(context).size.height * AppSpacing.textOverlayMaxHeightRatio
-              : 140,
           child: ReaderIllustration(
             asset: page.illustration,
             hotspots: page.hotspots,
             onHotspotTapped: onHotspotTapped,
             enabled: isCurrent,
             compact: MediaQuery.of(context).size.width < AppBreakpoints.smallPhone,
+            canvasMode: true,
+            safeTop: safeTop,
+            safeBottom: safeBottom,
           ),
         ),
 
@@ -689,7 +723,7 @@ class _StoryPageView extends StatelessWidget {
 
         // Maandishi (chini) — hufichwa katika `listenOnly`.
         if (state.showsStoryText)
-          _TextOverlay(page: page, state: state, isCurrent: isCurrent),
+          _TextOverlay(page: page, state: state, isCurrent: isCurrent, onSize: onTextSize),
 
       ],
     );
@@ -707,11 +741,13 @@ class _TextOverlay extends StatelessWidget {
     required this.page,
     required this.state,
     required this.isCurrent,
+    required this.onSize,
   });
 
   final StoryPage page;
   final ReaderState state;
   final bool isCurrent;
+  final ValueChanged<Size> onSize;
 
   @override
   Widget build(BuildContext context) {
@@ -769,7 +805,9 @@ class _TextOverlay extends StatelessWidget {
       child: ConstrainedBox(
         // Urefu wa juu wa 40% — mchoro lazima ubaki kuonekana.
         constraints: BoxConstraints(maxHeight: maxHeight),
-        child: Container(
+        child: _MeasureSize(
+          onChange: onSize,
+          child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: scrim,
@@ -861,8 +899,37 @@ class _TextOverlay extends StatelessWidget {
             ),
           ),
         ),
+        ),
       ),
     );
+  }
+}
+
+/// Reports actual laid-out controls without changing their constraints.
+class _MeasureSize extends SingleChildRenderObjectWidget {
+  const _MeasureSize({required this.onChange, required super.child});
+  final ValueChanged<Size> onChange;
+  @override
+  RenderObject createRenderObject(BuildContext context) => _MeasureRender(onChange);
+  @override
+  void updateRenderObject(BuildContext context, covariant _MeasureRender renderObject) {
+    renderObject.onChange = onChange;
+  }
+}
+
+class _MeasureRender extends RenderProxyBox {
+  _MeasureRender(this.onChange);
+  ValueChanged<Size> onChange;
+  Size? _previous;
+  @override
+  void performLayout() {
+    super.performLayout();
+    if (size == _previous) return;
+    _previous = size;
+    final measured = size;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (attached) onChange(measured);
+    });
   }
 }
 

@@ -336,20 +336,21 @@ abstract final class AppRouter {
             final Story? story = state.extra as Story?;
             // `auto=1` hutoka kwenye `openReader(autoPlay: true)` — "Sikiliza".
             final bool autoPlay = state.uri.queryParameters['auto'] == '1';
+            final bool resume = state.uri.queryParameters['resume'] == '1';
             return BlocProvider<ReaderCubit>(
               create: (BuildContext context) {
                 final ReaderCubit cubit =
                     ReaderCubit(repository: resolveStoryRepository());
                 if (story != null) {
                   // Tuna hadithi tayari — hatuhitaji ombi la `id`.
-                  cubit.loadStory(story, autoPlay: autoPlay);
+                  cubit.loadStory(story, autoPlay: autoPlay, resume: resume);
                 } else {
                   // Kiungo kilichoshirikiwa — pakia kwa `id`.
-                  cubit.loadById(id, autoPlay: autoPlay);
+                  cubit.loadById(id, autoPlay: autoPlay, resume: resume);
                 }
                 return cubit;
               },
-              child: StoryReaderPage(storyId: id, autoPlay: autoPlay),
+              child: StoryReaderPage(storyId: id, autoPlay: autoPlay, resume: resume),
             );
           },
         ),

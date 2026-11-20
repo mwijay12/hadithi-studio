@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/story_page.dart';
@@ -13,6 +16,9 @@ class ReaderIllustration extends StatefulWidget {
     required this.onHotspotTapped,
     required this.enabled,
     required this.compact,
+    this.canvasMode = false,
+    this.safeTop = 0,
+    this.safeBottom = 0,
   });
 
   final String asset;
@@ -20,6 +26,10 @@ class ReaderIllustration extends StatefulWidget {
   final void Function(StoryHotspot hotspot, Rect globalRect) onHotspotTapped;
   final bool enabled;
   final bool compact;
+  /// Edge-to-edge reader mode; default retains the standalone contain widget.
+  final bool canvasMode;
+  final double safeTop;
+  final double safeBottom;
 
   @override
   State<ReaderIllustration> createState() => _ReaderIllustrationState();
@@ -70,32 +80,116 @@ class _ReaderIllustrationState extends State<ReaderIllustration> {
       if (_failed) return const Center(child: Icon(Icons.image_outlined, size: 48));
       final Size? size = _imageSize;
       if (size == null || constraints.biggest.isEmpty) return const SizedBox.expand();
-      final FittedSizes fitted = applyBoxFit(BoxFit.contain, size, constraints.biggest);
-      final Rect rect = Alignment.center.inscribe(fitted.destination, Offset.zero & constraints.biggest);
-      return Stack(children: <Widget>[
+      final view = constraints.biggest;
+      if (!widget.canvasMode) {
+        final fitted = applyBoxFit(BoxFit.contain, size, view);
+        final rect = Alignment.center.inscribe(fitted.destination, Offset.zero & view);
+        return Stack(children: <Widget>[
+          Positioned.fromRect(rect: rect, child: Image.asset(widget.asset, fit: BoxFit.fill)),
+          for (final hotspot in widget.hotspots) _hotspot(rect, hotspot, view),
+        ]);
+      }
+      final layout = readerCanvasLayout(size, view,
+        safeTop: widget.safeTop, safeBottom: widget.safeBottom);
+      final rect = layout.imageRect;
+      return ClipRect(child: Stack(fit: StackFit.expand, children: <Widget>[
+        // The ambient layer is only used where the image cannot fill without
+        // an extreme crop; it is ignored for hit testing and accessibility.
+        if (layout.ambient)
+          IgnorePointer(child: ExcludeSemantics(child: ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 36, sigmaY: 36),
+            child: Transform.scale(scale: 1.15, child: Image.asset(widget.asset, fit: BoxFit.cover)),
+          ))),
+        if (layout.ambient)
+          const IgnorePointer(child: ColoredBox(color: Color(0x480F0C0A))),
         Positioned.fromRect(
           rect: rect,
-          child: Image.asset(widget.asset, fit: BoxFit.fill),
+          child: layout.ambient
+              ? _FeatheredArtwork(asset: widget.asset)
+              : Image.asset(widget.asset, fit: BoxFit.fill),
         ),
         for (final hotspot in widget.hotspots)
-          Positioned.fromRect(
-            rect: hotspotTargetRect(rect, hotspot, constraints.biggest),
-            child: Builder(builder: (hotspotContext) {
-              return InteractiveHotspot(
-                hotspot: hotspot,
-                onTapped: (selected) {
-                  final box = hotspotContext.findRenderObject() as RenderBox?;
-                  if (box != null && box.hasSize) {
-                    widget.onHotspotTapped(selected, box.localToGlobal(Offset.zero) & box.size);
-                  }
-                },
-                enabled: widget.enabled,
-                compact: widget.compact,
-              );
-            }),
-          ),
-      ]);
+          if (hotspotCenterVisible(rect, hotspot, view)) _hotspot(rect, hotspot, view),
+      ]));
     });
+  }
+
+  Widget _hotspot(Rect rect, StoryHotspot hotspot, Size view) => Positioned.fromRect(
+    rect: widget.canvasMode
+        ? canvasHotspotTargetRect(rect, hotspot)
+        : hotspotTargetRect(rect, hotspot, view),
+    child: Builder(builder: (hotspotContext) => InteractiveHotspot(
+      hotspot: hotspot,
+      onTapped: (selected) {
+        final box = hotspotContext.findRenderObject() as RenderBox?;
+        if (box != null && box.hasSize) {
+          widget.onHotspotTapped(selected, box.localToGlobal(Offset.zero) & box.size);
+        }
+      }, enabled: widget.enabled, compact: widget.compact,
+    )),
+  );
+}
+
+/// The painted image rectangle is also the source of truth for hotspot mapping.
+class ReaderCanvasLayout {
+  const ReaderCanvasLayout(this.imageRect, this.ambient);
+  final Rect imageRect;
+  final bool ambient;
+}
+
+@visibleForTesting
+ReaderCanvasLayout readerCanvasLayout(Size image, Size view, {double safeTop = 0, double safeBottom = 0}) {
+  final imgRatio = image.width / image.height;
+  final viewRatio = view.width / view.height;
+  final sameOrientation = (imgRatio >= 1) == (viewRatio >= 1);
+  final ratioDelta = math.max(imgRatio / viewRatio, viewRatio / imgRatio);
+  final ambient = !sameOrientation || ratioDelta > 1.8;
+  if (!ambient) {
+    final scale = math.max(view.width / image.width, view.height / image.height);
+    final size = Size(image.width * scale, image.height * scale);
+    return ReaderCanvasLayout(const Alignment(0, -0.25).inscribe(size, Offset.zero & view), false);
+  }
+  final top = safeTop.clamp(0.0, view.height * .45);
+  final bottom = safeBottom.clamp(0.0, view.height - top - 1);
+  final safe = Rect.fromLTWH(0, top, view.width, view.height - top - bottom);
+  final scale = math.min(safe.width / image.width, safe.height / image.height);
+  final size = Size(image.width * scale, image.height * scale);
+  return ReaderCanvasLayout(Alignment.center.inscribe(size, safe), true);
+}
+
+@visibleForTesting
+bool hotspotCenterVisible(Rect image, StoryHotspot hotspot, Size view) {
+  final center = Offset(image.left + (hotspot.left + hotspot.width / 2) * image.width,
+      image.top + (hotspot.top + hotspot.height / 2) * image.height);
+  return (Offset.zero & view).contains(center);
+}
+
+/// Keep the hit target centered on the artwork even when the image is cropped.
+/// The enclosing ClipRect clips a partially visible target rather than moving it.
+@visibleForTesting
+Rect canvasHotspotTargetRect(Rect image, StoryHotspot hotspot) {
+  final center = Offset(image.left + (hotspot.left + hotspot.width / 2) * image.width,
+      image.top + (hotspot.top + hotspot.height / 2) * image.height);
+  final width = math.max(48.0, hotspot.width * image.width);
+  final height = math.max(48.0, hotspot.height * image.height);
+  return Rect.fromCenter(center: center, width: width, height: height);
+}
+
+/// Only the sharp picture is feathered; hotspot hit targets remain crisp.
+class _FeatheredArtwork extends StatelessWidget {
+  const _FeatheredArtwork({required this.asset});
+  final String asset;
+  @override
+  Widget build(BuildContext context) {
+    const vertical = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+      colors: <Color>[Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+      stops: <double>[0, .12, .84, 1]);
+    const horizontal = LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight,
+      colors: <Color>[Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+      stops: <double>[0, .035, .965, 1]);
+    return ShaderMask(shaderCallback: (bounds) => vertical.createShader(bounds), blendMode: BlendMode.dstIn,
+      child: ShaderMask(shaderCallback: (bounds) => horizontal.createShader(bounds), blendMode: BlendMode.dstIn,
+        child: Image.asset(asset, fit: BoxFit.fill)));
   }
 }
 

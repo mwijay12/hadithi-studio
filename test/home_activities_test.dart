@@ -2,10 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hadithi_studio/config/routes/app_routes.dart';
+import 'package:hadithi_studio/core/services/reading_activity_store.dart';
+import 'package:hadithi_studio/core/services/reading_rewards_store.dart';
+import 'package:hadithi_studio/core/services/parent_preferences.dart';
+import 'package:hadithi_studio/core/services/reading_discovery.dart';
+import 'package:hadithi_studio/features/stories/data/datasources/story_sample_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hadithi_studio/l10n/l10n.dart';
 import 'package:hadithi_studio/navigation/app_shell.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    ReadingActivityStore.resetForTesting();
+    ReadingRewardsStore.resetForTesting();
+    ParentPreferences.resetForTesting();
+  });
+
   GoRouter router() => GoRouter(initialLocation: '/home', routes: [
         GoRoute(path: '/home', builder: (_, __) => const HomeTabPage()),
         GoRoute(
@@ -31,6 +44,15 @@ void main() {
     ));
     await tester.pump();
   }
+
+  testWidgets('Leo greets near top without a journey card on Home', (tester) async {
+    final appRouter = router();
+    await openHome(tester, appRouter);
+    await tester.pumpAndSettle();
+    expect(find.text('Habari, rafiki!'), findsOneWidget);
+    expect(find.text('Safari ya kusoma'), findsNothing);
+    expect(find.byKey(const ValueKey('weekly-mini-goal')), findsNothing);
+  });
 
   testWidgets('home game opens the actual short quiz', (tester) async {
     final appRouter = router();
@@ -61,7 +83,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-listen')));
     await tester.pumpAndSettle();
-    expect(find.text('reader:safari-ya-simba:1'), findsOneWidget);
+    expect(find.text('reader:${dailyStoryFor(DateTime.now(), StorySampleData.all)!.id}:1'), findsOneWidget);
   });
 
   testWidgets('music opens reader without claiming to start music', (tester) async {
@@ -78,7 +100,7 @@ void main() {
     expect(find.text('Fungua hadithi, kisha washa muziki kwenye mipangilio'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('home-music')));
     await tester.pumpAndSettle();
-    expect(find.text('reader:safari-ya-simba:off'), findsOneWidget);
+    expect(find.text('reader:${dailyStoryFor(DateTime.now(), StorySampleData.all)!.id}:off'), findsOneWidget);
   });
 
   testWidgets('all stories opens library listing', (tester) async {
@@ -100,6 +122,14 @@ void main() {
     final appRouter = router();
     await openHome(tester, appRouter);
     expect(find.text('Habari, rafiki!'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('home-leo-stories')), 200,
+      scrollable: find.descendant(
+        of: find.byKey(const ValueKey('home-scroll')),
+        matching: find.byType(Scrollable),
+      ).first,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-leo-stories')));
     await tester.pumpAndSettle();
     expect(find.text('all stories route'), findsOneWidget);
@@ -125,10 +155,16 @@ void main() {
       ),
     ));
     await tester.pump();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('home-leo-stories')), 200,
+      scrollable: find.descendant(
+        of: find.byKey(const ValueKey('home-scroll')),
+        matching: find.byType(Scrollable),
+      ).first,
+    );
+    await tester.pumpAndSettle();
     expect(find.text('Habari, rafiki!'), findsOneWidget);
     expect(tester.takeException(), isNull);
-    await tester.ensureVisible(find.byKey(const ValueKey('home-leo-stories')));
-    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('home-leo-stories')));
     await tester.pumpAndSettle();
     expect(find.text('all stories route'), findsOneWidget);

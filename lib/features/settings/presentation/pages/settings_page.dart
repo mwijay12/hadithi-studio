@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/services/library_store.dart';
+import '../../../../core/services/parent_preferences.dart';
 import '../../../../core/services/theme_controller.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../config/theme/spacing.dart';
@@ -34,6 +35,9 @@ import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/widgets/leo_mascot.dart';
 import '../../../../l10n/app_locale_controller.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/offline_overview.dart';
+import '../widgets/parent_goal_setting.dart';
+import '../widgets/reading_journey_card.dart';
 
 /// Toleo la app.
 ///
@@ -233,45 +237,27 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
 
-              // -------------------------------------------------------------
-              // Bado haipatikani — kwa uaminifu
-              // -------------------------------------------------------------
-              _SectionTitle(title: l10n.notAvailableYet),
-              for (final String label in <String>[
-                context.isSwahili ? 'Hali ya Data Ndogo' : 'Low Data Mode',
-                context.isSwahili ? 'Udhibiti wa Mzazi' : 'Parental Controls',
-              ])
-                ListTile(
-                  enabled: false,
-                  leading: Icon(
-                    Icons.lock_outline_rounded,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  title: Text(label),
-                  subtitle: Text(
-                    l10n.notAvailableYet,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
+              _SectionTitle(title: context.isSwahili ? 'Kwa mzazi' : 'For parents'),
+              const ParentGoalSetting(),
+              ListenableBuilder(
+                listenable: ParentPreferences.instance,
+                builder: (context, _) => ParentPreferences.instance.showGoals
+                    ? ReadingJourneyCard(now: DateTime.now())
+                    : const SizedBox.shrink(),
+              ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                child: Text(
-                  context.isSwahili
-                      ? 'Vipengele hivi vinahitaji backend. Hazijaachwa kwa '
-                          'makusudi — zinaonyeshwa kama zilivyo, ili '
-                          'usidhani zinafanya kazi.'
-                      : 'These features need a backend. They are shown as '
-                          'they are so you do not assume they work.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    height: 1.5,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: Text(context.isSwahili
+                    ? 'Mpangilio huu hauna PIN na haumzuii mtoto kuubadilisha. Vikumbusho havitumwi bado.'
+                    : 'This setting has no PIN and does not prevent a child changing it. Reminders are not sent yet.'),
+              ),
+              _SectionTitle(title: context.isSwahili ? 'Matumizi bila mtandao' : 'Offline use'),
+              const OfflineOverview(),
+              ListTile(
+                enabled: false,
+                leading: const Icon(Icons.lock_outline_rounded),
+                title: Text(context.isSwahili ? 'Hali ya Data Ndogo' : 'Low Data Mode'),
+                subtitle: Text(l10n.notAvailableYet),
               ),
 
               // -------------------------------------------------------------
@@ -296,10 +282,10 @@ class SettingsPage extends StatelessWidget {
                 ),
                 subtitle: Text(
                   context.isSwahili
-                      ? 'Maendeleo, alama, rasimu, jina la mtoto na '
-                          'umri wa mtoto vitaondolewa; lugha na muonekano vitabaki'
-                      : 'Progress, bookmarks, drafts, child name and '
-                          'child age will be removed; language and appearance remain',
+                      ? 'Maendeleo, hadithi zilizokamilika, nyota, mfululizo, alama, rasimu, maoni, jina la mtoto na '
+                          'umri wa mtoto vitaondolewa; lugha, muonekano na mapendeleo ya mzazi vitabaki'
+                      : 'Progress, completed stories, stars, streaks, bookmarks, drafts, reviews, child name and '
+                          'child age will be removed; language, appearance and parent preferences remain',
                 ),
               ),
 
@@ -345,10 +331,10 @@ Future<void> _confirmClearData(BuildContext context) async {
       title: Text(sw ? 'Futa data ya maktaba?' : 'Clear library data?'),
       content: Text(
         sw
-            ? 'Maendeleo ya kusoma, alama, rasimu, jina la mtoto na '
-                'umri wa mtoto vitaondolewa. Mapendeleo ya lugha, muonekano na arifa yatabaki. Hili haliwezi kutenduliwa.'
-            : 'Reading progress, bookmarks, drafts, child name and '
-                'child age will be removed. Language, appearance and notification preferences remain. This cannot be undone.',
+            ? 'Maendeleo, hadithi zilizokamilika, nyota, mfululizo, alama, rasimu, maoni, jina la mtoto na '
+                'umri wa mtoto vitaondolewa. Mapendeleo ya lugha, muonekano, arifa na mzazi yatabaki. Hili haliwezi kutenduliwa.'
+            : 'Reading progress, completed stories, stars, streaks, bookmarks, drafts, reviews, child name and '
+                'child age will be removed. Language, appearance, notification and parent preferences remain. This cannot be undone.',
       ),
       actions: <Widget>[
         TextButton(

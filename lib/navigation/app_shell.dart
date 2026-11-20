@@ -18,6 +18,8 @@
 /// halisi (rangi, typography, nafasi) ili muundo uweze kuhakikiwa mapema.
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,6 +27,7 @@ import '../config/routes/app_routes.dart';
 import '../core/enums/app_enums.dart';
 import '../core/extensions/context_extensions.dart';
 import '../core/services/library_store.dart';
+import '../core/services/reading_discovery.dart';
 import '../core/widgets/leo_mascot.dart';
 import '../core/widgets/story_clouds.dart';
 import '../l10n/app_locale_controller.dart';
@@ -290,8 +293,65 @@ class _TabHeader extends StatelessWidget {
 
 
 /// Tabu 1 — Nyumbani.
-class HomeTabPage extends StatelessWidget {
+class HomeTabPage extends StatefulWidget {
   const HomeTabPage({super.key});
+
+  @override
+  State<HomeTabPage> createState() => _HomeTabPageState();
+}
+
+class _HomeTabPageState extends State<HomeTabPage> with WidgetsBindingObserver {
+  Timer? _dayTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _scheduleDayChange();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _offerResume());
+  }
+
+  Future<void> _offerResume() async {
+    await LibraryStore.instance.restore();
+    if (!mounted || ModalRoute.of(context)?.isCurrent != true || _lastReadableStory() == null) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => SafeArea(child: _ContinueReadingCard(
+        onContinue: (story) {
+          Navigator.of(context).pop();
+          if (mounted) openReader(context, story, resume: true);
+        },
+      )),
+    );
+  }
+
+  void _scheduleDayChange() {
+    _dayTimer?.cancel();
+    final now = DateTime.now();
+    final next = DateTime(now.year, now.month, now.day + 1);
+    _dayTimer = Timer(next.difference(now), () {
+      if (!mounted) return;
+      setState(() {});
+      _scheduleDayChange();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      setState(() {});
+      _scheduleDayChange();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _dayTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -300,7 +360,7 @@ class HomeTabPage extends StatelessWidget {
     // **C9:** kila kadi hutafuta hadithi yake kwa `id` HALISI. `id`
     // isiyojulikana hurudisha `null` na kadi hiyo **haijengwi** — badala ya
     // kuonyesha hadithi nyingine kwa jina la uongo.
-    final Story? daily = storyById('safari-ya-simba');
+    final Story? daily = dailyStoryFor(DateTime.now(), StorySampleData.all);
     final List<Story> featured = storiesByIds(const <String>[
       'mlima-kilimanjaro',
       'nyota-za-usiku',
@@ -332,6 +392,7 @@ class HomeTabPage extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: StoryCard(
+                  key: const ValueKey('daily-story'),
                   story: daily,
                   badge: l10n.dailyStory,
                   height: 200,
@@ -400,8 +461,8 @@ class HomeTabPage extends StatelessWidget {
                       accent: AppColors.kilimanjaroBlue,
                       title: context.isSwahili ? 'Sikiliza hadithi' : 'Listen to a story',
                       subtitle: context.isSwahili
-                          ? 'Anza Safari ya Simba • sauti ipo kwenye kifaa'
-                          : 'Start Simba’s Safari • audio is on this device',
+                          ? 'Anza ${daily.title(swahili: true)} • sauti ipo kwenye kifaa'
+                          : 'Start ${daily.title(swahili: false)} • audio is on this device',
                       onTap: () => openReader(context, daily, autoPlay: true),
                     ),
                   const SizedBox(height: AppSpacing.sm),
@@ -440,6 +501,78 @@ class HomeTabPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Most recently visited valid page, not a claim of completion.
+(Story, int)? _lastReadableStory() {
+  for (final id in LibraryStore.instance.inProgressStoryIds) {
+    final story = storyById(id);
+    final page = LibraryStore.instance.lastPage(id);
+    if (story != null && page != null && page >= 0 && page < story.pageCount) {
+      return (story, page);
+    }
+  }
+  return null;
+}
+
+class _ContinueReadingCard extends StatelessWidget {
+  const _ContinueReadingCard({required this.onContinue});
+  final void Function(Story) onContinue;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: LibraryStore.instance,
+      builder: (context, _) {
+        final saved = _lastReadableStory();
+        if (saved == null) return const SizedBox.shrink();
+        final selected = saved.$1;
+        final pageNumber = saved.$2 + 1;
+        final total = selected.pageCount;
+        final sw = context.isSwahili;
+        final colors = Theme.of(context).colorScheme;
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.xl),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Text(sw ? 'Tuendelee na hadithi?' : 'Continue your story?',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: AppSpacing.xs),
+            Text(sw ? 'Leo amehifadhi ukurasa wako.' : 'Leo saved your place.',
+              style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: AppSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(color: colors.secondaryContainer, borderRadius: BorderRadius.circular(20)),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.asset(selected.coverAsset, width: 82, height: 105, fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const SizedBox(width: 82, height: 105, child: Icon(Icons.menu_book_rounded))),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Text(selected.title(swahili: sw), style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(sw ? 'Ukurasa $pageNumber kati ya $total' : 'Page $pageNumber of $total'),
+                  const SizedBox(height: AppSpacing.sm),
+                  ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: pageNumber / total)),
+                ])),
+              ]),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(width: double.infinity, child: FilledButton.icon(
+              key: const ValueKey('home-resume'),
+              onPressed: () => onContinue(selected),
+              icon: const Icon(Icons.menu_book_rounded),
+              label: Text(sw ? 'Endelea kusoma' : 'Continue reading'),
+            )),
+            Center(child: TextButton(onPressed: () => Navigator.of(context).pop(),
+              child: Text(sw ? 'Labda baadaye' : 'Maybe later'))),
+          ]),
+        );
+      },
     );
   }
 }
@@ -1019,7 +1152,7 @@ class BookshelfTabPage extends StatelessWidget {
                           // moja** kwenye reader, si kwenye maelezo: hatua
                           // inayotarajiwa ni kuendelea kusoma.
                           onTap: () =>
-                              openReader(context, story),
+                              openReader(context, story, resume: true),
                         ),
                       ),
                   ],

@@ -61,8 +61,10 @@ void main() {
       ),
     ));
     await tester.pump();
-    expect(find.byType(ImageFiltered), findsWidgets);
     expect(find.byType(ReaderIllustration), findsWidgets);
+    final viewport = tester.getSize(find.byType(ReaderIllustration).first);
+    expect(viewport.height, 740);
+    expect(viewport.width, 360);
     expect(find.byTooltip('Telezesha kuona vidhibiti zaidi'), findsOneWidget);
     expect(find.byIcon(Icons.close_rounded), findsWidgets);
     expect(tester.takeException(), isNull);

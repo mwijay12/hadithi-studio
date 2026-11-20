@@ -16,12 +16,7 @@
 ///    ujumbe sahihi wa lugha mbili. Kuandika widget ya pili kungeunda mahali
 ///    pa pili pa kutafsiri makosa — hivyo tunairudia ile iliyopo.
 ///
-/// 3. **`_SimilarStoriesSection` na `_ReviewsSection` HAZIONYESHI data ya
-///    kubuni.** Prompt 2 inaomba "3 fake review cards" na kadi za kubuni.
-///    Hilo lingemdanganya mzazi anayeona maoni ya wasomaji ambayo hayapo.
-///    Badala yake tunaonyesha muundo halisi wenye hali tupu inayoeleweka
-///    ("Maoni yatawasili hivi punde") + kiungo cha kweli. Kadi za hadithi
-///    zinazofanana zinahitaji injini ya mapendekezo (Prompt 6).
+/// 3. Mapendekezo hutumia repository; maoni ya mtumiaji huhifadhiwa ndani.
 ///
 /// 4. **`isPremium` / `priceTZS` / `reviewCount` HAZIPO kwenye `Story`.**
 ///    Entity ina: `isFree`, `rating`, `readCount`, `publishedYear`. Hakuna
@@ -62,6 +57,8 @@ import '../../domain/entities/story_shelf.dart';
 import '../cubit/story_detail_cubit.dart';
 import '../state/story_detail_state.dart';
 import '../story_navigation.dart';
+import '../widgets/similar_stories_section.dart';
+import '../widgets/story_reviews_section.dart';
 
 /// Ukurasa wa maelezo ya hadithi.
 class StoryDetailPage extends StatefulWidget {
@@ -209,11 +206,11 @@ class _DetailBody extends StatelessWidget {
           // 7 — Makundi na vibonge.
           SliverToBoxAdapter(child: _TagChips(story: story)),
 
-          // 8 — Hadithi zinazofanana (hali tupu kwa sasa).
-          const SliverToBoxAdapter(child: _SimilarStoriesSection()),
+          // 8 — Mapendekezo kutoka maktaba ya hadithi.
+          SliverToBoxAdapter(child: SimilarStoriesSection(story: story)),
 
-          // 9 — Maoni ya wasomaji (hali tupu kwa sasa).
-          const SliverToBoxAdapter(child: _ReviewsSection()),
+          // 9 — Maoni ya kifaa hiki na mfano uliowekwa alama.
+          SliverToBoxAdapter(child: StoryReviewsSection(storyId: story.id)),
 
           // 10 — Nafasi ya chini kwa `SafeArea` ya vifaa vyenye notch.
           SliverToBoxAdapter(
@@ -1066,27 +1063,45 @@ class _ActionButtonsState extends State<_ActionButtons> {
       ),
       child: Column(
         children: <Widget>[
-          // Msingi — Safari Green, urefu 56, kona 16 (Task 6a).
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: FilledButton.icon(
-              onPressed: () => _openReader(context, listen: false),
-              icon: const Icon(Icons.play_arrow_rounded, size: AppSpacing.iconMd),
-              label: Text(l10n.readNow),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.safariGreen,
-                foregroundColor: Colors.white,
-                elevation: 2,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: AppSpacing.borderRadiusMd,
+          // A saved page means visited, not necessarily completed.
+          ListenableBuilder(
+            listenable: LibraryStore.instance,
+            builder: (context, _) {
+              final page = LibraryStore.instance.lastPage(widget.story.id);
+              final valid = page != null && page >= 0 && page < widget.story.pageCount;
+              final sw = context.isSwahili;
+              return Column(children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    key: const ValueKey('detail-read'),
+                    onPressed: () {
+                      if (valid) {
+                        openReader(context, widget.story, resume: true);
+                      } else {
+                        _openReader(context, listen: false);
+                      }
+                    },
+                    icon: const Icon(Icons.play_arrow_rounded, size: AppSpacing.iconMd),
+                    label: Text(valid
+                        ? (sw ? 'Endelea — Ukurasa ${page + 1}/${widget.story.pageCount}'
+                            : 'Continue — Page ${page + 1}/${widget.story.pageCount}')
+                        : l10n.readNow),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 56),
+                      backgroundColor: AppColors.safariGreen,
+                      foregroundColor: Colors.white,
+                      shape: const RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusMd),
+                      textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                    ),
+                  ),
                 ),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+                if (valid) ...<Widget>[
+                  const SizedBox(height: AppSpacing.xs),
+                  LinearProgressIndicator(value: (page + 1) / widget.story.pageCount),
+                ],
+              ]);
+            },
           ),
           const SizedBox(height: AppSpacing.md),
           SizedBox(
@@ -1454,160 +1469,9 @@ String _shelfLabel(BuildContext context, StoryShelf shelf) {
 // 8 — Hadithi zinazofanana
 // ---------------------------------------------------------------------------
 
-/// Mapendekezo ya hadithi zinazofanana.
-///
-/// Hali tupu kwa makusudi: kadi za hadithi **halisi** zinahitaji injini ya
-/// mapendekezo (`getSimilarStories`) ambayo haipo. Kadi za kubuni zingeonyesha
-/// hadithi ambazo mtumiaji hawezi kuzifungua — uzoefu mbaya kuliko kitufe
-/// kinachoeleza ukweli.
-class _SimilarStoriesSection extends StatelessWidget {
-  const _SimilarStoriesSection();
-
-  @override
-  Widget build(BuildContext context) {
-    final AppLocalizations l10n = context.l10n;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.xxl,
-        AppSpacing.xl,
-        0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(l10n.similarStories, style: _sectionHeadingStyle),
-              ),
-              TextButton(
-                onPressed: () =>
-                    context.pushNamed(AppRoutes.allStoriesName),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.safariGreen,
-                  textStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                child: Text(l10n.viewAll),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            decoration: BoxDecoration(
-              color: AppColors.cardBackground,
-              borderRadius: AppSpacing.borderRadiusMd,
-              border: Border.all(color: AppColors.divider),
-            ),
-            child: Column(
-              children: <Widget>[
-                const Icon(
-                  Icons.auto_awesome_rounded,
-                  size: AppSpacing.iconLg,
-                  color: AppColors.skyBlue,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  context.localised(
-                    swahili: 'Mapendekezo yanakuja na Prompt 6',
-                    english: 'Recommendations arrive with Prompt 6',
-                  ),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ---------------------------------------------------------------------------
 // 9 — Maoni ya wasomaji
 // ---------------------------------------------------------------------------
-
-/// Sehemu ya maoni.
-///
-/// `reviewCount` HAIPO kwenye `Story`, na maoni ya kweli yanahitaji backend
-/// (Prompt 6). Hatuandiki maoni ya kubuni yenye majina ya watu wasiopo.
-class _ReviewsSection extends StatelessWidget {
-  const _ReviewsSection();
-
-  @override
-  Widget build(BuildContext context) {
-    final AppLocalizations l10n = context.l10n;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.xxl,
-        AppSpacing.xl,
-        0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(l10n.userReviews, style: _sectionHeadingStyle),
-          const SizedBox(height: AppSpacing.md),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            decoration: BoxDecoration(
-              color: AppColors.cardBackground,
-              borderRadius: AppSpacing.borderRadiusMd,
-              border: Border.all(color: AppColors.divider),
-            ),
-            child: Column(
-              children: <Widget>[
-                Icon(
-                  Icons.rate_review_outlined,
-                  size: AppSpacing.iconLg,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  context.localised(
-                    swahili: 'Maoni yatawasili hivi punde',
-                    english: 'Reviews arrive shortly',
-                  ),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                // Kitufe kimezimwa kwa makusudi: haliwezi kuandika maoni
-                // bado, na kitufe kinachobofya bila matokeo ni udanganyifu.
-                OutlinedButton.icon(
-                  onPressed: null,
-                  icon: const Icon(Icons.edit_rounded, size: AppSpacing.iconSm),
-                  label: Text(l10n.writeReview),
-                  style: OutlinedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: AppSpacing.borderRadiusPill,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Task 2 — Skelitoni ya kupakia

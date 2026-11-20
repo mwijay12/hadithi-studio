@@ -51,4 +51,61 @@ void main() {
     final tiny = hotspotTargetRect(const Rect.fromLTWH(0, 0, 20, 10), hotspot, const Size(20, 10));
     expect(tiny, const Rect.fromLTWH(0, 0, 20, 10));
   });
+  test('adaptive geometry maps hotspots through cover or contain at multiple viewports', () {
+    const hotspot = StoryHotspot(
+      type: HotspotType.info_popup,
+      labelSw: 'A', labelEn: 'A', revealSw: 'B', revealEn: 'B',
+      left: .4, top: .25, width: .2, height: .2,
+    );
+    for (final view in <Size>[
+      const Size(375, 667), const Size(412, 915),
+      const Size(820, 1180), const Size(1180, 820),
+    ]) {
+      for (final image in <Size>[const Size(1536, 2048), const Size(1376, 768)]) {
+        final layout = readerCanvasLayout(image, view, safeTop: 80, safeBottom: view.height * .42);
+        final rect = layout.imageRect;
+        expect(rect.width / rect.height, closeTo(image.width / image.height, .0001));
+        final target = canvasHotspotTargetRect(rect, hotspot);
+        expect(target.center.dx, closeTo(rect.left + rect.width * .5, .001));
+        expect(target.center.dy, closeTo(rect.top + rect.height * .35, .001));
+        if (layout.ambient) {
+          expect(rect.left, greaterThanOrEqualTo(-.001));
+          expect(rect.right, lessThanOrEqualTo(view.width + .001));
+          expect(rect.top, greaterThanOrEqualTo(79.999));
+        } else {
+          expect(rect.left, lessThanOrEqualTo(0));
+          expect(rect.top, lessThanOrEqualTo(0));
+          expect(rect.right, greaterThanOrEqualTo(view.width));
+          expect(rect.bottom, greaterThanOrEqualTo(view.height));
+        }
+      }
+    }
+  });
+
+  testWidgets('mismatched artwork uses feathered ambient with aligned hotspots', (tester) async {
+    tester.view.physicalSize = const Size(375, 667);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    const asset = 'assets/images/stories/pages/kuku-na-mwewe/page_01.webp';
+    const hotspot = StoryHotspot(type: HotspotType.info_popup, labelSw: 'A', labelEn: 'A',
+      revealSw: 'B', revealEn: 'B', left: .4, top: .2, width: .2, height: .2);
+    await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
+      supportedLocales: AppLocalizationsSetup.supportedLocales,
+      home: Scaffold(body: Center(child: SizedBox(width: 375, height: 667,
+        child: ReaderIllustration(asset: asset, hotspots: const [hotspot],
+          onHotspotTapped: (_, __) {}, enabled: true, compact: false,
+          canvasMode: true, safeTop: 80, safeBottom: 280)))),
+    ));
+    await tester.runAsync(() => precacheImage(const AssetImage(asset), tester.element(find.byType(ReaderIllustration))));
+    await tester.pump();
+    expect(find.byType(ImageFiltered), findsOneWidget);
+    expect(find.byType(ShaderMask), findsNWidgets(2));
+    final marker = tester.getRect(find.byType(InteractiveHotspot));
+    final frame = tester.getRect(find.byType(ReaderIllustration));
+    final layout = readerCanvasLayout(const Size(1536, 1024), const Size(375, 667), safeTop: 80, safeBottom: 280);
+    expect(marker.center.dx, closeTo(frame.left + layout.imageRect.left + layout.imageRect.width * .5, 1));
+    expect(marker.center.dy, closeTo(frame.top + layout.imageRect.top + layout.imageRect.height * .3, 1));
+  });
 }

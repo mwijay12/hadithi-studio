@@ -126,12 +126,15 @@ class ReaderCubit extends Cubit<ReaderState> {
   /// Hupakia hadithi **moja kwa moja** (tuna kitu tayari kutoka kadi).
   ///
   /// [autoPlay] ni `true` tunapoingia kwa "Sikiliza" badala ya "Soma Sasa".
-  Future<void> loadStory(Story story, {bool autoPlay = false}) async {
+  Future<void> loadStory(Story story, {bool autoPlay = false, bool resume = false}) async {
     _resetPlayback();
+    final int? saved = resume ? await _progress.savedPage(story.id) : null;
+    if (isClosed) return;
+    final int initialPage = saved != null && saved >= 0 && saved < story.pages.length ? saved : 0;
     emit(state.copyWith(
       status: ReaderStatus.success,
       story: story,
-      pageIndex: 0,
+      pageIndex: initialPage,
       clearHighlight: true,
       isSpeaking: false,
       isPaused: false,
@@ -145,7 +148,7 @@ class ReaderCubit extends Cubit<ReaderState> {
   }
 
   /// Hupakia hadithi kwa [id] — hutumika kwenye kiungo kilichoshirikiwa.
-  Future<void> loadById(String id, {bool autoPlay = false}) async {
+  Future<void> loadById(String id, {bool autoPlay = false, bool resume = false}) async {
     _resetPlayback();
     emit(state.copyWith(
       status: ReaderStatus.loading,
@@ -156,27 +159,17 @@ class ReaderCubit extends Cubit<ReaderState> {
     final Either<Failure, Story> result = await _repository.getStoryById(id);
     if (isClosed) return;
 
-    result.fold(
-      (Failure failure) {
-        emit(ReaderState(
-          status: ReaderStatus.failure,
-          failure: failure,
-          speechAvailable: state.speechAvailable,
-        ),);
-      },
-      (Story story) {
-        emit(state.copyWith(
-          status: ReaderStatus.success,
-          story: story,
-          pageIndex: 0,
-          clearHighlight: true,
-          clearFailure: true,
-        ),);
-        _prepareTokens();
-        unawaited(_restoreBookmarks());
-        if (autoPlay) startReadAloud();
-      },
-    );
+    final Failure? failure = result.fold((failure) => failure, (_) => null);
+    if (failure != null) {
+      emit(ReaderState(
+        status: ReaderStatus.failure,
+        failure: failure,
+        speechAvailable: state.speechAvailable,
+      ));
+      return;
+    }
+    final Story? story = result.fold((_) => null, (story) => story);
+    if (story != null) await loadStory(story, autoPlay: autoPlay, resume: resume);
   }
 
   /// Hubadilisha lugha ya maandishi.
