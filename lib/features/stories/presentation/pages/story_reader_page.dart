@@ -29,8 +29,10 @@
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
@@ -93,6 +95,19 @@ class StoryReaderPage extends StatefulWidget {
 
 class _StoryReaderPageState extends State<StoryReaderPage> {
   PageController? _pageController;
+  final Map<int, double> _textPanelHeights = <int, double>{};
+  double? _ttsPanelHeight;
+
+  void _recordPanelSize(Size size, {required bool text, int? page}) {
+    if (!mounted) return;
+    final previous = text ? _textPanelHeights[page] : _ttsPanelHeight;
+    if (previous != null && (previous - size.height).abs() < .5) return;
+    if (text && page != null && page != context.read<ReaderCubit>().state.pageIndex) {
+      _textPanelHeights[page] = size.height;
+      return;
+    }
+    setState(() { if (text && page != null) { _textPanelHeights[page] = size.height; } else { _ttsPanelHeight = size.height; } });
+  }
 
   /// Vidhibiti (upau wa juu na wa sauti) vinaonekana.
   bool _showControls = true;
@@ -500,6 +515,14 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
               index: index,
               state: state,
               onHotspotTapped: _onHotspotTapped,
+              onTextSize: (size) => _recordPanelSize(size, text: true, page: index),
+              safeTop: _showControls ? MediaQuery.paddingOf(context).top + AppSpacing.readerTopBarHeight : MediaQuery.paddingOf(context).top,
+              safeBottom: math.max(
+                state.showsStoryText
+                    ? (_textPanelHeights[index] ?? MediaQuery.sizeOf(context).height * AppSpacing.textOverlayMaxHeightRatio)
+                    : MediaQuery.paddingOf(context).bottom,
+                showTtsBar ? (_ttsPanelHeight ?? 140 + MediaQuery.paddingOf(context).bottom) : 0,
+              ),
             ),
             ),
           ),
@@ -563,10 +586,13 @@ class _StoryReaderPageState extends State<StoryReaderPage> {
               opacity: showTtsBar ? 1 : 0,
               child: IgnorePointer(
                 ignoring: !showTtsBar,
-                child: TtsControls(
-                  state: state,
-                  cubit: cubit,
-                  onBookmark: () => _onBookmark(context, cubit, state),
+                child: _MeasureSize(
+                  onChange: (size) => _recordPanelSize(size, text: false),
+                  child: TtsControls(
+                    state: state,
+                    cubit: cubit,
+                    onBookmark: () => _onBookmark(context, cubit, state),
+                  ),
                 ),
               ),
             ),
@@ -655,6 +681,9 @@ class _StoryPageView extends StatelessWidget {
     required this.index,
     required this.state,
     required this.onHotspotTapped,
+    required this.onTextSize,
+    required this.safeTop,
+    required this.safeBottom,
   });
 
   final StoryPage page;
@@ -662,6 +691,9 @@ class _StoryPageView extends StatelessWidget {
   final ReaderState state;
   /// Hupeleka eneo na mipaka yake kwenye skrini ili kupanga kibonge.
   final void Function(StoryHotspot hotspot, Rect globalRect) onHotspotTapped;
+  final ValueChanged<Size> onTextSize;
+  final double safeTop;
+  final double safeBottom;
 
   @override
   Widget build(BuildContext context) {
@@ -678,11 +710,8 @@ class _StoryPageView extends StatelessWidget {
             enabled: isCurrent,
             compact: MediaQuery.of(context).size.width < AppBreakpoints.smallPhone,
             canvasMode: true,
-            safeTop: MediaQuery.paddingOf(context).top + AppSpacing.readerTopBarHeight,
-            // Text scroll area and controls occupy at most this reserved region.
-            safeBottom: state.showsStoryText
-                ? MediaQuery.sizeOf(context).height * AppSpacing.textOverlayMaxHeightRatio
-                : 140 + MediaQuery.paddingOf(context).bottom,
+            safeTop: safeTop,
+            safeBottom: safeBottom,
           ),
         ),
 
@@ -694,7 +723,7 @@ class _StoryPageView extends StatelessWidget {
 
         // Maandishi (chini) — hufichwa katika `listenOnly`.
         if (state.showsStoryText)
-          _TextOverlay(page: page, state: state, isCurrent: isCurrent),
+          _TextOverlay(page: page, state: state, isCurrent: isCurrent, onSize: onTextSize),
 
       ],
     );
@@ -712,11 +741,13 @@ class _TextOverlay extends StatelessWidget {
     required this.page,
     required this.state,
     required this.isCurrent,
+    required this.onSize,
   });
 
   final StoryPage page;
   final ReaderState state;
   final bool isCurrent;
+  final ValueChanged<Size> onSize;
 
   @override
   Widget build(BuildContext context) {
@@ -774,7 +805,9 @@ class _TextOverlay extends StatelessWidget {
       child: ConstrainedBox(
         // Urefu wa juu wa 40% — mchoro lazima ubaki kuonekana.
         constraints: BoxConstraints(maxHeight: maxHeight),
-        child: Container(
+        child: _MeasureSize(
+          onChange: onSize,
+          child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: scrim,
@@ -866,8 +899,37 @@ class _TextOverlay extends StatelessWidget {
             ),
           ),
         ),
+        ),
       ),
     );
+  }
+}
+
+/// Reports actual laid-out controls without changing their constraints.
+class _MeasureSize extends SingleChildRenderObjectWidget {
+  const _MeasureSize({required this.onChange, required super.child});
+  final ValueChanged<Size> onChange;
+  @override
+  RenderObject createRenderObject(BuildContext context) => _MeasureRender(onChange);
+  @override
+  void updateRenderObject(BuildContext context, covariant _MeasureRender renderObject) {
+    renderObject.onChange = onChange;
+  }
+}
+
+class _MeasureRender extends RenderProxyBox {
+  _MeasureRender(this.onChange);
+  ValueChanged<Size> onChange;
+  Size? _previous;
+  @override
+  void performLayout() {
+    super.performLayout();
+    if (size == _previous) return;
+    _previous = size;
+    final measured = size;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (attached) onChange(measured);
+    });
   }
 }
 
