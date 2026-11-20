@@ -27,11 +27,8 @@ import '../config/routes/app_routes.dart';
 import '../core/enums/app_enums.dart';
 import '../core/extensions/context_extensions.dart';
 import '../core/services/library_store.dart';
-import '../core/services/parent_preferences.dart';
-import '../core/services/reading_activity_store.dart';
 import '../core/services/reading_discovery.dart';
 import '../core/widgets/leo_mascot.dart';
-import '../core/widgets/reading_rewards_strip.dart';
 import '../core/widgets/story_clouds.dart';
 import '../l10n/app_locale_controller.dart';
 import '../../config/theme/colors.dart';
@@ -310,10 +307,24 @@ class _HomeTabPageState extends State<HomeTabPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    unawaited(ParentPreferences.instance.restore().catchError((Object error) {
-      debugPrint('Parent settings could not be loaded: $error');
-    }));
     _scheduleDayChange();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _offerResume());
+  }
+
+  Future<void> _offerResume() async {
+    await LibraryStore.instance.restore();
+    if (!mounted || ModalRoute.of(context)?.isCurrent != true || _lastReadableStory() == null) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => SafeArea(child: _ContinueReadingCard(
+        onContinue: (story) {
+          Navigator.of(context).pop();
+          if (mounted) openReader(context, story, resume: true);
+        },
+      )),
+    );
   }
 
   void _scheduleDayChange() {
@@ -372,13 +383,6 @@ class _HomeTabPageState extends State<HomeTabPage> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            ListenableBuilder(
-              listenable: ParentPreferences.instance,
-              builder: (context, _) => ParentPreferences.instance.showGoals
-                  ? _WeeklyActivityCard(now: DateTime.now())
-                  : const SizedBox.shrink(),
-            ),
-            const _ContinueReadingCard(),
             const _LeoWelcomeCard(),
             const SizedBox(height: AppSpacing.lg),
             // Kadi kuu — hadithi ya leo. Ni kubwa kuliko kadi nyingine kwa
@@ -501,186 +505,72 @@ class _HomeTabPageState extends State<HomeTabPage> with WidgetsBindingObserver {
   }
 }
 
-/// A gentle local calendar: pages opened, not minutes read or stories completed.
-class _WeeklyActivityCard extends StatefulWidget {
-  const _WeeklyActivityCard({required this.now});
-  final DateTime now;
-
-  @override
-  State<_WeeklyActivityCard> createState() => _WeeklyActivityCardState();
+/// Most recently visited valid page, not a claim of completion.
+(Story, int)? _lastReadableStory() {
+  for (final id in LibraryStore.instance.inProgressStoryIds) {
+    final story = storyById(id);
+    final page = LibraryStore.instance.lastPage(id);
+    if (story != null && page != null && page >= 0 && page < story.pageCount) {
+      return (story, page);
+    }
+  }
+  return null;
 }
 
-class _WeeklyActivityCardState extends State<_WeeklyActivityCard> with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    ReadingActivityStore.instance.restore().catchError((Object error) {
-      debugPrint('Reading activity could not be loaded: $error');
-    });
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && mounted) setState(() {});
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final sw = context.isSwahili;
-    final colors = Theme.of(context).colorScheme;
-    final now = widget.now;
-    final today = activityDay(now);
-    final monday = today.subtract(Duration(days: today.weekday - 1));
-    final labels = sw
-        ? const <String>['Jtt', 'Jnn', 'Jtn', 'Alh', 'Ijm', 'Jms', 'Jpl']
-        : const <String>['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return ListenableBuilder(
-      listenable: ReadingActivityStore.instance,
-      builder: (context, _) {
-        final activity = ReadingActivityStore.instance.snapshot;
-        final count = activity.pagesToday(now).clamp(0, 3);
-        final streak = activity.visibleStreak(now);
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.md),
-          child: Card(
-            color: colors.secondaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(sw ? 'Safari ya kusoma' : 'Reading journey',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: colors.onSecondaryContainer, fontWeight: FontWeight.bold)),
-                const SizedBox(height: AppSpacing.xs),
-                Text(sw ? 'Leo: kurasa $count/3 zimefunguliwa'
-                    : 'Today: $count/3 pages opened',
-                  style: TextStyle(color: colors.onSecondaryContainer)),
-                const SizedBox(height: AppSpacing.sm),
-                Row(children: <Widget>[
-                  for (int i = 0; i < 7; i++)
-                    Expanded(child: Column(children: <Widget>[
-                      Text(labels[i], style: Theme.of(context).textTheme.labelSmall?.copyWith(color: colors.onSecondaryContainer)),
-                      const SizedBox(height: 4),
-                      Icon(activity.activeDates.contains(activityDateKey(monday.add(Duration(days: i))))
-                          ? Icons.star_rounded : Icons.star_border_rounded,
-                        color: colors.onSecondaryContainer, size: 22),
-                    ])),
-                ]),
-                const SizedBox(height: AppSpacing.sm),
-                Text(streak > 0
-                    ? (sw ? 'Siku $streak mfululizo • Kinga ${activity.freezes}' : '$streak-day streak • ${activity.freezes} freezes')
-                    : (sw ? 'Kila ukurasa ni mwanzo mzuri!' : 'Every page is a lovely start!'),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSecondaryContainer)),
-                Text(sw ? 'Nyota huwaka ukifungua kurasa 3 tofauti kwa siku.'
-                    : 'A star lights up when you open 3 different pages in a day.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSecondaryContainer)),
-                const SizedBox(height: AppSpacing.md),
-                _WeeklyMiniGoal(activity: activity, now: now),
-                const ReadingRewardsStrip(),
-              ]),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-/// A gentle three-day goal; no penalties or new data collection.
-class _WeeklyMiniGoal extends StatelessWidget {
-  const _WeeklyMiniGoal({required this.activity, required this.now});
-  final ActivitySnapshot activity;
-  final DateTime now;
-
-  @override
-  Widget build(BuildContext context) {
-    final sw = context.isSwahili;
-    final days = weeklyActiveDays(activity, now);
-    final progress = days.clamp(0, 3);
-    final color = Theme.of(context).colorScheme.onSecondaryContainer;
-    return Column(key: const ValueKey('weekly-mini-goal'),
-      crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(sw ? 'Lengo la wiki: siku $progress/3' : 'Weekly goal: $progress/3 days',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: color, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 6),
-        Semantics(label: sw ? 'Lengo la wiki: siku $progress kati ya 3' : 'Weekly goal: $progress of 3 days',
-          child: LinearProgressIndicator(value: progress / 3)),
-        const SizedBox(height: 6),
-        Text(progress >= 3
-            ? (sw ? 'Hongera! Umetimiza lengo la wiki.' : 'Hooray! You reached your weekly goal.')
-            : (sw ? 'Siku moja ni kurasa 3 tofauti zilizofunguliwa. Polepole ni sawa!' :
-                'One day means 3 different pages opened. Go at your own pace!'),
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: color)),
-      ]);
-  }
-}
-
-/// Last visited story, not a claim of completion.
 class _ContinueReadingCard extends StatelessWidget {
-  const _ContinueReadingCard();
+  const _ContinueReadingCard({required this.onContinue});
+  final void Function(Story) onContinue;
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: LibraryStore.instance,
       builder: (context, _) {
-        Story? story;
-        int? page;
-        for (final id in LibraryStore.instance.inProgressStoryIds) {
-          final candidate = storyById(id);
-          final saved = LibraryStore.instance.lastPage(id);
-          if (candidate != null && saved != null && saved >= 0 && saved < candidate.pageCount) {
-            story = candidate;
-            page = saved;
-            break;
-          }
-        }
-        if (story == null || page == null) return const SizedBox.shrink();
-        final selected = story;
-        final pageNumber = page + 1;
+        final saved = _lastReadableStory();
+        if (saved == null) return const SizedBox.shrink();
+        final selected = saved.$1;
+        final pageNumber = saved.$2 + 1;
         final total = selected.pageCount;
         final sw = context.isSwahili;
         final colors = Theme.of(context).colorScheme;
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
-          child: Card(
-            child: Padding(
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.xl),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Text(sw ? 'Tuendelee na hadithi?' : 'Continue your story?',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: AppSpacing.xs),
+            Text(sw ? 'Leo amehifadhi ukurasa wako.' : 'Leo saved your place.',
+              style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: AppSpacing.md),
+            Container(
               padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(sw ? 'Endelea Kusoma' : 'Continue reading',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: AppSpacing.sm),
-                Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(selected.coverAsset, width: 72, height: 86, fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const SizedBox(width: 72, height: 86, child: Icon(Icons.menu_book_rounded))),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Text(selected.title(swahili: sw), style: Theme.of(context).textTheme.titleSmall),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(sw ? 'Ukurasa $pageNumber kati ya $total' : 'Page $pageNumber of $total'),
-                    const SizedBox(height: AppSpacing.xs),
-                    LinearProgressIndicator(value: pageNumber / total, color: colors.primary),
-                  ])),
-                ]),
-                const SizedBox(height: AppSpacing.sm),
-                FilledButton.icon(
-                  key: const ValueKey('home-resume'),
-                  onPressed: () => openReader(context, selected, resume: true),
-                  icon: const Icon(Icons.menu_book_rounded),
-                  label: Text(sw ? 'Endelea' : 'Continue'),
+              decoration: BoxDecoration(color: colors.secondaryContainer, borderRadius: BorderRadius.circular(20)),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.asset(selected.coverAsset, width: 82, height: 105, fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const SizedBox(width: 82, height: 105, child: Icon(Icons.menu_book_rounded))),
                 ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Text(selected.title(swahili: sw), style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(sw ? 'Ukurasa $pageNumber kati ya $total' : 'Page $pageNumber of $total'),
+                  const SizedBox(height: AppSpacing.sm),
+                  ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: pageNumber / total)),
+                ])),
               ]),
             ),
-          ),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(width: double.infinity, child: FilledButton.icon(
+              key: const ValueKey('home-resume'),
+              onPressed: () => onContinue(selected),
+              icon: const Icon(Icons.menu_book_rounded),
+              label: Text(sw ? 'Endelea kusoma' : 'Continue reading'),
+            )),
+            Center(child: TextButton(onPressed: () => Navigator.of(context).pop(),
+              child: Text(sw ? 'Labda baadaye' : 'Maybe later'))),
+          ]),
         );
       },
     );

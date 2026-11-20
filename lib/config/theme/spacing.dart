@@ -95,12 +95,9 @@ abstract final class AppSpacing {
   /// picha yote na mtoto asingeliona simba anayeongea.
   /// Urefu wa juu wa kifuniko cha maandishi, kwa uwiano wa urefu wa skrini.
   ///
-  /// **Kwa nini 0.52, sivyo 0.40:** kifuniko hiki sasa kinatenga **148 px**
-  /// chini kwa upau wa sauti na chips. Kwa 0.40 kwenye simu ya 780 px,
-  /// kilichobaki kwa maandishi ni 132 px — mistari mitatu pekee, kisha
-  /// maandishi huanza kuskroli. 0.52 hurejesha nafasi ya mistari 7–8 huku
-  /// scrim yenye vituo vitatu ikiendelea kuacha picha ionekane juu.
-  static const double textOverlayMaxHeightRatio = 0.52;
+  /// Leave more room for the artwork. Long text remains scrollable above
+  /// the bottom controls instead of obscuring the illustration.
+  static const double textOverlayMaxHeightRatio = 0.42;
 
   // Animation durations
   static const Duration instant = Duration(milliseconds: 90);

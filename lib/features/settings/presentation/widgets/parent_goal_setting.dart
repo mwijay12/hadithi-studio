@@ -36,10 +36,10 @@ class _ParentGoalSettingState extends State<ParentGoalSetting> {
           key: const ValueKey('parent-show-goals'),
           value: store.showGoals,
           onChanged: store.isLoaded && !_saving ? _set : null,
-          title: Text(sw ? 'Onyesha malengo Nyumbani' : 'Show goals on Home'),
+          title: Text(sw ? 'Onyesha safari ya kusoma' : 'Show reading journey'),
           subtitle: Text(sw
-              ? 'Ficha au onyesha kalenda, mfululizo na nyota Nyumbani. Shughuli bado huhifadhiwa kwenye kifaa.'
-              : 'Show or hide the calendar, streak and stars on Home. Activity is still saved on this device.'),
+              ? 'Ficha au onyesha kalenda, mfululizo na nyota kwenye mipangilio. Shughuli bado huhifadhiwa kwenye kifaa.'
+              : 'Show or hide the calendar, streak and stars in settings. Activity is still saved on this device.'),
         ),
         if (_failed) TextButton(onPressed: () => _attempted == null ? _restore() : _set(_attempted!),
           child: Text(sw ? 'Haikuhifadhiwa. Jaribu tena' : 'Not saved. Try again')),

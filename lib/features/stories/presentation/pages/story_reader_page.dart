@@ -29,7 +29,6 @@
 library;
 
 import 'dart:async';
-import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -661,32 +660,20 @@ class _StoryPageView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        // Fill letterboxed space with a softened copy of the same scene.
-        // The sharp foreground and its hotspots stay completely visible.
-        Positioned.fill(
-          child: IgnorePointer(
-            child: ExcludeSemantics(
-              child: ClipRect(
-                child: RepaintBoundary(
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                    child: Image.asset(
-                      page.illustration,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const ColoredBox(
-                        color: AppColors.readerNightBackground,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+        // A calm background avoids a giant blurred duplicate of the artwork.
+        // Portrait and landscape originals remain uncropped in the same viewport.
+        const Positioned.fill(
+          child: DecoratedBox(decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter, end: Alignment.bottomCenter,
+              colors: <Color>[Color(0xFFF4E6CA), Color(0xFFE4CDA7), Color(0xFF5A5147)],
             ),
-          ),
+          )),
         ),
         // Keep the complete illustration above the reading controls and text.
         // Hotspot rectangles are measured in illustration coordinates.
         Positioned(
-          top: 64,
+          top: 0,
           left: 0,
           right: 0,
           bottom: state.showsStoryText

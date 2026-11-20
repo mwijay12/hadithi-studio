@@ -45,6 +45,15 @@ void main() {
     await tester.pump();
   }
 
+  testWidgets('Leo greets near top without a journey card on Home', (tester) async {
+    final appRouter = router();
+    await openHome(tester, appRouter);
+    await tester.pumpAndSettle();
+    expect(find.text('Habari, rafiki!'), findsOneWidget);
+    expect(find.text('Safari ya kusoma'), findsNothing);
+    expect(find.byKey(const ValueKey('weekly-mini-goal')), findsNothing);
+  });
+
   testWidgets('home game opens the actual short quiz', (tester) async {
     final appRouter = router();
     await openHome(tester, appRouter);

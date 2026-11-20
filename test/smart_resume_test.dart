@@ -88,7 +88,7 @@ void main() {
     expect(library.lastPage('old'), 2);
   });
 
-  testWidgets('home card resumes most recently visited page without autoplay', (tester) async {
+  testWidgets('resume popup opens most recently visited page without autoplay', (tester) async {
     await progress.savePage(story.id, 2);
     final router = GoRouter(initialLocation: '/home', routes: <RouteBase>[
       GoRoute(path: '/home', builder: (_, __) => const HomeTabPage()),
@@ -103,9 +103,9 @@ void main() {
       builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
     ));
     await tester.pump();
-    expect(find.text('Ukurasa 3 kati ya ${story.pageCount}'), findsOneWidget);
-    await tester.ensureVisible(find.byKey(const ValueKey('home-resume')));
     await tester.pumpAndSettle();
+    expect(find.text('Tuendelee na hadithi?'), findsOneWidget);
+    expect(find.text('Ukurasa 3 kati ya ${story.pageCount}'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('home-resume')));
     await tester.pumpAndSettle();
     expect(find.text('resume:1:auto:off'), findsOneWidget);

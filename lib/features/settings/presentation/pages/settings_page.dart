@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/services/library_store.dart';
+import '../../../../core/services/parent_preferences.dart';
 import '../../../../core/services/theme_controller.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../config/theme/spacing.dart';
@@ -36,6 +37,7 @@ import '../../../../l10n/app_locale_controller.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/offline_overview.dart';
 import '../widgets/parent_goal_setting.dart';
+import '../widgets/reading_journey_card.dart';
 
 /// Toleo la app.
 ///
@@ -237,6 +239,12 @@ class SettingsPage extends StatelessWidget {
 
               _SectionTitle(title: context.isSwahili ? 'Kwa mzazi' : 'For parents'),
               const ParentGoalSetting(),
+              ListenableBuilder(
+                listenable: ParentPreferences.instance,
+                builder: (context, _) => ParentPreferences.instance.showGoals
+                    ? ReadingJourneyCard(now: DateTime.now())
+                    : const SizedBox.shrink(),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Text(context.isSwahili
