@@ -817,6 +817,16 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
                 ),
               ),
             ),
+            const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: SizedBox(width: double.infinity, child: FilledButton.icon(
+                key: const ValueKey('library-all-stories'),
+                onPressed: () => openAllStories(context),
+                icon: const Icon(Icons.auto_stories_rounded),
+                label: Text(context.isSwahili ? 'Hadithi zote' : 'All stories'),
+              )),
+            ),
             const SizedBox(height: AppSpacing.xl),
             Padding(
               padding:

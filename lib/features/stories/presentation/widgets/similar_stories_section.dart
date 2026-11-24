@@ -136,7 +136,7 @@ class _SimilarStoriesSectionState extends State<SimilarStoriesSection> {
                               StoryCard(key: ValueKey('similar-${story.id}'), story: story, height: 150),
                               const SizedBox(height: AppSpacing.xs),
                               Text(story.ageLabel(swahili: sw), style: Theme.of(context).textTheme.labelMedium),
-                              Text('${story.readingMinutes} ${sw ? 'dakika' : 'min'} • ★ ${story.rating.toStringAsFixed(1)}',
+                              Text('${story.readingMinutes} ${sw ? 'dakika' : 'min'}',
                                   style: Theme.of(context).textTheme.bodySmall),
                             ],
                           ),

@@ -26,8 +26,7 @@ List<Story> getSimilarStories(
   candidates.sort((a, b) {
     final byScore = b.score.compareTo(a.score);
     if (byScore != 0) return byScore;
-    final byRating = b.story.rating.compareTo(a.story.rating);
-    if (byRating != 0) return byRating;
+    // The bundled catalog has placeholder ratings, not real review data.
     return a.story.id.compareTo(b.story.id);
   });
   final ranked = candidates.map((entry) => entry.story);

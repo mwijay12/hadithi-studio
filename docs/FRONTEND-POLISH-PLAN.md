@@ -68,7 +68,13 @@ Protect reading, local progress and offline access; do not ship fake features.
 - Clarify playback, speed, page movement and audio availability. Test bundled
   Swahili audio and device-language TTS; no fake lip-sync or unsupported claims.
 
-## Phase 7 — library and story detail
+## Phase 7 — library and story detail (in progress)
+- Add a direct all-stories entry to Library and keep reviews private and local.
+- Hide unverified catalog ratings, reader counts and publication-year sorting;
+  recommendations use relevance and stable ID, not placeholder ratings.
+- Refresh offline reports when a detail view changes stories; protect local
+  review and bookmark UI from results associated with a different story.
+- Large text and device visuals still need real-device review.
 - Polish cards, shelves, recommendations, reviews and empty/error states;
   maintain honest demo labels, local privacy and responsive navigation.
 

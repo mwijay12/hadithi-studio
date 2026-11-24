@@ -282,7 +282,9 @@ class _AllStoriesPageState extends State<AllStoriesPage> {
       tooltip: l10n.sortBy,
       onSelected: (StorySort sort) => setState(() => _sort = sort),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<StorySort>>[
-        for (final StorySort sort in StorySort.values)
+        // Popularity, rating and publication year are placeholders in the
+        // bundled catalog; offer these sorts when verified data is available.
+        for (final StorySort sort in const [StorySort.curated, StorySort.name])
           CheckedPopupMenuItem<StorySort>(
             value: sort,
             checked: _sort == sort,

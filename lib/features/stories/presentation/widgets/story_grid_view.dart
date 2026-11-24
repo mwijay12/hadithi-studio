@@ -20,7 +20,6 @@ library;
 
 import 'package:flutter/material.dart';
 
-import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/spacing.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -31,9 +30,7 @@ import 'story_card.dart';
 ///
 /// Kifuniko kinatumia [StoryCard] **kile kile** kinachotumika Nyumbani na
 /// Maktaba, kwa hivyo kichwa na mguso ni sawa kila mahali. Chini yake
-/// tunaongeza mistari miwili ambayo kadi ya picha pekee haiwezi kuonyesha:
-/// mwandishi na rating — mzazi anayechagua hadithi ya jioni hutaka kujua
-/// nani aliandika na wengine waliipenda kiasi gani.
+/// tunaongeza mwandishi. Aggregate ratings are withheld until verified data exists.
 class StoryGridTile extends StatelessWidget {
   /// Huunda kadi ya [story].
   const StoryGridTile({super.key, required this.story});
@@ -61,18 +58,6 @@ class StoryGridTile extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: metaStyle,
-        ),
-        const SizedBox(height: AppSpacing.xxs),
-        Row(
-          children: <Widget>[
-            const Icon(
-              Icons.star_rounded,
-              size: 14,
-              color: AppColors.sunsetGold,
-            ),
-            const SizedBox(width: AppSpacing.xxs),
-            Text(story.rating.toStringAsFixed(1), style: metaStyle),
-          ],
         ),
       ],
     );

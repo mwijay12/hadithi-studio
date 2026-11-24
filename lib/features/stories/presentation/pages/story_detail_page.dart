@@ -90,6 +90,14 @@ class _StoryDetailPageState extends State<StoryDetailPage> {
     _bookmarked = LibraryStore.instance.isSaved(widget.storyId);
   }
 
+  @override
+  void didUpdateWidget(covariant StoryDetailPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.storyId != widget.storyId) {
+      _bookmarked = LibraryStore.instance.isSaved(widget.storyId);
+    }
+  }
+
   /// Hubadilisha alama na kuhifadhi — UI husoma thamani **iliyorudishwa**.
   Future<void> _toggleBookmark() async {
     HapticFeedback.lightImpact();
@@ -97,9 +105,9 @@ class _StoryDetailPageState extends State<StoryDetailPage> {
     // Tunasubiri hifadhi **kwanza**: kuweka `setState` kabla ya hapo
     // kungeonyesha hali ambayo bado haijaandikwa, na `toggleSaved` hurudisha
     // `false` kwa `id` tupu — hali ambayo UI isingejua.
-    final bool nowSaved =
-        await LibraryStore.instance.toggleSaved(widget.storyId);
-    if (!mounted) return;
+    final storyId = widget.storyId;
+    final bool nowSaved = await LibraryStore.instance.toggleSaved(storyId);
+    if (!mounted || widget.storyId != storyId) return;
 
     setState(() => _bookmarked = nowSaved);
 
@@ -184,8 +192,8 @@ class _DetailBody extends StatelessWidget {
           // 2 — Chipu za taarifa.
           SliverToBoxAdapter(child: _MetadataChips(story: story)),
 
-          // 3 — Nyota, maoni, wasomaji.
-          SliverToBoxAdapter(child: _RatingBar(story: story)),
+          // The catalog contains placeholder aggregate metrics; do not
+          // present them as real ratings or reader counts.
 
           // 4 — Mwandishi.
           SliverToBoxAdapter(
@@ -448,92 +456,6 @@ class _InfoChip extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 /// Nyota + idadi ya maoni + idadi ya wasomaji.
-class _RatingBar extends StatelessWidget {
-  const _RatingBar({required this.story});
-
-  final Story story;
-
-  // TANBIHI: hatufupishi namba kuwa "1.2k". Namba kamili ("1174 wasomaji")
-  // ni wazi zaidi kwa mzazi, na `l10n.readers` huchukua `int` — kufupisha
-  // kungehitaji `String`, kupunguza ukali wa aina bure.
-
-  @override
-  Widget build(BuildContext context) {
-    final AppLocalizations l10n = context.l10n;
-
-    // Nyota huwasilisha alama, hivyo ni kipengele cha maana (si pambo):
-    // WCAG 1.4.11 inahitaji 3:1. Sunset Gold yenyewe ni 2.10:1 juu ya cream
-    // — ndiyo maana tunatumia toleo lake lililozidishwa giza.
-    final Color starColor = ContrastUtils.readableInk(
-      AppColors.sunsetGold,
-      AppColors.background,
-      target: ContrastUtils.nonText,
-    );
-
-    final int full = story.rating.floor();
-    final bool half = (story.rating - full) >= 0.25 && (story.rating - full) < 0.75;
-    final bool roundUp = (story.rating - full) >= 0.75;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.lg,
-        AppSpacing.xl,
-        0,
-      ),
-      child: Row(
-        children: <Widget>[
-          // Nyota tano (Task 6f).
-          for (int i = 0; i < 5; i++)
-            Icon(
-              i < full || (roundUp && i == full)
-                  ? Icons.star_rounded
-                  : (half && i == full ? Icons.star_half_rounded : Icons.star_border_rounded),
-              size: AppSpacing.iconSm,
-              color: starColor,
-            ),
-          const SizedBox(width: AppSpacing.sm),
-          Text(
-            story.rating.toStringAsFixed(1),
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          // Kumbuka: `reviewCount` HAIPO kwenye `Story`, hivyo hatubuni idadi
-          // ya maoni. `readers` ni ya kweli (`readCount`).
-          _Dot(),
-          Text(
-            l10n.readers(story.readCount),
-            style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
-          ),
-          const Spacer(),
-          Text(
-            '${story.publishedYear}',
-            style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Kitenganishi kidogo cha nukta.
-class _Dot extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-      child: Text(
-        '•',
-        style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
-      ),
-    );
-  }
-}
-
 /// Kitufe cha mviringo cha upau wa juu.
 class _RoundIconButton extends StatelessWidget {
   const _RoundIconButton({
@@ -927,6 +849,16 @@ class _ActionButtons extends StatefulWidget {
 class _ActionButtonsState extends State<_ActionButtons> {
   /// Ripoti ya ukaguzi — `null` humaanisha bado tunakagua.
   OfflineReport? _report;
+  int _verificationRequest = 0;
+
+  @override
+  void didUpdateWidget(covariant _ActionButtons oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.story != widget.story) {
+      _report = null;
+      unawaited(_verifyOffline());
+    }
+  }
 
   @override
   void initState() {
@@ -945,6 +877,8 @@ class _ActionButtonsState extends State<_ActionButtons> {
   Future<void> _verifyOffline() async {
     // Si `final`: tunaiweka ndani ya `try` **au** `catch` — moja pekee
     // inafikiwa, lakini mkusanyaji hawezi kuthibitisha hilo.
+    final request = ++_verificationRequest;
+    final story = widget.story;
     OfflineReport report;
     try {
       final AssetManifest manifest =
@@ -962,8 +896,8 @@ class _ActionButtonsState extends State<_ActionButtons> {
       // `toSet()` kwa sababu kurasa nyingi hushiriki picha moja kwa sasa;
       // kuhesabu faili ile ile mara tano kungepotosha "x kati ya y".
       final Set<String> requiredAssets = <String>{
-        widget.story.coverAsset,
-        for (final StoryPage page in widget.story.pages) page.illustration,
+        story.coverAsset,
+        for (final StoryPage page in story.pages) page.illustration,
       };
       final List<String> readingAssets = requiredAssets.toList(growable: false);
 
@@ -973,8 +907,8 @@ class _ActionButtonsState extends State<_ActionButtons> {
 
       // Timestamps are not needed for audio playback.
       int audioMissing = 0;
-      for (int i = 0; i < widget.story.pages.length; i++) {
-        if (!bundled.contains(BundledStories.pageAudioAsset(widget.story.id, i))) {
+      for (int i = 0; i < story.pages.length; i++) {
+        if (!bundled.contains(BundledStories.pageAudioAsset(story.id, i))) {
           audioMissing++;
         }
       }
@@ -991,12 +925,12 @@ class _ActionButtonsState extends State<_ActionButtons> {
       report = const OfflineReport.unknown();
     }
 
-    if (!mounted) return;
+    if (!mounted || request != _verificationRequest) return;
 
     // Keep the library's reading availability in sync only when known.
     if (report.manifestAvailable) {
       unawaited(LibraryStore.instance.setDownloaded(
-        widget.story.id,
+        story.id,
         downloaded: report.isComplete,
       ));
     }
@@ -1098,7 +1032,14 @@ class _ActionButtonsState extends State<_ActionButtons> {
                 ),
                 if (valid) ...<Widget>[
                   const SizedBox(height: AppSpacing.xs),
-                  LinearProgressIndicator(value: (page + 1) / widget.story.pageCount),
+                  Semantics(
+                    label: sw ? 'Nafasi ya ukurasa' : 'Page position',
+                    value: sw ? 'Ukurasa ${page + 1} kati ya ${widget.story.pageCount}'
+                        : 'Page ${page + 1} of ${widget.story.pageCount}',
+                    child: ExcludeSemantics(child: LinearProgressIndicator(
+                      value: (page + 1) / widget.story.pageCount,
+                    )),
+                  ),
                 ],
               ]);
             },
@@ -1106,7 +1047,6 @@ class _ActionButtonsState extends State<_ActionButtons> {
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.infinity,
-            height: AppSpacing.buttonHeight,
             child: OutlinedButton.icon(
               onPressed: () => _openReader(context, listen: true),
               icon: const Icon(
@@ -1115,6 +1055,7 @@ class _ActionButtonsState extends State<_ActionButtons> {
               ),
               label: Text(l10n.listenNow),
               style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, AppSpacing.buttonHeight),
                 foregroundColor: AppColors.safariGreen,
                 side: const BorderSide(color: AppColors.safariGreen, width: 1.5),
                 shape: const RoundedRectangleBorder(

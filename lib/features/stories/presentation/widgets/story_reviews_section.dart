@@ -63,7 +63,7 @@ class _StoryReviewsSectionState extends State<StoryReviewsSection> {
       context: context, isScrollControlled: true, showDragHandle: true,
       builder: (_) => _ReviewEditor(storyId: widget.storyId, initial: _review, store: widget.store),
     );
-    if (!mounted || saved == null) return;
+    if (!mounted || saved == null || saved.storyId != widget.storyId) return;
     unawaited(ReadingRewardsStore.instance.reviewWritten(saved.storyId).then((result) {
       if (!mounted || !result.unlocked.contains('reviewer')) return;
       final name = rewardBadgeName('reviewer', sw: sw);
@@ -79,6 +79,7 @@ class _StoryReviewsSectionState extends State<StoryReviewsSection> {
 
   Future<void> _delete() async {
     final sw = context.isSwahili;
+    final storyId = widget.storyId;
     final confirmed = await showDialog<bool>(context: context, builder: (dialog) => AlertDialog(
       title: Text(sw ? 'Futa maoni yako?' : 'Delete your review?'),
       actions: <Widget>[
@@ -86,9 +87,9 @@ class _StoryReviewsSectionState extends State<StoryReviewsSection> {
         FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(sw ? 'Futa' : 'Delete')),
       ],
     ));
-    if (confirmed != true) return;
-    final ok = await widget.store.delete(widget.storyId);
-    if (!mounted) return;
+    if (confirmed != true || !mounted || widget.storyId != storyId) return;
+    final ok = await widget.store.delete(storyId);
+    if (!mounted || widget.storyId != storyId) return;
     if (ok) setState(() => _review = null);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok
         ? (sw ? 'Maoni yamefutwa.' : 'Review deleted.')
@@ -217,7 +218,7 @@ class _ReviewEditorState extends State<_ReviewEditor> {
             Text(sw ? 'Maoni yako' : 'Your review', style: Theme.of(context).textTheme.titleLarge),
             Text(sw ? 'Chagua nyota. Usijumuishe taarifa binafsi za mtoto.'
                 : 'Choose a rating. Please do not include a child’s personal information.'),
-            Row(children: <Widget>[
+            Wrap(children: <Widget>[
               for (int i = 1; i <= 5; i++)
                 IconButton(
                   key: ValueKey('review-star-$i'),
