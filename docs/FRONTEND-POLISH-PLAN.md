@@ -29,8 +29,8 @@ Protect reading, local progress and offline access; do not ship fake features.
   arm cutout produced a visible seam at the shoulder when rotated. Both were
   rejected, so neither is shipped. A proper transparent layered arm plus
   reconstructed shoulder, registered to the original canvas, is still needed.
-- Acceptance: exactly two limbs, no detached paw/shoulder gap or duplicated
-  pixels at either extreme, no cropping, and the approved blink and rest pose
+- Acceptance: exactly two arms, no detached paw/shoulder gap or duplicated
+  pixels at either extreme, no cropping, and the existing blink and rest pose
   preserved. Validate at multiple sizes and against reduced-motion settings.
 - Prepare an anatomically correct layered arm with a clean shoulder pivot;
   animate a short wave and settle. No third arm, cropping or disconnected joints.
