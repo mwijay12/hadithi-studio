@@ -56,7 +56,15 @@ Protect reading, local progress and offline access; do not ship fake features.
   contrast, story text and hotspot alignment on real phones/tablets.
 - Correct individual scene composition or hotspot coordinates where needed.
 
-## Phase 6 — listening and reader controls
+## Phase 6 — listening and reader controls (in progress)
+- Play/pause now actually pauses and resumes recorded audio instead of stopping
+  and restarting it. TTS may restart at the beginning when resume is unsupported.
+- Speed and voice sheets scroll on small screens. The voice sheet explains that
+  its settings change device TTS rate and pitch, not prerecorded narration;
+  device TTS availability and offline behaviour are not guaranteed.
+- Changing voice does not restart a recording. TTS preference changes made
+  while paused take effect on resume without unexpectedly starting playback.
+- Automated tests do not establish real device audio quality or TTS behaviour.
 - Clarify playback, speed, page movement and audio availability. Test bundled
   Swahili audio and device-language TTS; no fake lip-sync or unsupported claims.
 
