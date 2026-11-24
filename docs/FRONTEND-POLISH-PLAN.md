@@ -45,7 +45,13 @@ Protect reading, local progress and offline access; do not ship fake features.
 - Refine greeting, resume sheet, daily story and card hierarchy on compact and
   tall phones; gentle, purposeful transitions; usable at larger text sizes.
 
-## Phase 5 — reader art and interaction
+## Phase 5 — reader art and interaction (in progress)
+- Hotspot pulsing respects reduced motion, disabled tickers and inactive pages;
+  inactive targets are announced as disabled and cannot be activated.
+- A partially clipped hotspot anchors its bubble to the visible hit area.
+- Existing cover/ambient geometry and artwork remain unchanged. Coordinate
+  math can be tested automatically, but actual object placement and contrast
+  still require visual review on devices and across each scene.
 - Visually review portrait and landscape artwork, safe areas, feathering,
   contrast, story text and hotspot alignment on real phones/tablets.
 - Correct individual scene composition or hotspot coordinates where needed.

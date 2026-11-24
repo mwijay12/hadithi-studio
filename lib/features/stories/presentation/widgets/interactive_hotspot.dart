@@ -128,7 +128,29 @@ class _InteractiveHotspotState extends State<InteractiveHotspot>
   late final AnimationController _pulse = AnimationController(
     vsync: this,
     duration: AppSpacing.hotspotPulse,
-  )..repeat(reverse: true);
+  );
+
+  void _syncPulse() {
+    if (!widget.enabled || MediaQuery.of(context).disableAnimations ||
+        !TickerMode.of(context)) {
+      _pulse.stop();
+      _pulse.value = 0;
+    } else if (!_pulse.isAnimating) {
+      _pulse.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncPulse();
+  }
+
+  @override
+  void didUpdateWidget(covariant InteractiveHotspot oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.enabled != widget.enabled) _syncPulse();
+  }
 
   @override
   void dispose() {
@@ -161,9 +183,10 @@ class _InteractiveHotspotState extends State<InteractiveHotspot>
 
         return Semantics(
           button: true,
+          enabled: widget.enabled,
           label: widget.hotspot.label(swahili: context.isSwahili),
           child: GestureDetector(
-            onTap: _handleTap,
+            onTap: widget.enabled ? _handleTap : null,
             behavior: HitTestBehavior.opaque,
             child: AnimatedBuilder(
               animation: _pulse,
@@ -175,6 +198,7 @@ class _InteractiveHotspotState extends State<InteractiveHotspot>
                   alignment: Alignment.center,
                   children: <Widget>[
                     Transform.scale(
+                      key: const ValueKey('hotspot-pulse'),
                       scale: 0.85 + (t * 0.35),
                       child: Container(
                         decoration: BoxDecoration(
