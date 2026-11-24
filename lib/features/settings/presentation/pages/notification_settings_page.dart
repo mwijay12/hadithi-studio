@@ -302,11 +302,12 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 ),
                 RadioGroup<String>(
                   groupValue: _preferredTime,
-                  onChanged: _saving ? null : _onPreferredTimeChanged,
+                  onChanged: _onPreferredTimeChanged,
                   child: Column(
                     children: <Widget>[
                       for (final _TimeOption option in _timeOptions)
                         RadioListTile<String>(
+                          enabled: !_saving,
                           value: option.value,
                           title: Text(
                             context.isSwahili ? option.swahili : option.english,
