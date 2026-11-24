@@ -78,7 +78,11 @@ Protect reading, local progress and offline access; do not ship fake features.
 - Polish cards, shelves, recommendations, reviews and empty/error states;
   maintain honest demo labels, local privacy and responsive navigation.
 
-## Phase 8 — rewards and celebrations
+## Phase 8 — rewards and celebrations (in progress)
+- Rewards sheet shows earned/locked status in words and accessible progress
+  within each actual level; the top level has no invented next target.
+- Encouragement is deliberately low pressure. Stars and badges stay on-device.
+- Device visual and screen-reader review remains outstanding.
 - Make milestones and completion feel warm but low-pressure. Keep progress
   truthful, respect reduced motion and never punish missed reading days.
 
