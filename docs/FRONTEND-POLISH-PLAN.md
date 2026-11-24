@@ -86,7 +86,12 @@ Protect reading, local progress and offline access; do not ship fake features.
 - Make milestones and completion feel warm but low-pressure. Keep progress
   truthful, respect reduced motion and never punish missed reading days.
 
-## Phase 9 — parent, accessibility and offline UX
+## Phase 9 — parent, accessibility and offline UX (in progress)
+- Notification preferences remain optional and local; unavailable delivery is
+  explicit, failed writes do not pretend to succeed, and load failures retry.
+- Offline inspection does not claim audio or reading is ready for empty stories.
+- Removed an unverified legal-compliance assertion; professional privacy review
+  and physical-device accessibility/offline tests remain necessary.
 - Improve legibility, semantics, touch targets, reduced motion, offline status,
   permissions and deletion explanations. Do not present a settings toggle as
   a PIN-protected parental control or imply reminders are sent.

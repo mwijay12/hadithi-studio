@@ -116,14 +116,11 @@ class PrivacyPolicyPage extends StatelessWidget {
             bodySw: 'Hadithi Studio ni app ya kusoma hadithi kwa watoto, '
                 'iliyotengenezwa Tanzania. Sera hii inaeleza ni taarifa gani '
                 'app inashughulikia, kwa nini, na haki zako ni zipi. '
-                'Tunazingatia Sheria ya Ulinzi wa Taarifa Binafsi ya Mwaka '
-                '2022 (PDPA) na miongozo ya Tume ya Ulinzi wa Taarifa '
-                'Binafsi (PDPC).',
+                'Taarifa kuhusu haki za faragha zinarejelea Sheria ya Ulinzi wa Taarifa Binafsi ya Mwaka 2022 na Tume ya Ulinzi wa Taarifa Binafsi.',
             bodyEn: 'Hadithi Studio is a childrens reading app made in '
                 'Tanzania. This policy explains what information the app '
-                'handles, why, and what your rights are. We follow the '
-                'Personal Data Protection Act, 2022 (PDPA) and the guidance '
-                'of the Personal Data Protection Commission (PDPC).',
+                'handles, why, and what your rights are. The rights section references the '
+                'Personal Data Protection Act, 2022 and the Personal Data Protection Commission.',
           ),
 
           const _PolicySection(
