@@ -84,6 +84,8 @@ void main() {
     ));
     await tester.pumpAndSettle();
     expect(find.textContaining('Notifications cannot be delivered yet'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Streak reminders'), 150,
+      scrollable: find.byType(Scrollable).first);
     final first = find.byType(SwitchListTile).first;
     expect(tester.widget<SwitchListTile>(first).value, isFalse);
     await tester.tap(first);
