@@ -93,22 +93,25 @@ class StoryArtwork extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Image.asset(
-            asset,
-            fit: BoxFit.cover,
-            filterQuality: FilterQuality.medium,
-            // Kichwa cha hadithi kinasomwa na screen reader — picha ni
-            // mapambo yanayorudia wazo hilo.
-            excludeFromSemantics: true,
-            // Picha za 1020px zinapakiwa chini kwa upana wa kadi, si kwa
-            // ukubwa wao kamili.
-            cacheWidth: _cacheWidthFor(context, 140),
-            errorBuilder: (_, __, ___) => DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[accent, accent.withValues(alpha: 0.65)],
+          LayoutBuilder(
+            builder: (context, constraints) => Image.asset(
+              asset,
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.medium,
+              excludeFromSemantics: true,
+              // Decode at the actual card width. The daily hero is much wider
+              // than a 140dp shelf card, so a fixed width made it blurry.
+              cacheWidth: _cacheWidthFor(
+                context,
+                constraints.maxWidth.isFinite ? constraints.maxWidth : 140,
+              ),
+              errorBuilder: (_, __, ___) => DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: <Color>[accent, accent.withValues(alpha: 0.65)],
+                  ),
                 ),
               ),
             ),
@@ -214,9 +217,7 @@ class StoryArtwork extends StatelessWidget {
 
   /// Hupunguza ukubwa wa picha inayopakiwa.
   ///
-  /// Kwa kadi ndogo (140dp) tunapakia picha kwa ~2x ya density ili
-  /// ionekane safi kwenye skrini za retina bila kutumia kumbukumbu ya
-  /// picha kamili.
+  /// Decode at the rendered width and device density, with a sensible cap.
   static int _cacheWidthFor(BuildContext context, double logicalWidth) {
     final double ratio = MediaQuery.of(context).devicePixelRatio;
     return (logicalWidth * ratio).round().clamp(120, 2048);

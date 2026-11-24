@@ -36,7 +36,12 @@ Protect reading, local progress and offline access; do not ship fake features.
   animate a short wave and settle. No third arm, cropping or disconnected joints.
 - Compare and approve the idle, blink and wave in a single working prototype.
 
-## Phase 4 — Home polish
+## Phase 4 — Home polish (in progress)
+- Compact layouts put the greeting before Leo, so the invitation is higher.
+- Story cards decode their image at the actual rendered card width and device
+  density, instead of decoding the daily hero as a tiny 140dp thumbnail.
+- The resume indicator exposes page position to assistive technology rather
+  than presenting it as a completion percentage. Device review is pending.
 - Refine greeting, resume sheet, daily story and card hierarchy on compact and
   tall phones; gentle, purposeful transitions; usable at larger text sizes.
 

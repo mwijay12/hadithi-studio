@@ -111,6 +111,37 @@ void main() {
     expect(find.text('resume:1:auto:off'), findsOneWidget);
   });
 
+  testWidgets('resume sheet remains usable on a small screen with large text', (tester) async {
+    tester.view.physicalSize = const Size(320, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await progress.savePage(story.id, 2);
+    final router = GoRouter(initialLocation: '/home', routes: <RouteBase>[
+      GoRoute(path: '/home', builder: (_, __) => const HomeTabPage()),
+    ]);
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(
+      routerConfig: router, locale: const Locale('sw'),
+      localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
+      supportedLocales: AppLocalizationsSetup.supportedLocales,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          disableAnimations: true, textScaler: const TextScaler.linear(1.6),
+        ), child: child!,
+      ),
+    ));
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(find.text('Tuendelee na hadithi?'), findsOneWidget);
+    await tester.ensureVisible(find.text('Labda baadaye'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Labda baadaye'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tuendelee na hadithi?'), findsNothing);
+  });
+
   testWidgets('reader attaches PageView at saved page without resume dialog', (tester) async {
     await progress.savePage(story.id, 2);
     final cubit = reader();
