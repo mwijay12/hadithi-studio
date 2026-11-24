@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hadithi_studio/core/services/speech_service.dart';
+import 'package:hadithi_studio/core/services/reading_progress_store.dart';
+import 'package:hadithi_studio/features/stories/data/services/background_music_player.dart';
 import 'package:hadithi_studio/features/stories/data/datasources/story_sample_data.dart';
 import 'package:hadithi_studio/features/stories/data/services/story_audio_player.dart';
 import 'package:hadithi_studio/features/stories/presentation/cubit/reader_cubit.dart';
@@ -12,6 +14,19 @@ import 'package:hadithi_studio/features/stories/presentation/widgets/tts_control
 import 'package:hadithi_studio/l10n/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class _MemoryProgress extends ReadingProgressStore {
+  const _MemoryProgress();
+  @override
+  Future<Set<int>> bookmarks(String storyId) async => <int>{};
+  @override
+  Future<bool> savePage(String storyId, int pageIndex) async => true;
+}
+
+class _Music extends BackgroundMusicPlayer {
+  @override
+  Future<void> dispose() async {}
+}
 
 class FakeAudio extends StoryAudioPlayer {
   int plays = 0;
@@ -48,7 +63,7 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   test('recorded Swahili remains playable after English TTS is unavailable', () async {
-    final cubit = ReaderCubit(audioPlayer: FakeAudio(), speech: UnavailableSpeech());
+    final cubit = ReaderCubit(audioPlayer: FakeAudio(), speech: UnavailableSpeech(), musicPlayer: _Music(), progressStore: const _MemoryProgress());
     await cubit.loadStory(StorySampleData.all.first);
     cubit.setLanguage(false);
     await cubit.startReadAloud();
@@ -64,7 +79,7 @@ void main() {
   });
   test('recording pauses, changes speed and resumes without restarting for voice', () async {
     final audio = FakeAudio();
-    final cubit = ReaderCubit(audioPlayer: audio, speech: UnavailableSpeech());
+    final cubit = ReaderCubit(audioPlayer: audio, speech: UnavailableSpeech(), musicPlayer: _Music(), progressStore: const _MemoryProgress());
     await cubit.loadStory(StorySampleData.all.first);
     await cubit.togglePause();
     expect(audio.plays, 1);
@@ -87,7 +102,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     final audio = FakeAudio();
-    final cubit = ReaderCubit(audioPlayer: audio, speech: UnavailableSpeech());
+    final cubit = ReaderCubit(audioPlayer: audio, speech: UnavailableSpeech(), musicPlayer: _Music(), progressStore: const _MemoryProgress());
     addTearDown(cubit.close);
     await cubit.loadStory(StorySampleData.all.first);
     await tester.pumpWidget(MaterialApp(
