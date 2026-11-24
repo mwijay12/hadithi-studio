@@ -45,4 +45,28 @@ void main() {
     expect(tester.widget<Transform>(transforms.first).transform.storage.toList(), equals(stopped));
     await tester.pumpWidget(const SizedBox.shrink());
   });
+  testWidgets('wave pose blinks briefly and respects motion settings', (tester) async {
+    Widget app({bool reduced = false, bool ticker = true, LeoPose pose = LeoPose.wave}) => MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(disableAnimations: reduced),
+        child: TickerMode(enabled: ticker, child: Scaffold(
+          body: LeoMascot(pose: pose, semanticLabel: 'Leo'),
+        )),
+      ),
+    );
+    final blink = find.byKey(const ValueKey('leo-blink-frame'));
+    await tester.pumpWidget(app());
+    expect(tester.widget<Opacity>(blink).opacity, 0);
+    await tester.pump(const Duration(milliseconds: 4100));
+    expect(tester.widget<Opacity>(blink).opacity, 1);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(tester.widget<Opacity>(blink).opacity, 0);
+    await tester.pumpWidget(app(reduced: true));
+    expect(blink, findsNothing);
+    await tester.pumpWidget(app(ticker: false));
+    expect(blink, findsNothing);
+    await tester.pumpWidget(app(pose: LeoPose.reading));
+    expect(blink, findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }

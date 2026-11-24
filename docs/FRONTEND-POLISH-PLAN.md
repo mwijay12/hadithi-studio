@@ -10,7 +10,13 @@ Protect reading, local progress and offline access; do not ship fake features.
   and disabled tickers. This is not a blink, hand wave, lip-sync or true rig.
 - Confirm the current test APK works on the user's phone before judging polish.
 
-## Phase 2 — Leo facial rig
+## Phase 2 — Leo facial rig (prototype in progress)
+- The greeting pose now has an aligned closed-eye composite and a brief blink
+  every five seconds. Other poses remain static; this is not a layered face rig.
+- The source pose is unchanged outside the eye patches. The generated patches
+  were composited onto the original canvas; device and frame-by-frame review
+  are still required before approval. Reduced motion and disabled tickers use
+  the original open-eye image.
 - Produce approved, consistently aligned eye layers or frames for one existing
   pose. Implement a natural, infrequent blink, no extra limbs, no distorted face.
 - Review frame-by-frame and on device; preserve the existing static fallback.
