@@ -8,8 +8,8 @@
 /// ## Hii ni nini — na nini HAIYO
 ///
 /// Hii ni **daraja la uaminifu** kuelekea Rive rig halisi. Inabadilisha
-/// **pose** na kuongeza mwendo mdogo wa juu-chini. **HAIFANYI**: kupepesa
-/// macho, kupunga mkono kwa joint, kupumua, wala lip-sync. Hizo zinahitaji
+/// **pose** na kuongeza mwendo mdogo wa mwili mzima. **HAIFANYI**: kupepesa
+/// macho, kupunga mkono kwa joint, kupumua halisi, wala lip-sync. Hizo zinahitaji
 /// layered rig ndani ya Rive Editor na faili `.riv` ambayo **haipo**.
 ///
 /// Hivyo hatuandiki `RiveAnimation.asset(...)` hapa — faili haipo, na
@@ -81,26 +81,15 @@ class _LeoMascotState extends State<LeoMascot>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    // Sekunde 2.2 — ya kupumua, si ya kutazama. Watoto husoma kwa muda
-    // mrefu; mwendo wa haraka huchosha na hupunguza umakini.
-    duration: const Duration(milliseconds: 2200),
+    // Slow whole-body motion; this is not a separately rigged gesture.
+    duration: const Duration(milliseconds: 2400),
   );
 
-  /// Mwendo mdogo wa juu-chini — sentimita 5 kwenye skrini.
-  late final Animation<double> _lift = TweenSequence<double>(
-    <TweenSequenceItem<double>>[
-      TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 0, end: -5)
-            .chain(CurveTween(curve: Curves.easeInOut)),
-        weight: 50,
-      ),
-      TweenSequenceItem<double>(
-        tween: Tween<double>(begin: -5, end: 0)
-            .chain(CurveTween(curve: Curves.easeInOut)),
-        weight: 50,
-      ),
-    ],
-  ).animate(_controller);
+  /// Subtle grounded sway and scale, anchored at the feet. This moves the
+  /// whole image; real blinking and hand animation require aligned layers.
+  late final Animation<double> _motion = CurvedAnimation(
+    parent: _controller, curve: Curves.easeInOutSine,
+  );
 
   /// `true` = tusifanye mwendo kabisa.
   bool _shouldStill(BuildContext context) =>
@@ -120,8 +109,10 @@ class _LeoMascotState extends State<LeoMascot>
     if (_shouldStill(context)) {
       _controller.stop();
       _controller.value = 0;
-    } else if (!_controller.isAnimating) {
-      _controller.repeat();
+    } else if (TickerMode.of(context) && !_controller.isAnimating) {
+      _controller.repeat(reverse: true);
+    } else if (!TickerMode.of(context)) {
+      _controller.stop();
     }
   }
 
@@ -189,9 +180,14 @@ class _LeoMascotState extends State<LeoMascot>
     return AnimatedBuilder(
       animation: _controller,
       child: wrapped,
-      builder: (BuildContext context, Widget? child) => Transform.translate(
-        offset: Offset(0, _lift.value),
-        child: child,
+      builder: (BuildContext context, Widget? child) => Transform.rotate(
+        alignment: Alignment.bottomCenter,
+        angle: -0.008 + 0.016 * _motion.value,
+        child: Transform.scale(
+          alignment: Alignment.bottomCenter,
+          scale: 0.992 + 0.008 * _motion.value,
+          child: child,
+        ),
       ),
     );
   }
