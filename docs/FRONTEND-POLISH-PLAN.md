@@ -21,7 +21,17 @@ Protect reading, local progress and offline access; do not ship fake features.
   pose. Implement a natural, infrequent blink, no extra limbs, no distorted face.
 - Review frame-by-frame and on device; preserve the existing static fallback.
 
-## Phase 3 — Leo greeting and gestures
+## Phase 3 — Leo greeting and gestures (in progress; not enabled)
+- A bounded, one-shot wave timing curve and tests are prepared separately;
+  it is not connected to the mascot until a usable rig exists.
+- The existing wave artwork is flattened. A generated arm-removal plate
+  introduced a baked checkerboard background and changed the artwork; a manual
+  arm cutout produced a visible seam at the shoulder when rotated. Both were
+  rejected, so neither is shipped. A proper transparent layered arm plus
+  reconstructed shoulder, registered to the original canvas, is still needed.
+- Acceptance: exactly two limbs, no detached paw/shoulder gap or duplicated
+  pixels at either extreme, no cropping, and the approved blink and rest pose
+  preserved. Validate at multiple sizes and against reduced-motion settings.
 - Prepare an anatomically correct layered arm with a clean shoulder pivot;
   animate a short wave and settle. No third arm, cropping or disconnected joints.
 - Compare and approve the idle, blink and wave in a single working prototype.
