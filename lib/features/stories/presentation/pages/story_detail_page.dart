@@ -1358,14 +1358,14 @@ class _TagChip extends StatelessWidget {
             children: <Widget>[
               Icon(icon, size: AppSpacing.iconSm - 2, color: ink),
               const SizedBox(width: AppSpacing.xs + 2),
-              Text(
+              Flexible(child: Text(
                 label,
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: ink,
                 ),
-              ),
+              )),
             ],
           ),
         ),
