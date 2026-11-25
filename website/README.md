@@ -1,6 +1,6 @@
-# Hadithi Studio landing page
+# Hadithi Studio website
 
-A separate Vite/React marketing website. It does not replace the Flutter app or provide a web reader. Existing app artwork is copied into `public/images` for a standalone deploy.
+A separate Vite/React website. Pages introduce the app, stories and parent information; it does not provide a web reader. The Android APK link points to a test build. Artwork is copied from the Flutter app for standalone deployment.
 
 ```sh
 cd website
@@ -9,4 +9,4 @@ npm run dev
 npm run build
 ```
 
-For Vercel, set the project root to `website`, framework preset to Vite, and output directory to `dist`. The browser reader is not available yet; the page intentionally does not link to an unfinished app or collect visitor data. Validate the content and privacy wording before a public launch.
+For Vercel use project root `website`, framework Vite and output `dist`. `vercel.json` rewrites deep links to the client entry point. On other static hosts configure an equivalent SPA fallback. Before a public release, review copy, privacy and the test APK on real devices. Leo's gentle whole-body sway and blink use existing flattened art; they are not an articulated arm wave. Reduced-motion settings disable the effects.
