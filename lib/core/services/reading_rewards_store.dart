@@ -17,6 +17,13 @@ class RewardsSnapshot {
   int get stars => 5 * (pages.length + hotspots.length) + 15 * reviews.length;
   int get levelIndex => stars < 100 ? 0 : stars < 300 ? 1 : stars < 700 ? 2 : 3;
   int? get nextLevelAt => const <int?>[100, 300, 700, null][levelIndex];
+  /// Progress through the current level, not a percentage of all-time stars.
+  double get levelProgress {
+    final next = nextLevelAt;
+    if (next == null) return 1;
+    final start = const <int>[0, 100, 300, 700][levelIndex];
+    return ((stars - start) / (next - start)).clamp(0.0, 1.0);
+  }
 
   Map<String, Object> toJson() => <String, Object>{
     'version': 1, 'pages': pages.toList(), 'hotspots': hotspots.toList(),

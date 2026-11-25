@@ -17,9 +17,8 @@
 ///
 /// ## Faili hili haliwezi kuangusha app
 ///
-/// Kusoma au kuandika mapendeleo kukishindwa, tunarudi kwa chaguo-msingi
-/// (`try/catch`, hakuna `throw`) — sawa na `ReadingProgressStore`. Hifadhi
-/// ya mapendeleo ni mapambo, si sharti la kufungua ukurasa.
+/// Kusoma au kuandika kukishindwa, tunaonyesha kosa badala ya kudai kuwa
+/// mapendeleo yamehifadhiwa. Mtumiaji anaweza kujaribu tena.
 library;
 
 import 'package:flutter/material.dart';
@@ -160,6 +159,9 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
   /// `true` wakati mapendeleo yanasomwa — tunaonyesha spinner badala ya
   /// swichi zenye thamani isiyo sahihi kwa sekunde moja.
   bool _loading = true;
+  bool _loadFailed = false;
+  bool _saving = false;
+  bool _saveFailed = false;
 
   @override
   void initState() {
@@ -169,8 +171,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   /// Husoma mapendeleo yote; kikishindwa, hurudi kwa chaguo-msingi.
   Future<void> _load() async {
-    // Anza na chaguo-msingi ili hata kabla ya kusoma, hali ni sahihi.
-    _toggles.addAll(_defaults);
+    if (mounted) setState(() { _loading = true; _loadFailed = false; });
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       if (!mounted) return;
@@ -178,62 +179,51 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         _defaults.forEach((String key, bool fallback) {
           _toggles[key] = prefs.getBool(key) ?? fallback;
         });
-        _preferredTime =
-            prefs.getString(_keyPreferredTime) ?? _timeEvening;
+        final savedTime = prefs.getString(_keyPreferredTime);
+        _preferredTime = _timeOptions.any((option) => option.value == savedTime)
+            ? savedTime! : _timeEvening;
         _loading = false;
+        _loadFailed = false;
       });
     } catch (error) {
-      // Hifadhi kushindwa si sababu ya kufunga ukurasa — chaguo-msingi
-      // zilizoingizwa juu zinatosha kuendelea.
+      // Usionyeshe chaguo-msingi kama mapendeleo yaliyohifadhiwa.
       debugPrint(
         'NotificationSettingsPage: kusoma mapendeleo kimeshindwa — $error',
       );
       if (!mounted) return;
       setState(() {
         _loading = false;
+        _loadFailed = true;
       });
     }
   }
 
-  /// Hubadilisha swichi na kuhifadhi mara moja.
-  void _onToggleChanged(String key, bool value) {
+  /// Apply only after the write succeeds; disable controls during the write so
+  /// rapid changes cannot be persisted out of order.
+  Future<void> _savePreference(String key, Object value) async {
+    setState(() { _saving = true; _saveFailed = false; });
+    bool saved = false;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      saved = value is bool
+          ? await prefs.setBool(key, value)
+          : await prefs.setString(key, value as String);
+    } catch (error) {
+      debugPrint('Notification preferences could not be saved: $error');
+    }
+    if (!mounted) return;
     setState(() {
-      _toggles[key] = value;
+      _saving = false;
+      _saveFailed = !saved;
+      if (saved) {
+        if (value is bool) { _toggles[key] = value; }
+        else { _preferredTime = value as String; }
+      }
     });
-    _saveBool(key, value);
   }
 
-  /// Hubadilisha muda unaopendelea na kuhifadhi mara moja.
   void _onPreferredTimeChanged(String? value) {
-    if (value == null) return;
-    setState(() {
-      _preferredTime = value;
-    });
-    _saveString(_keyPreferredTime, value);
-  }
-
-  /// Huhifadhi `bool` moja; kosa hupuuzwa kwa makusudi (hakuna `throw`).
-  Future<void> _saveBool(String key, bool value) async {
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(key, value);
-    } catch (error) {
-      debugPrint(
-        'NotificationSettingsPage: kuhifadhi mapendeleo kimeshindwa — $error',
-      );
-    }
-  }
-
-  /// Huhifadhi `String` moja; kosa hupuuzwa kwa makusudi (hakuna `throw`).
-  Future<void> _saveString(String key, String value) async {
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString(key, value);
-    } catch (error) {
-      debugPrint(
-        'NotificationSettingsPage: kuhifadhi mapendeleo kimeshindwa — $error',
-      );
-    }
+    if (value != null && !_saving) _savePreference(_keyPreferredTime, value);
   }
 
   @override
@@ -257,7 +247,14 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
+          : _loadFailed
+              ? Center(child: TextButton(
+                  onPressed: _load,
+                  child: Text(context.isSwahili
+                      ? 'Mapendeleo hayajasomeka. Jaribu tena'
+                      : 'Could not load preferences. Try again'),
+                ))
+              : ListView(
               padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
               children: <Widget>[
                 const _NoticeBox(
@@ -270,15 +267,22 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                       'are saved on this device only.',
                 ),
 
+                if (_saveFailed) Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  child: Text(context.isSwahili
+                      ? 'Mabadiliko hayakuhifadhiwa. Jaribu tena.'
+                      : 'Change not saved. Please try again.',
+                    style: TextStyle(color: scheme.error)),
+                ),
                 const _SectionHeading(
-                  swahili: 'Arifa nitakazopata',
-                  english: 'Notifications I want',
+                  swahili: 'Mapendeleo ya arifa za baadaye',
+                  english: 'Preferences for future notifications',
                 ),
                 for (final _ToggleSpec spec in _specs)
                   SwitchListTile(
                     value: _toggles[spec.key] ?? false,
-                    onChanged: (bool value) =>
-                        _onToggleChanged(spec.key, value),
+                    onChanged: _saving ? null : (bool value) =>
+                        _savePreference(spec.key, value),
                     title: Text(
                       context.isSwahili ? spec.swahili : spec.english,
                       style: TextStyle(color: scheme.onSurface),
@@ -303,6 +307,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                     children: <Widget>[
                       for (final _TimeOption option in _timeOptions)
                         RadioListTile<String>(
+                          enabled: !_saving,
                           value: option.value,
                           title: Text(
                             context.isSwahili ? option.swahili : option.english,
@@ -323,8 +328,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   child: Text(
                     context.isSwahili
                         ? 'Muda unatumika mara miundombinu ya arifa '
-                            'itakapowekwa.'
-                        : 'The time is used once push infrastructure is set up.',
+                            'ikiwa arifa zitaongezwa baadaye.'
+                        : 'This preference is stored locally; notification delivery is not available yet.',
                     style: TextStyle(
                       fontSize: 12,
                       height: 1.5,
@@ -420,7 +425,7 @@ class _NoticeBox extends StatelessWidget {
           children: <Widget>[
             Icon(
               Icons.notifications_off_rounded,
-              color: scheme.onErrorContainer,
+              color: scheme.onSurface,
               size: AppSpacing.iconMd,
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -430,7 +435,7 @@ class _NoticeBox extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   height: 1.5,
-                  color: scheme.onErrorContainer,
+                  color: scheme.onSurface,
                 ),
               ),
             ),

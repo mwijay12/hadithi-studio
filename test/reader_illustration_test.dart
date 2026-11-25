@@ -108,4 +108,69 @@ void main() {
     expect(marker.center.dx, closeTo(frame.left + layout.imageRect.left + layout.imageRect.width * .5, 1));
     expect(marker.center.dy, closeTo(frame.top + layout.imageRect.top + layout.imageRect.height * .3, 1));
   });
+  testWidgets('edge hotspot passes only its visible area as bubble anchor', (tester) async {
+    tester.view.physicalSize = const Size(375, 667);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    const asset = 'assets/images/stories/pages/kuku-na-mwewe/page_01.webp';
+    const hotspot = StoryHotspot(type: HotspotType.info_popup, labelSw: 'A', labelEn: 'A',
+      revealSw: 'B', revealEn: 'B', left: 0, top: .4, width: .01, height: .1);
+    Rect? anchor;
+    await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
+      supportedLocales: AppLocalizationsSetup.supportedLocales,
+      home: Scaffold(body: SizedBox.expand(child: ReaderIllustration(
+        asset: asset, hotspots: const [hotspot], enabled: true, compact: false,
+        canvasMode: true, safeTop: 80, safeBottom: 280,
+        onHotspotTapped: (_, rect) => anchor = rect,
+      ))),
+    ));
+    await tester.runAsync(() => precacheImage(const AssetImage(asset), tester.element(find.byType(ReaderIllustration))));
+    await tester.pump();
+    final target = tester.getRect(find.byType(InteractiveHotspot));
+    final viewport = tester.getRect(find.byType(ReaderIllustration));
+    expect(target.left, lessThan(viewport.left));
+    await tester.tapAt(Offset(viewport.left + 4, target.center.dy));
+    expect(anchor, target.intersect(viewport));
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('hotspot pulse respects motion, inactive pages and ticker mode', (tester) async {
+    const hotspot = StoryHotspot(type: HotspotType.info_popup, labelSw: 'A', labelEn: 'A',
+      revealSw: 'B', revealEn: 'B', left: .4, top: .4, width: .2, height: .2);
+    var taps = 0;
+    Widget app({bool reduced = false, bool enabled = true, bool ticker = true}) => MaterialApp(
+      localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
+      supportedLocales: AppLocalizationsSetup.supportedLocales,
+      home: MediaQuery(data: MediaQueryData(disableAnimations: reduced),
+        child: TickerMode(enabled: ticker, child: Scaffold(body: Center(
+          child: SizedBox(width: 60, height: 60, child: InteractiveHotspot(
+            hotspot: hotspot, enabled: enabled, onTapped: (_) => taps++,
+          )),
+        ))),
+      ),
+    );
+    final pulse = find.byKey(const ValueKey('hotspot-pulse'));
+    double scale() => tester.widget<Transform>(pulse).transform.storage[0];
+    await tester.pumpWidget(app());
+    final initial = scale();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(scale(), isNot(initial));
+    await tester.pumpWidget(app(reduced: true));
+    final stopped = scale();
+    await tester.pump(const Duration(seconds: 2));
+    expect(scale(), stopped);
+    await tester.pumpWidget(app(enabled: false));
+    await tester.tap(find.byType(InteractiveHotspot));
+    expect(taps, 0);
+    await tester.pumpWidget(app(ticker: false));
+    final tickerStopped = scale();
+    await tester.pump(const Duration(seconds: 2));
+    expect(scale(), tickerStopped);
+    await tester.pumpWidget(app());
+    await tester.tap(find.byType(InteractiveHotspot));
+    expect(taps, 1);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }

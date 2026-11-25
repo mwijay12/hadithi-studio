@@ -37,11 +37,11 @@ void main() {
     expect(getSimilarStories(current, [high], limit: 0), isEmpty);
   });
 
-  test('ties use rating and then stable id; completion bonus changes rank', () {
+  test('ties use stable id rather than placeholder ratings; completion bonus changes rank', () {
     final a = story('a', rating: 4);
     final b = story('b', rating: 5);
     final c = story('c', rating: 5);
-    expect(getSimilarStories(current, [c, a, b]).map((s) => s.id), ['b', 'c', 'a']);
+    expect(getSimilarStories(current, [c, a, b]).map((s) => s.id), ['a', 'b', 'c']);
     expect(getSimilarStories(current, [b, a], completedIds: {'b'}).first.id, 'a');
   });
 

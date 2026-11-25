@@ -10,6 +10,8 @@ import 'package:hadithi_studio/features/stories/data/datasources/story_sample_da
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hadithi_studio/l10n/l10n.dart';
 import 'package:hadithi_studio/navigation/app_shell.dart';
+import 'package:hadithi_studio/core/widgets/leo_mascot.dart';
+import 'package:hadithi_studio/features/stories/presentation/widgets/story_artwork.dart';
 
 void main() {
   setUp(() {
@@ -164,10 +166,24 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Habari, rafiki!'), findsOneWidget);
+    expect(tester.getTopLeft(find.text('Habari, rafiki!')).dy,
+        lessThan(tester.getTopLeft(find.byType(LeoMascot)).dy));
     expect(tester.takeException(), isNull);
     await tester.tap(find.byKey(const ValueKey('home-leo-stories')));
     await tester.pumpAndSettle();
     expect(find.text('all stories route'), findsOneWidget);
+  });
+
+  testWidgets('story artwork decodes for its actual rendered width', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(body: Center(child: SizedBox(width: 320, height: 200,
+        child: StoryArtwork(title: 'Story', asset: 'assets/images/mascot/leo_wave.webp',
+          accent: Colors.orange, height: 200),
+      ))),
+    ));
+    final image = tester.widget<Image>(find.byType(Image));
+    final provider = image.image as ResizeImage;
+    expect(provider.width, (320 * tester.view.devicePixelRatio).round().clamp(120, 2048));
   });
 
 }

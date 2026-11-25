@@ -90,6 +90,7 @@ class ReaderCubit extends Cubit<ReaderState> {
   final BackgroundMusicPlayer _music;
   late final StreamSubscription<ProcessingState> _audioSubscription;
   bool _usingRecordedAudio = false;
+  bool _restartTtsOnResume = false;
 
   /// Huhifadhi ukurasa wa mwisho na alama za kurasa kwa kifaa.
   ///
@@ -356,6 +357,12 @@ class ReaderCubit extends Cubit<ReaderState> {
       if (!isClosed) emit(state.copyWith(isPaused: false));
       return;
     }
+    if (_restartTtsOnResume) {
+      _restartTtsOnResume = false;
+      emit(state.copyWith(isPaused: false, clearHighlight: true));
+      await startReadAloud();
+      return;
+    }
     final bool resumed = await _speech.resume();
     if (resumed) {
       emit(state.copyWith(isPaused: false));
@@ -477,8 +484,10 @@ class ReaderCubit extends Cubit<ReaderState> {
     emit(state.copyWith(rateMultiplier: clamped));
     if (_usingRecordedAudio) {
       unawaited(_audio.setSpeed(clamped));
+    } else if (wasSpeaking && state.isPaused) {
+      _restartTtsOnResume = true;
     } else if (wasSpeaking) {
-      startReadAloud();
+      unawaited(startReadAloud());
     }
   }
 
@@ -491,7 +500,13 @@ class ReaderCubit extends Cubit<ReaderState> {
     final bool wasSpeaking = state.isSpeaking;
     _stopKaraoke();
     emit(state.copyWith(voice: voice));
-    if (wasSpeaking) startReadAloud();
+    if (wasSpeaking && !_usingRecordedAudio) {
+      if (state.isPaused) {
+        _restartTtsOnResume = true;
+      } else {
+        unawaited(startReadAloud());
+      }
+    }
   }
 
   /// Hugeuza "geuza ukurasa wenyewe".
@@ -760,6 +775,7 @@ class ReaderCubit extends Cubit<ReaderState> {
     _stopKaraoke();
     _stopAutoTurn();
     _tokenIndex = 0;
+    _restartTtsOnResume = false;
   }
 
   @override

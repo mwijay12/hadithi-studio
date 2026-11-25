@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hadithi_studio/core/services/library_store.dart';
+import 'package:hadithi_studio/core/enums/app_enums.dart';
+import 'package:hadithi_studio/features/stories/domain/entities/story.dart';
+import 'package:hadithi_studio/features/stories/domain/entities/story_page.dart';
+import 'package:hadithi_studio/features/settings/presentation/pages/notification_settings_page.dart';
 import 'package:hadithi_studio/core/services/parent_preferences.dart';
 import 'package:hadithi_studio/features/settings/presentation/widgets/offline_overview.dart';
 import 'package:hadithi_studio/features/settings/presentation/widgets/parent_goal_setting.dart';
@@ -40,6 +44,13 @@ void main() {
     expect(missing.readingReady, isFalse);
     expect(missing.missingAudio, story.pages.length);
     expect(inspectBundledStories([], {}).isEmpty, isTrue);
+    const empty = Story(id: 'empty', titleSw: '', titleEn: '', synopsisSw: '',
+      synopsisEn: '', author: '', category: StoryCategory.ngano,
+      ageGroup: AgeGroup.miaka_3_5, readingLevel: ReadingLevel.mtoto_mdogo,
+      coverAsset: 'cover', accent: Colors.green, shelves: [], pages: <StoryPage>[]);
+    final noPages = inspectBundledStories([empty], {'cover'}).single;
+    expect(noPages.readingReady, isFalse);
+    expect(noPages.swAudioReady, isFalse);
   });
 
   testWidgets('parent preference switch displays and updates saved value', (tester) async {
@@ -57,4 +68,32 @@ void main() {
     expect(tester.widget<SwitchListTile>(find.byKey(const ValueKey('parent-show-goals'))).value, isFalse);
     expect(find.textContaining('Activity is still saved'), findsOneWidget);
   });
+
+  testWidgets('notification preferences are optional, local and persist', (tester) async {
+    tester.view.physicalSize = const Size(320, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('en'),
+      localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
+      supportedLocales: AppLocalizationsSetup.supportedLocales,
+      builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(
+        textScaler: const TextScaler.linear(1.4)), child: child!),
+      home: const NotificationSettingsPage(),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Notifications cannot be delivered yet'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Streak reminders'), 150,
+      scrollable: find.byType(Scrollable).first);
+    final first = find.byType(SwitchListTile).first;
+    expect(tester.widget<SwitchListTile>(first).value, isFalse);
+    await tester.tap(first);
+    await tester.pumpAndSettle();
+    expect(tester.widget<SwitchListTile>(first).value, isTrue);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getBool('hadithi_notif_streak_reminders'), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
 }

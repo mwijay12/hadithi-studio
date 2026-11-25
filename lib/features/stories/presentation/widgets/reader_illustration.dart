@@ -123,7 +123,15 @@ class _ReaderIllustrationState extends State<ReaderIllustration> {
       onTapped: (selected) {
         final box = hotspotContext.findRenderObject() as RenderBox?;
         if (box != null && box.hasSize) {
-          widget.onHotspotTapped(selected, box.localToGlobal(Offset.zero) & box.size);
+          final target = box.localToGlobal(Offset.zero) & box.size;
+          // The canvas clips targets that straddle an edge. Anchor the bubble
+          // to the visible hit area, not to the invisible part outside it.
+          final viewport = context.findRenderObject() as RenderBox?;
+          if (viewport != null && viewport.hasSize) {
+            final visible = viewport.localToGlobal(Offset.zero) & viewport.size;
+            final clipped = target.intersect(visible);
+            if (!clipped.isEmpty) widget.onHotspotTapped(selected, clipped);
+          }
         }
       }, enabled: widget.enabled, compact: widget.compact,
     )),

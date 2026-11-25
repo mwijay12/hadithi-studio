@@ -11,8 +11,9 @@ class BundledStoryStatus {
   final Story story;
   final int missingImages;
   final int missingAudio;
-  bool get readingReady => missingImages == 0;
-  bool get swAudioReady => missingAudio == 0;
+  bool get hasPages => story.pages.isNotEmpty;
+  bool get readingReady => hasPages && missingImages == 0;
+  bool get swAudioReady => hasPages && missingAudio == 0;
 }
 
 List<BundledStoryStatus> inspectBundledStories(Iterable<Story> stories, Set<String> assets) => [
@@ -70,7 +71,9 @@ class _OfflineOverviewState extends State<OfflineOverview> {
               for (final item in snapshot.data!)
                 ListTile(
                   title: Text(item.story.title(swahili: sw)),
-                  subtitle: Text(sw
+                  subtitle: Text(!item.hasPages
+                      ? (sw ? 'Hakuna kurasa za kukagua' : 'No pages to check')
+                      : sw
                       ? '${item.readingReady ? 'Picha zipo' : 'Picha ${item.missingImages} hazipo'} • ${item.swAudioReady ? 'Sauti ya Kiswahili ipo' : 'Sauti ${item.missingAudio} hazipo'}'
                       : '${item.readingReady ? 'Images bundled' : '${item.missingImages} images missing'} • ${item.swAudioReady ? 'Swahili audio bundled' : '${item.missingAudio} audio files missing'}'),
                   leading: Icon(item.readingReady && item.swAudioReady

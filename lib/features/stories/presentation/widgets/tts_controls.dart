@@ -150,7 +150,7 @@ class TtsControls extends StatelessWidget {
                         child: _PlayButton(
                           state: state,
                           onPressed: state.allowsAudio
-                              ? cubit.toggleReadAloud
+                              ? cubit.togglePause
                               : null,
                         ),
                       ),
@@ -279,9 +279,13 @@ class TtsControls extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
       builder: (BuildContext sheetContext) {
         return SafeArea(
-          child: Column(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * .75),
+            child: SingleChildScrollView(
+              child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
@@ -315,6 +319,8 @@ class TtsControls extends StatelessWidget {
                   },
                 ),
             ],
+              ),
+            ),
           ),
         );
       },
@@ -330,9 +336,13 @@ class TtsControls extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
       builder: (BuildContext sheetContext) {
         return SafeArea(
-          child: Column(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * .75),
+            child: SingleChildScrollView(
+              child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
@@ -340,6 +350,16 @@ class TtsControls extends StatelessWidget {
                 child: Text(
                   l10n.ttsVoice,
                   style: Theme.of(sheetContext).textTheme.titleMedium,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: Text(
+                  context.localised(
+                    swahili: 'Chaguo hili hubadili kasi na pitch ya sauti ya kifaa (TTS); halibadili sauti zilizorekodiwa. TTS inategemea kifaa na inaweza kuhitaji mtandao.',
+                    english: 'This changes the device TTS rate and pitch, not recorded narration. TTS depends on the device and may need internet.',
+                  ),
+                  style: Theme.of(sheetContext).textTheme.bodySmall,
                 ),
               ),
               for (final ReaderVoice voice in ReaderVoice.values)
@@ -371,6 +391,8 @@ class TtsControls extends StatelessWidget {
                   },
                 ),
             ],
+              ),
+            ),
           ),
         );
       },

@@ -557,7 +557,14 @@ class _ContinueReadingCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.sm),
                   Text(sw ? 'Ukurasa $pageNumber kati ya $total' : 'Page $pageNumber of $total'),
                   const SizedBox(height: AppSpacing.sm),
-                  ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: pageNumber / total)),
+                  Semantics(
+                    label: sw ? 'Nafasi ya ukurasa' : 'Page position',
+                    value: sw ? 'Ukurasa $pageNumber kati ya $total' : 'Page $pageNumber of $total',
+                    child: ExcludeSemantics(child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(value: pageNumber / total),
+                    )),
+                  ),
                 ])),
               ]),
             ),
@@ -635,9 +642,9 @@ class _LeoWelcomeCard extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Center(child: leo),
-                    const SizedBox(height: AppSpacing.sm),
                     message,
+                    const SizedBox(height: AppSpacing.sm),
+                    const Center(child: leo),
                   ],
                 );
               }
@@ -809,6 +816,16 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
                   ),
                 ),
               ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: SizedBox(width: double.infinity, child: FilledButton.icon(
+                key: const ValueKey('library-all-stories'),
+                onPressed: () => openAllStories(context),
+                icon: const Icon(Icons.auto_stories_rounded),
+                label: Text(context.isSwahili ? 'Hadithi zote' : 'All stories'),
+              )),
             ),
             const SizedBox(height: AppSpacing.xl),
             Padding(

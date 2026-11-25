@@ -62,23 +62,40 @@ class _ReadingRewardsStripState extends State<ReadingRewardsStrip> {
                   Text(sw ? 'Nyota na tuzo zako' : 'Your stars and achievements',
                     style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 8),
-                  Text('${snapshot.stars} ${sw ? 'Nyota' : 'stars'} • ${_levelName(snapshot.levelIndex, sw)}'),
-                  if (snapshot.nextLevelAt != null)
-                    Text(sw ? 'Ngazi inayofuata: ${snapshot.nextLevelAt} Nyota' : 'Next level: ${snapshot.nextLevelAt} stars'),
+                  Text('${snapshot.stars} ${sw ? 'Nyota' : 'stars'} • ${_levelName(snapshot.levelIndex, sw)}',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  if (snapshot.nextLevelAt != null) ...<Widget>[
+                    Text(sw ? 'Nyota ${snapshot.stars}/${snapshot.nextLevelAt} hadi ngazi inayofuata'
+                        : '${snapshot.stars}/${snapshot.nextLevelAt} stars towards the next level'),
+                    const SizedBox(height: 8),
+                    Semantics(
+                      label: sw ? 'Maendeleo ya ngazi' : 'Level progress',
+                      value: sw ? 'Nyota ${snapshot.stars} kati ya ${snapshot.nextLevelAt}'
+                          : '${snapshot.stars} of ${snapshot.nextLevelAt} stars',
+                      child: ExcludeSemantics(child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: LinearProgressIndicator(
+                          key: const ValueKey('rewards-level-progress'),
+                          minHeight: 10, value: snapshot.levelProgress),
+                      )),
+                    ),
+                  ] else Text(sw ? 'Umefikia ngazi ya juu!' : 'You reached the top level!'),
+                  const SizedBox(height: 8),
+                  Text(sw ? 'Soma kwa mwendo wako; kila hatua ni ya thamani.'
+                      : 'Read at your own pace; every step matters.',
+                    style: Theme.of(context).textTheme.bodySmall),
                   const SizedBox(height: 16),
                   for (final entry in <(String, String)>[
                     ('explorer', sw ? 'Gusa vitu $explorer/10' : 'Explore $explorer/10 spots'),
                     ('reviewer', sw ? 'Andika maoni ya kwanza kwenye kifaa' : 'Write your first review on this device'),
                     ('week', sw ? 'Fikisha siku 7 za mfululizo' : 'Reach a 7-day streak'),
                   ])
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(snapshot.unlocked.containsKey(entry.$1)
-                          ? Icons.emoji_events_rounded : Icons.emoji_events_outlined),
-                      title: Text(rewardBadgeName(entry.$1, sw: sw)),
-                      subtitle: Text(entry.$2),
-                      trailing: snapshot.unlocked.containsKey(entry.$1)
-                          ? const Icon(Icons.check_circle_outline_rounded) : null,
+                    _RewardBadge(
+                      name: rewardBadgeName(entry.$1, sw: sw),
+                      description: entry.$2,
+                      earned: snapshot.unlocked.containsKey(entry.$1),
+                      sw: sw,
                     ),
                   Text(sw ? 'Nyota ni za kifaa hiki: ukurasa mpya +5, kitu kipya +5, maoni ya kwanza kwa hadithi +15.'
                       : 'Stars stay on this device: new page +5, new spot +5, first review per story +15.',
@@ -109,6 +126,40 @@ class _ReadingRewardsStripState extends State<ReadingRewardsStrip> {
           label: Text('${snapshot.stars} ${sw ? 'Nyota' : 'stars'} • ${_levelName(snapshot.levelIndex, sw)}'),
         );
       },
+    );
+  }
+}
+
+/// Badge status is written in words as well as shown by an icon.
+class _RewardBadge extends StatelessWidget {
+  const _RewardBadge({required this.name, required this.description,
+    required this.earned, required this.sw});
+  final String name;
+  final String description;
+  final bool earned;
+  final bool sw;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final status = earned ? (sw ? 'Umeipata' : 'Earned')
+        : (sw ? 'Bado haijapatikana' : 'Not earned yet');
+    return Card(
+      color: earned ? colors.primaryContainer : colors.surfaceContainerHighest,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          ExcludeSemantics(child: Icon(earned ? Icons.emoji_events_rounded : Icons.emoji_events_outlined,
+              color: earned ? colors.onPrimaryContainer : colors.onSurfaceVariant)),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Text(name, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(status, style: Theme.of(context).textTheme.labelMedium),
+            Text(description, style: Theme.of(context).textTheme.bodySmall),
+          ])),
+        ]),
+      ),
     );
   }
 }

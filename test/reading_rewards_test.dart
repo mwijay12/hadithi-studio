@@ -70,6 +70,11 @@ void main() {
     expect(sample(60).levelIndex, 2);
     expect(sample(140).levelIndex, 3);
     expect(sample(140).nextLevelAt, isNull);
+    expect(sample(0).levelProgress, 0);
+    expect(sample(10).levelProgress, .5);
+    expect(sample(20).levelProgress, 0);
+    expect(sample(40).levelProgress, .5);
+    expect(sample(140).levelProgress, 1);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(ReadingRewardsStore.storageKey, '{bad');
     final store = ReadingRewardsStore();
@@ -99,5 +104,38 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Nyota na tuzo zako'), findsOneWidget);
     expect(find.text('Mpelelezi Hodari'), findsOneWidget);
+    expect(find.text('Bado haijapatikana'), findsNWidgets(3));
+    expect(tester.widget<LinearProgressIndicator>(find.byKey(const ValueKey('rewards-level-progress'))).value, .05);
+    expect(find.textContaining('Soma kwa mwendo wako'), findsOneWidget);
   });
+
+  testWidgets('earned and top-level rewards fit a narrow large-text screen', (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final snapshot = RewardsSnapshot(
+      pages: {for (int i = 0; i < 140; i++) '$i'},
+      unlocked: {'reviewer': DateTime.utc(2026).toIso8601String()},
+    );
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      ReadingRewardsStore.storageKey: jsonEncode(snapshot.toJson()),
+    });
+    await tester.runAsync(() => ReadingRewardsStore.instance.restore());
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('en'),
+      localizationsDelegates: AppLocalizationsSetup.localizationsDelegates,
+      supportedLocales: AppLocalizationsSetup.supportedLocales,
+      builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(
+        textScaler: const TextScaler.linear(1.5), disableAnimations: true), child: child!),
+      home: const Scaffold(body: ReadingRewardsStrip()),
+    ));
+    await tester.tap(find.byKey(const ValueKey('open-rewards')));
+    await tester.pumpAndSettle();
+    expect(find.text('You reached the top level!'), findsOneWidget);
+    expect(find.byKey(const ValueKey('rewards-level-progress')), findsNothing);
+    expect(find.text('Earned'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
 }
